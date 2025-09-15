@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Notiq
+
+A modern, extensible note-taking and document editor built with Next.js, TypeScript, Tailwind CSS, and Lexical. Features include rich text editing, image and media embeds, equations, polls, and more.
+
+## Features
+
+- ⚡️ Fast, responsive editor powered by Lexical
+- 🖼️ Image, inline image, and media embeds (YouTube, Twitter, Figma, GIFs)
+- 🧮 Equation and math support (KaTeX)
+- 📊 Polls, tables, and code blocks
+- 🎨 Customizable themes with Tailwind CSS
+- 🗂️ Modular plugin architecture
+- 🌐 Next.js app with API routes
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- pnpm (or npm/yarn)
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+### Build
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app/` — Next.js app routes and layout
+- `src/components/editor/` — Editor core, plugins, nodes, and UI
+- `src/components/ui/` — Reusable UI components
+- `src/lib/` — Utility libraries (EdgeStore, Pinecone, etc.)
+- `public/` — Static assets
 
-## Deploy on Vercel
+## Editor Plugins & Nodes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Plugins:** Toolbar, Floating Toolbar, AutoEmbed, Equations, Excalidraw, Inline Images, Polls, Tables, Code Actions, Slash Commands, etc.
+- **Nodes:** ImageNode, InlineImageNode, EquationNode, ExcalidrawNode, PollNode, etc.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Customization
+
+- Tailwind CSS config: `tailwind.config.ts`
+- ESLint config: `eslint.config.mjs`
+- Editor themes: `src/components/editor/themes/`
+
+## Contributing
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/foo`)
+3. Commit your changes (`git commit -am 'Add feature'`)
+4. Push to the branch (`git push origin feature/foo`)
+5. Create a Pull Request
+
+## License
+
+MIT
