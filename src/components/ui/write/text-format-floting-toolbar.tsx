@@ -13,17 +13,17 @@ import { getDOMRangeRect } from "@/components/editor/utils/getDOMRangeRect";
 import { setFloatingElemPosition } from "@/components/editor/utils/setFloatingElemPosition";
 import { mergeRegister } from "@lexical/utils";
 import { Separator } from "@/components/ui/separator";
-import BlockFormatDropDown from "../../drop-downs/block-format";
+import BlockFormatDropDown from "../drop-downs/block-format";
 import { useIsMobile } from "@/components/editor/hooks/use-mobile";
 import { Toggle } from "@/components/ui/toggle";
 import { SHORTCUTS } from "@/components/editor/plugins/ShortcutsPlugin/shortcuts";
 import { Bold, Code, Italic, Link, UnderlineIcon } from "lucide-react";
-import Color from "../../drop-downs/color";
+import Color from "../drop-downs/color";
 import { sanitizeUrl } from "@/components/editor/utils/url";
-import TextFormat from "../../drop-downs/text-format";
-import Font from "../../drop-downs/font";
-import FontSize from "../../drop-downs/font-size";
-import AiButton from "../../ai/ai-button";
+import TextFormat from "../drop-downs/text-format";
+import Font from "../drop-downs/font";
+import FontSize from "../drop-downs/font-size";
+import AiButton from "../ai/ai-button";
 
 
 

@@ -41,11 +41,11 @@ import {
   InlineImageNode,
   InlineImagePayload,
 } from '../../nodes/InlineImageNode/InlineImageNode';
-import FileInput from '../../ui/FileInput';
-import Select from '../../ui/Select';
-import { DialogActions } from '../../ui/Dialog';
 import { Button } from '@/components/ui/button';
 import TextInput from '@/components/ui/TextInput';
+import FileInput from '@/components/ui/FileInput';
+import Select from '@/components/ui/Select';
+import { DialogActions } from '@/components/ui/dialog/Dialog';
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
 

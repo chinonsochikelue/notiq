@@ -36,14 +36,14 @@ import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
 
 // import useModal from '../../hooks/useModal';
 import LinkPlugin from '../../plugins/LinkPlugin';
-// import ContentEditable from '../../ui/ContentEditable';
+// import ContentEditable from '@/components/ui/ContentEditable';
 import {InlineImageNode} from './InlineImageNode';
-import { DialogActions } from '../../ui/Dialog';
 import { Button } from '@/components/ui/button';
-import Select from '../../ui/Select';
 import TextInput from '@/components/ui/TextInput';
-import useModal from '../../ui/models/use-model';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { DialogActions } from '@/components/ui/dialog/Dialog';
+import Select from '@/components/ui/Select';
+import useModal from '@/components/ui/models/use-model';
 
 const imageCache = new Set();
 

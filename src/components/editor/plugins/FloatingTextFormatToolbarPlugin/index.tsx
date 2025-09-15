@@ -23,7 +23,7 @@
   import { getSelectedNode } from "../../utils/getSelectedNode";
 
   import { blockTypeToBlockName } from "@/components/providers/ToolbarContext";
-  import TextFormatFloatingToolbar from "../../ui/floting-text/write/text-format-floting-toolbar";
+  // import TextFormatFloatingToolbar from "@/components/ui/floting-text/write/text-format-floting-toolbar";
   import {
     $getSelectionStyleValueForProperty,
   } from "@lexical/selection";
@@ -32,6 +32,7 @@
   import { $isTableNode } from "@lexical/table";
   import { $isListNode, ListNode } from "@lexical/list";
   import { $isHeadingNode } from "@lexical/rich-text";
+import TextFormatFloatingToolbar from "@/components/ui/write/text-format-floting-toolbar";
 
   function useFloatingTextFormatToolbar(
     editor: LexicalEditor,

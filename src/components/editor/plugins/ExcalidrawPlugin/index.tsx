@@ -26,7 +26,7 @@ import {
   $createExcalidrawNode,
   ExcalidrawNode,
 } from '../../nodes/ExcalidrawNode';
-import ExcalidrawModal, { ExcalidrawInitialElements } from '../../ui/excalidraw/ExcalidrawModal';
+import ExcalidrawModal, { ExcalidrawInitialElements } from '@/components/ui/excalidraw/ExcalidrawModal';
 
 export const INSERT_EXCALIDRAW_COMMAND: LexicalCommand<void> = createCommand(
   'INSERT_EXCALIDRAW_COMMAND',

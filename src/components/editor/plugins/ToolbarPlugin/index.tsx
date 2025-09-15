@@ -48,28 +48,29 @@ import dynamic from "next/dynamic";
 import { Toggle } from "@/components/ui/toggle";
 import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { sanitizeUrl } from "../../utils/url";
-import CodeList from "@/components/editor/ui/drop-downs/code"
+import CodeList from "@/components/ui/drop-downs/code"
 import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
 const BlockFormatDropDown = dynamic(
-  () => import("@/components/editor/ui/drop-downs/block-format")
+  () => import("@/components/ui/drop-downs/block-format")
 );
 const FontDropDown = dynamic(
-  () => import("@/components/editor/ui/drop-downs/font")
+  () => import("@/components/ui/drop-downs/font")
 );
 const FontSize = dynamic(
-  () => import("@/components/editor/ui/drop-downs/font-size")
+  () => import("@/components/ui/drop-downs/font-size")
 );
-const Color = dynamic(() => import("@/components/editor/ui/drop-downs/color"));
-const BackgroundColor = dynamic(() => import("@/components/editor/ui/drop-downs/background-color"));
+const Color = dynamic(() => import("@/components/ui/drop-downs/color"));
+const BackgroundColor = dynamic(() => import("@/components/ui/drop-downs/background-color"));
 const TextFormat = dynamic(
-  () => import("@/components/editor/ui/drop-downs/text-format")
+  () => import("@/components/ui/drop-downs/text-format")
 );
 const InsertNode = dynamic(
-  () => import("@/components/editor/ui/drop-downs/insert-node")
+  () => import("@/components/ui/drop-downs/insert-node")
 );
 const TextAlign = dynamic(
-  () => import("@/components/editor/ui/drop-downs/text-align")
-);import { type } from './../../../providers/ToolbarContext';
+  () => import("@/components/ui/drop-downs/text-align")
+);
+// import { type } from './../../../providers/ToolbarContext';
 
 
 const rootTypeToRootName = {

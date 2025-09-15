@@ -17,7 +17,7 @@ import {
 } from "lexical";
 import React, { Suspense, useEffect } from "react";
 const StepperComponent = React.lazy(
-  () => import("@/components/editor/ui/stepper/stepper")
+  () => import("@/components/ui/stepper/stepper")
 );
 
 export interface StepType {

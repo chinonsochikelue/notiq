@@ -56,7 +56,7 @@ import { cn } from "@/lib/utils";
 import { INSERT_LAYOUT_COMMAND } from "../LayoutPlugin";
 import { INSERT_POLL_COMMAND } from "../PollPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
-import useModal from "../../ui/models/use-model";
+import useModal from "@/components/ui/models/use-model";
 import {
   Command,
   CommandItem,
@@ -73,9 +73,9 @@ import { AutoEmbedDialog, FigmaEmbedConfig, TwitterEmbedConfig, YoutubeEmbedConf
 import { initialEditorState, INSERT_STEPPER_COMMAND } from "../../nodes/Stepper";
 import { InsertInlineImageDialog } from "../InlineImagePlugin";
 import { InsertEquationDialog } from "../EquationsPlugin";
-const InsertGif = React.lazy(() => import("../../ui/models/insert-gif"));
+const InsertGif = React.lazy(() => import("@/components/ui/models/insert-gif"));
 const InsertImageDialog = React.lazy(() =>
-  import("../../ui/models/insert-image").then((module) => ({
+  import("@/components/ui/models/insert-image").then((module) => ({
     default: module.InsertImageDialog,
   }))
 );

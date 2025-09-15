@@ -52,8 +52,8 @@ import {
   TableRowsSplit,
   Trash,
 } from "lucide-react";
-import { DropDown } from "../../ui/drop-downs";
-import useModal from "../../ui/models/use-model";
+import { DropDown } from "@/components/ui/drop-downs";
+import useModal from "@/components/ui/models/use-model";
 
 function computeSelectionCount(selection: TableSelection): {
   columns: number;

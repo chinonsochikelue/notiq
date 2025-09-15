@@ -19,7 +19,7 @@ import { INSERT_TWEET_COMMAND } from '../TwitterPlugin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Twitter, Youtube, Figma } from 'lucide-react';
-import useModal from '../../ui/models/use-model';
+import useModal from '@/components/ui/models/use-model';
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.

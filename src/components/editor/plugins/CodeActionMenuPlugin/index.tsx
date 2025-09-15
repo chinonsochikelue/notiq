@@ -18,7 +18,7 @@ import { createPortal } from "react-dom";
 import { CopyButton } from "./components/CopyButton";
 import { canBePrettier, PrettierButton } from "./components/PrettierButton";
 import { useDebounce } from "./utils";
-import CodeList from "../../ui/drop-downs/code";
+import CodeList from "@/components/ui/drop-downs/code";
 
 const CODE_PADDING = 8;
 
