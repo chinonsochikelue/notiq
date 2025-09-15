@@ -356,6 +356,27 @@ function getBaseOptions(
           true
         ),
     }),
+    
+    new ComponentPickerOption("InlineImage", {
+      icon: <ImageIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
+      keywords: ["image", "photo", "picture", "file", "img"],
+      desc: "Upload or embed with a link",
+
+      onSelect: () =>
+        showModal(
+          "Insert Image",
+          "Please select an image to upload.",
+          (onClose) => (
+            <React.Suspense
+              fallback={<Skeleton className="mx-2 w-[350px] h-[350px]" />}
+            >
+              <InsertImageDialog activeEditor={editor} onClose={onClose} />
+            </React.Suspense>
+          ),
+          true
+        ),
+    }),
+
     new ComponentPickerOption("Poll", {
       icon: <SquarePenIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["collapse", "collapsible", "toggle"],

@@ -37,6 +37,7 @@ import HintPlugin from "./nodes/Hint";
 import { LexicalOnChangePlugin } from "./lexical-on-change";
 import StepperPlugin from "./nodes/Stepper";
 import ExcalidrawPlugin from "./plugins/ExcalidrawPlugin";
+import InlineImagePlugin from "./plugins/InlineImagePlugin";
 const SlashCommand = dynamic(
   () => import("@/components/editor/plugins/SlashCommand"),
   { ssr: false }
@@ -128,6 +129,7 @@ export default function Core() {
       <TwitterPlugin />
       <CheckListPlugin />
       <ImagesPlugin />
+      <InlineImagePlugin />
       <AutoEmbedPlugin />
       <HintPlugin />
       <YouTubePlugin />

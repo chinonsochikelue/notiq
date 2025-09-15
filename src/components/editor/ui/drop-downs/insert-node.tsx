@@ -97,20 +97,8 @@ export default function InsertNode({
         label: "ExcaliDraw",
         icon: <DraftingCompassIcon className="w-4 h-4" />,
         func: () => {
-          showModal(
-            "Create Poll",
-            "Please type your question.",
-            (onClose) => (
-              <Suspense fallback={<Skeleton className="mx-2 w-[400px] h-[100px]" />}>
-                <InsertPoll activeEditor={editor} onClose={onClose} />
-              </Suspense>
-            ),
-            true
-          );
+          editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined);
         },
-        // func: () => {
-        //   editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined);
-        // },
       },
       {
         label: "Poll",

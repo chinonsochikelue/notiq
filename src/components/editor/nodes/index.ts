@@ -22,6 +22,8 @@ import { TweetNode } from './TweetNode';
 import { YouTubeNode } from '../plugins/YouTubeNode';
 import { Hint } from './Hint';
 import { StepperNode } from './Stepper';
+import { InlineImageNode } from './InlineImageNode/InlineImageNode';
+import { ExcalidrawNode } from './ExcalidrawNode';
 
 
 
@@ -52,6 +54,8 @@ const nodes: Array<Klass<LexicalNode>> = [
   CollapsibleContentNode,
   CollapsibleTitleNode,
   LinkWithMetaDataNode,
+  InlineImageNode,
+  ExcalidrawNode,
 
 ];
 
@@ -65,6 +69,8 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   CodeNode,
   StepperNode,
   LinkWithMetaDataNode,
-  ImageNode
+  ImageNode,
+  InlineImageNode,
+  ExcalidrawNode,
 ]
 export default nodes
