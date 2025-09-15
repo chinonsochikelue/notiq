@@ -13,11 +13,12 @@ import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {useMemo, useState} from 'react';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {INSERT_FIGMA_COMMAND} from '../FigmaPlugin';
 import { INSERT_YOUTUBE_COMMAND } from '../YouTubePlugin';
 import { INSERT_TWEET_COMMAND } from '../TwitterPlugin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Twitter, Youtube } from 'lucide-react';
+import { Twitter, Youtube, Figma } from 'lucide-react';
 import useModal from '../../ui/models/use-model';
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
@@ -108,12 +109,43 @@ export const TwitterEmbedConfig: PlaygroundEmbedConfig = {
   type: 'tweet',
 };
 
+export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
+  contentName: 'Figma Document',
 
+  exampleUrl: 'https://www.figma.com/file/LKQ4FJ4bTnCSjedbRpk931/Sample-File',
+
+  icon: <Figma className="h-4 w-4" />,
+
+  insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
+    editor.dispatchCommand(INSERT_FIGMA_COMMAND, result.id);
+  },
+
+  keywords: ['figma', 'figma.com', 'mock-up'],
+
+  // Determine if a given URL is a match and return url data.
+  parseUrl: (text: string) => {
+    const match =
+      /https:\/\/([\w.-]+\.)?figma.com\/(file|proto)\/([0-9a-zA-Z]{22,128})(?:\/.*)?$/.exec(
+        text,
+      );
+
+    if (match != null) {
+      return {
+        id: match[3],
+        url: match[0],
+      };
+    }
+
+    return null;
+  },
+
+  type: 'figma',
+};
 
 export const EmbedConfigs = [
   TwitterEmbedConfig,
   YoutubeEmbedConfig,
-  
+  FigmaEmbedConfig,
 ];
 
 function AutoEmbedMenuItem({

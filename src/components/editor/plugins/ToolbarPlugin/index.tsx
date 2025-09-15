@@ -24,7 +24,7 @@ import {
 } from "@/components/providers/ToolbarContext";
 import { cn } from "@/lib/utils";
 
-import { Bold, Code, Italic, Link, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
+import { Bold, Code, Italic, Link, Mic, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -49,6 +49,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { sanitizeUrl } from "../../utils/url";
 import CodeList from "@/components/editor/ui/drop-downs/code"
+import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
 const BlockFormatDropDown = dynamic(
   () => import("@/components/editor/ui/drop-downs/block-format")
 );
@@ -68,7 +69,8 @@ const InsertNode = dynamic(
 );
 const TextAlign = dynamic(
   () => import("@/components/editor/ui/drop-downs/text-align")
-);
+);import { type } from './../../../providers/ToolbarContext';
+
 
 const rootTypeToRootName = {
   root: 'Root',
@@ -86,6 +88,7 @@ export default function index({
   setIsLinkEditMode: Dispatch<boolean>;
 }) {
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
+  const [isSpeechToText, setIsSpeechToText] = useState(false);
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(
     null
   );
@@ -473,6 +476,48 @@ export default function index({
           editor={activeEditor}
           isRTL={toolbarState.isRTL}
         />
+        
+        {SUPPORT_SPEECH_RECOGNITION && (
+          <Button
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={() => {
+              editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
+              setIsSpeechToText(!isSpeechToText);
+            }}
+            className={`
+      relative inline-flex items-center justify-center
+      p-3 rounded-lg border-none font-medium
+      transition-all duration-300 ease-in-out
+      active:scale-95
+      ${isSpeechToText
+                ? "border-none animate-pulse bg-gray-800"
+                : 'bg-transparent hover:bg-gray-900 cursor-pointer border-none shadow-sm hover:shadow-md'
+              }
+    `}
+            title="Speech To Text"
+            aria-label={`${isSpeechToText ? 'Disable' : 'Enable'} speech to text`}
+          >
+            <div className="relative z-10 flex items-center space-x-2">
+              <Mic className={`w-4 h-4 transition-all duration-300 ${isSpeechToText ? 'animate-bounce' : ''
+                }`} />
+              {/* {isSpeechToText && (
+                <div className="flex space-x-1">
+                  <div className="w-1 h-4 bg-white rounded-full animate-pulse animation-delay-0"></div>
+                  <div className="w-1 h-3 bg-white rounded-full animate-pulse animation-delay-150"></div>
+                  <div className="w-1 h-4 bg-white rounded-full animate-pulse animation-delay-300"></div>
+                </div>
+              )} */}
+            </div>
+
+            {/* Ripple effect on click */}
+            {/* <div className="absolute inset-0 rounded-lg overflow-hidden">
+              <div className={`absolute inset-0 bg-white transition-transform duration-500 ${isSpeechToText ? 'scale-0' : ''
+                }`}></div>
+            </div> */}
+          </Button>
+        )}
       </div>
     </nav>
   );

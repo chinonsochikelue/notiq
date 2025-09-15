@@ -38,6 +38,9 @@ import { LexicalOnChangePlugin } from "./lexical-on-change";
 import StepperPlugin from "./nodes/Stepper";
 import ExcalidrawPlugin from "./plugins/ExcalidrawPlugin";
 import InlineImagePlugin from "./plugins/InlineImagePlugin";
+import FigmaPlugin from "./plugins/FigmaPlugin";
+import EquationsPlugin from "./plugins/EquationsPlugin";
+import SpeechToTextPlugin from "./plugins/SpeechToTextPlugin";
 const SlashCommand = dynamic(
   () => import("@/components/editor/plugins/SlashCommand"),
   { ssr: false }
@@ -115,6 +118,9 @@ export default function Core() {
       <TabFocusPlugin />
       <PollPlugin />
       <ExcalidrawPlugin />
+      <FigmaPlugin />
+      <EquationsPlugin />
+      <SpeechToTextPlugin />
       <TableCellResizerPlugin />
       <LayoutPlugin />
       <CollapsiblePlugin />

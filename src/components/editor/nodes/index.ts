@@ -24,6 +24,8 @@ import { Hint } from './Hint';
 import { StepperNode } from './Stepper';
 import { InlineImageNode } from './InlineImageNode/InlineImageNode';
 import { ExcalidrawNode } from './ExcalidrawNode';
+import { FigmaNode } from './FigmaNode/FigmaNode';
+import { EquationNode } from './EquationNode/EquationNode';
 
 
 
@@ -56,7 +58,8 @@ const nodes: Array<Klass<LexicalNode>> = [
   LinkWithMetaDataNode,
   InlineImageNode,
   ExcalidrawNode,
-
+  FigmaNode,
+  EquationNode,
 ];
 
 export  const nestedNodes: Array<Klass<LexicalNode>>=[
@@ -72,5 +75,7 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   ImageNode,
   InlineImageNode,
   ExcalidrawNode,
+  FigmaNode,
+  EquationNode,
 ]
 export default nodes
