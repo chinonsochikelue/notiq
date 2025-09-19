@@ -326,7 +326,7 @@ function getBaseOptions(
       onSelect: () => {
         showModal(
           "Figma",
-          "Insert a URL to embed a live preview. Works with YouTube",
+          "Insert a URL to embed a live preview. Works with Figma",
           (onClose) => (
             <AutoEmbedDialog
               embedConfig={FigmaEmbedConfig}

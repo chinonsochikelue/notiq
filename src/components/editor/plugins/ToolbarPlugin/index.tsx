@@ -50,6 +50,7 @@ import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { sanitizeUrl } from "../../utils/url";
 import CodeList from "@/components/ui/drop-downs/code"
 import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
+import { ModeToggle } from "@/components/theme/ModeToggle";
 const BlockFormatDropDown = dynamic(
   () => import("@/components/ui/drop-downs/block-format")
 );
@@ -304,221 +305,217 @@ export default function index({
   return (
     <nav
       className={cn(
-        "z-[200] fixed top-0 left-0  backdrop-blur-md bg-white/10 dark:bg-black/10 w-full  border-gray-500/20",
-
-
+        "z-[200] fixed top-0 left-0 w-full",
       )}
     >
-      <div className="group flex flex-row justify-center max-sm:overflow-x-scroll  w-screen items-center   p-2 border-b">
-        <div className="flex flex-row gap-x-2">
-          <Button
-            size={"Toolbar"}
-            variant={"outline"}
-            disabled={!toolbarState.canUndo || !isEditable}
-            onClick={() => {
-              activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
-            }}
-            tip={false ? "Undo (⌘Z)" : "Undo (Ctrl+Z)"}
-            type="button"
-            aria-label="Undo"
-            className="border-none"
-          >
-            <Undo2Icon className=" size-4" />
-          </Button>
-          <Button
-            variant={"outline"}
-            size={"Toolbar"}
-            disabled={!toolbarState.canRedo || !isEditable}
-            onClick={() => {
-              activeEditor.dispatchCommand(REDO_COMMAND, undefined);
-            }}
-            tip={false ? "Redo (⇧⌘Z)" : "Redo (Ctrl+Y)"}
-            type="button"
-            className="toolbar-item border-none"
-            aria-label="Redo"
-          >
-            <Redo2Icon className=" size-4" />
-          </Button>
-        </div>
-        <Separator className="h-6 mx-2" orientation="vertical" />
-        {toolbarState.blockType in blockTypeToBlockName &&
-          activeEditor === editor && (
-            <div className="flex flex-row gap-x-[5px]  items-center">
-              <BlockFormatDropDown
+      <div className="flex justify-center p-4">
+        <div
+          className={cn(
+            "group flex flex-row items-center gap-x-2 dark:border dark:border-gray-500/20",
+            "rounded-2xl h-14 px-4 py-2 shadow-md",
+            "overflow-x-auto whitespace-nowrap max-w-full scrollbar-none",
+            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          )}
+        >
+          <div className="flex flex-row gap-x-2">
+            <Button
+              size={"Toolbar"}
+              variant={"outline"}
+              disabled={!toolbarState.canUndo || !isEditable}
+              onClick={() => {
+                activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
+              }}
+              tip={false ? "Undo (⌘Z)" : "Undo (Ctrl+Z)"}
+              type="button"
+              aria-label="Undo"
+              className="border-none"
+            >
+              <Undo2Icon className=" size-4" />
+            </Button>
+            <Button
+              variant={"outline"}
+              size={"Toolbar"}
+              disabled={!toolbarState.canRedo || !isEditable}
+              onClick={() => {
+                activeEditor.dispatchCommand(REDO_COMMAND, undefined);
+              }}
+              tip={false ? "Redo (⇧⌘Z)" : "Redo (Ctrl+Y)"}
+              type="button"
+              className="toolbar-item border-none"
+              aria-label="Redo"
+            >
+              <Redo2Icon className=" size-4" />
+            </Button>
+          </div>
+          <Separator className="h-6 mx-2" orientation="vertical" />
+          {toolbarState.blockType in blockTypeToBlockName &&
+            activeEditor === editor && (
+              <div className="flex flex-row gap-x-[5px]  items-center">
+                <BlockFormatDropDown
+                  disabled={!isEditable}
+                  blockType={toolbarState.blockType}
+                  editor={activeEditor}
+                />
+                <Separator orientation={"vertical"} />
+              </div>
+            )}
+          <Separator className="h-6 mx-2" orientation="vertical" />
+          {toolbarState.blockType == "code" ? (
+            <CodeList
+              onCodeLanguageSelect={onCodeLanguageSelect}
+              codeLanguage={toolbarState.codeLanguage}
+              disabled={!isEditable}
+            />
+          ) : (
+            <div className="flex flex-row items-center">
+              <FontDropDown
                 disabled={!isEditable}
-                blockType={toolbarState.blockType}
+                style={{ fontFamily: toolbarState.fontFamily }}
+                value={toolbarState.fontFamily}
                 editor={activeEditor}
               />
-              <Separator orientation={"vertical"} />
+              <Separator className="h-6 mx-2" orientation="vertical" />
+              <FontSize
+                selectionFontSize={toolbarState.fontSize.slice(0, -2)}
+                editor={activeEditor}
+                disabled={!isEditable}
+              />
+              <Separator className="h-6 mx-2" orientation="vertical" />
+              <div className="flex flex-row gap-x-1">
+                <Toggle
+                  disabled={!isEditable}
+                  variant={"outline"}
+                  size={"Toolbar"}
+                  pressed={toolbarState.isBold}
+                  onPressedChange={() => {
+                    activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+                  }}
+                  tip={`Bold ${SHORTCUTS.BOLD}`}
+                  aria-label={`Format text as bold. Shortcut: ${SHORTCUTS.BOLD}`}
+                >
+                  <Bold />
+                </Toggle>
+                <Toggle
+                  variant={"outline"}
+                  size={"Toolbar"}
+                  disabled={!isEditable}
+                  pressed={toolbarState.isItalic}
+                  onPressedChange={() => {
+                    activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+                  }}
+                  tip={`Italic (${SHORTCUTS.ITALIC})`}
+                  type="button"
+                  aria-label={`Format text as italics. Shortcut: ${SHORTCUTS.ITALIC}`}
+                >
+                  <Italic />
+                </Toggle>
+                <Toggle
+                  disabled={!isEditable}
+                  variant={"outline"}
+                  size={"Toolbar"}
+                  pressed={toolbarState.isUnderline}
+                  onPressedChange={() => {
+                    activeEditor.dispatchCommand(
+                      FORMAT_TEXT_COMMAND,
+                      "underline"
+                    );
+                  }}
+                  tip={`Underline (${SHORTCUTS.UNDERLINE})`}
+                  type="button"
+                  aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
+                >
+                  <Underline />
+                </Toggle>
+                <Toggle
+                  disabled={!isEditable}
+                  variant={"outline"}
+                  size={"Toolbar"}
+                  pressed={toolbarState.isCode}
+                  onPressedChange={() => {
+                    activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+                  }}
+                  tip={`Insert code block (${SHORTCUTS.INSERT_CODE_BLOCK})`}
+                  type="button"
+                  aria-label="Insert code block"
+                >
+                  <Code />
+                </Toggle>
+                <Toggle
+                  variant={"outline"}
+                  size={"Toolbar"}
+                  disabled={!isEditable}
+                  onPressedChange={insertLink}
+                  pressed={toolbarState.isLink}
+                  aria-label="Insert link"
+                  tip={`Insert link (${SHORTCUTS.INSERT_LINK})`}
+                  type="button"
+                >
+                  <Link />
+                </Toggle>
+              </div>
+              <Separator className="h-6 mx-2" orientation="vertical" />
+              <Color
+                disabled={!isEditable}
+                color={toolbarState.fontColor}
+                bgColor={toolbarState.bgColor}
+                editor={editor}
+              />
+              <BackgroundColor
+                disabled={!isEditable}
+                color={toolbarState.fontColor}
+                bgColor={toolbarState.bgColor}
+                editor={editor}
+              />
+              <Separator className="h-6 mx-2" orientation="vertical" />
+              <TextFormat
+                disabled={!isEditable}
+                editor={editor}
+                toolbarState={toolbarState}
+              />
+              <Separator className="h-6 mx-2" orientation="vertical" />
+              <InsertNode disabled={!isEditable} editor={editor} />
             </div>
           )}
-        <Separator className="h-6 mx-2" orientation="vertical" />
-        {toolbarState.blockType == "code" ? (
-          <CodeList
-            onCodeLanguageSelect={onCodeLanguageSelect}
-            codeLanguage={toolbarState.codeLanguage}
-            disabled={!isEditable}
-          />
-        ) : (
-          <div className="flex flex-row items-center">
-            <FontDropDown
-              disabled={!isEditable}
-              style={{ fontFamily: toolbarState.fontFamily }}
-              value={toolbarState.fontFamily}
-              editor={activeEditor}
-            />
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            <FontSize
-              selectionFontSize={toolbarState.fontSize.slice(0, -2)}
-              editor={activeEditor}
-              disabled={!isEditable}
-            />
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            <div className="flex flex-row gap-x-1">
-              <Toggle
-                disabled={!isEditable}
-                variant={"outline"}
-                size={"Toolbar"}
-                pressed={toolbarState.isBold}
-                onPressedChange={() => {
-                  activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
-                }}
-                tip={`Bold ${SHORTCUTS.BOLD}`}
-                aria-label={`Format text as bold. Shortcut: ${SHORTCUTS.BOLD}`}
-              >
-                <Bold />
-              </Toggle>
-              <Toggle
-                variant={"outline"}
-                size={"Toolbar"}
-                disabled={!isEditable}
-                pressed={toolbarState.isItalic}
-                onPressedChange={() => {
-                  activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
-                }}
-                tip={`Italic (${SHORTCUTS.ITALIC})`}
-                type="button"
-                aria-label={`Format text as italics. Shortcut: ${SHORTCUTS.ITALIC}`}
-              >
-                <Italic />
-              </Toggle>
-              <Toggle
-                disabled={!isEditable}
-                variant={"outline"}
-                size={"Toolbar"}
-                pressed={toolbarState.isUnderline}
-                onPressedChange={() => {
-                  activeEditor.dispatchCommand(
-                    FORMAT_TEXT_COMMAND,
-                    "underline"
-                  );
-                }}
-                tip={`Underline (${SHORTCUTS.UNDERLINE})`}
-                type="button"
-                aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
-              >
-                <Underline />
-              </Toggle>
-              <Toggle
-                disabled={!isEditable}
-                variant={"outline"}
-                size={"Toolbar"}
-                pressed={toolbarState.isCode}
-                onPressedChange={() => {
-                  activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
-                }}
-                tip={`Insert code block (${SHORTCUTS.INSERT_CODE_BLOCK})`}
-                type="button"
-                aria-label="Insert code block"
-              >
-                <Code />
-              </Toggle>
-              <Toggle
-                variant={"outline"}
-                size={"Toolbar"}
-                disabled={!isEditable}
-                onPressedChange={insertLink}
-                pressed={toolbarState.isLink}
-                aria-label="Insert link"
-                tip={`Insert link (${SHORTCUTS.INSERT_LINK})`}
-                type="button"
-              >
-                <Link />
-              </Toggle>
-            </div>
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            <Color
-              disabled={!isEditable}
-              color={toolbarState.fontColor}
-              bgColor={toolbarState.bgColor}
-              editor={editor}
-            />
-            <BackgroundColor
-              disabled={!isEditable}
-              color={toolbarState.fontColor}
-              bgColor={toolbarState.bgColor}
-              editor={editor}
-            />
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            <TextFormat
-              disabled={!isEditable}
-              editor={editor}
-              toolbarState={toolbarState}
-            />
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            <InsertNode disabled={!isEditable} editor={editor} />
-          </div>
-        )}
-        <Separator className="h-6 mx-2" orientation="vertical" />
+          <Separator className="h-6 mx-2" orientation="vertical" />
 
-        <TextAlign
-          disabled={!isEditable}
-          value={toolbarState.elementFormat}
-          editor={activeEditor}
-          isRTL={toolbarState.isRTL}
-        />
-        
-        {SUPPORT_SPEECH_RECOGNITION && (
-          <Button
-            variant={"outline"}
-            size={"Toolbar"}
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
-              setIsSpeechToText(!isSpeechToText);
-            }}
-            className={`
+          <TextAlign
+            disabled={!isEditable}
+            value={toolbarState.elementFormat}
+            editor={activeEditor}
+            isRTL={toolbarState.isRTL}
+          />
+
+          {SUPPORT_SPEECH_RECOGNITION && (
+            <Button
+              variant={"outline"}
+              size={"Toolbar"}
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
+                setIsSpeechToText(!isSpeechToText);
+              }}
+              className={`
       relative inline-flex items-center justify-center
       p-3 rounded-lg border-none font-medium
       transition-all duration-300 ease-in-out
       active:scale-95
       ${isSpeechToText
-                ? "border-none animate-pulse bg-gray-800"
-                : 'bg-transparent hover:bg-gray-900 cursor-pointer border-none shadow-sm hover:shadow-md'
-              }
+                  ? "border-none animate-pulse bg-gray-800"
+                  : 'bg-transparent hover:bg-gray-900 cursor-pointer border-none shadow-sm hover:shadow-md'
+                }
     `}
-            title="Speech To Text"
-            aria-label={`${isSpeechToText ? 'Disable' : 'Enable'} speech to text`}
-          >
-            <div className="relative z-10 flex items-center space-x-2">
-              <Mic className={`w-4 h-4 transition-all duration-300 ${isSpeechToText ? 'animate-bounce' : ''
-                }`} />
-              {/* {isSpeechToText && (
-                <div className="flex space-x-1">
-                  <div className="w-1 h-4 bg-white rounded-full animate-pulse animation-delay-0"></div>
-                  <div className="w-1 h-3 bg-white rounded-full animate-pulse animation-delay-150"></div>
-                  <div className="w-1 h-4 bg-white rounded-full animate-pulse animation-delay-300"></div>
-                </div>
-              )} */}
-            </div>
+              title="Speech To Text"
+              aria-label={`${isSpeechToText ? 'Disable' : 'Enable'} speech to text`}
+            >
+              <div className="relative z-10 flex items-center space-x-2">
+                <Mic className={`w-4 h-4 transition-all duration-300 ${isSpeechToText ? 'animate-bounce' : ''
+                  }`} />
+              </div>
+            </Button>
+          )}
 
-            {/* Ripple effect on click */}
-            {/* <div className="absolute inset-0 rounded-lg overflow-hidden">
-              <div className={`absolute inset-0 bg-white transition-transform duration-500 ${isSpeechToText ? 'scale-0' : ''
-                }`}></div>
-            </div> */}
-          </Button>
-        )}
+          <ModeToggle />
+        </div>
       </div>
     </nav>
   );

@@ -93,6 +93,7 @@ export default function TextFormat({
       disabled={disabled}
       sideOffset={sideOffset}
       side={side}
+      className="cursor-pointer"
       ShowChevronsUpDown={ShowChevronsUpDown}
       TriggerLabel={
         <LucideRemoveFormatting />

@@ -1,7 +1,43 @@
 {
-  "name": "notiq",
-  "version": "0.2.0",
-  "private": true,
+  "name": "@collabchron/notiq",
+  "version": "0.3.0",
+  "private": false,
+  "description": "Notion AI + Figma + Excalidraw + 3D + Code Editor + Markdown Editor + Real-time Collaboration + Embeds + More = Notiq",
+  "author": "Chinonso Chikelue (fluantiX) <chinonsoneft@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "notion",
+    "notion-ai",
+    "figma",
+    "excalidraw",
+    "3d",
+    "code-editor",
+    "markdown-editor",
+    "real-time-collaboration",
+    "embeds",
+    "nextjs",
+    "react",
+    "lexical",
+    "tailwindcss",
+    "openai",
+    "ai",
+    "edgestore",
+    "pinecone",
+    "redis",
+    "typescript",
+    "web3",
+    "productivity",
+    "notiq",
+    "collabchron"
+  ],
+  "homepage": "https://github.com/chinonsochikelue/notiq#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chinonsochikelue/notiq.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chinonsochikelue/notiq/issues"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -42,6 +78,7 @@
     "@pinecone-database/pinecone": "^6.1.2",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-hover-card": "^1.1.15",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-progress": "^1.1.7",
@@ -75,11 +112,13 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.180.0",
+    "tw-animate-css": "^1.3.8",
     "zod": "^4.1.8",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/typography": "^0.5.16",
     "@tanstack/eslint-plugin-query": "^5.86.0",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^24.4.0",

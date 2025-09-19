@@ -1,9 +1,11 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Monomakh&display=swap'); */
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 body {
   font-family: Arial, Helvetica, sans-serif;
@@ -14,25 +16,31 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 .select-none {
   user-select: none;
 }
 
 #toolbar {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 #toolbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
+  display: none;
+  /* Chrome, Safari, Edge */
 }
 
 .code {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .code::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
+  display: none;
+  /* Chrome, Safari, Edge */
 }
+
 @layer base {
   :root {
     --font-gray: #9B9A97;
@@ -45,7 +53,7 @@ input[type="number"]::-webkit-outer-spin-button {
     --font-pink: #AD1A72;
     --font-red: #E03E3E;
 
-        
+
     --background-gray: #EBECED;
     --background-brown: #E9E5E3;
     --background-orange: #FAEBDD;
@@ -82,6 +90,7 @@ input[type="number"]::-webkit-outer-spin-button {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
 
     --font-gray: #9B9A97;
@@ -104,7 +113,7 @@ input[type="number"]::-webkit-outer-spin-button {
     --background-purple: #443F57;
     --background-pink: #533B4C;
     --background-red: #594141;
-    
+
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -132,6 +141,48 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
+.editor-shell .editor-image .image-edit-button {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  background-image: url(/src/images/icons/pencil-fill.svg);
+  background-size: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 35px;
+  height: 35px;
+  vertical-align: -0.25em;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.editor-shell .editor-image .image-edit-button:hover {
+  background-color: rgba(60, 132, 244, 0.1);
+}
+
+.editor-shell .inline-editor-image .image-edit-button {
+  display: block;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 8px;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  min-width: 60px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.editor-shell .inline-editor-image .image-edit-button:hover {
+  background-color: rgba(60, 132, 244, 0.5);
+}
+
+
 /* @layer base {
   * {
     @apply border-border;
@@ -152,8 +203,3 @@ input[type="number"]::-webkit-outer-spin-button {
     @apply bg-background text-foreground;
   }
 } */
-
-
-
-
-

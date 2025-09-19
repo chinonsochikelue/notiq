@@ -1,13 +1,12 @@
-import Editor from "@/components/editor";
-
-
-
-
+import Editor from "@/components/editor"
 
 export default function Home() {
   return (
-    <div className="container h-[500vh] max-w-7xl mx-auto  max-sm:px-0   md:px-20">
-      <Editor isEditable={true}/>
+    /* Enhanced page layout with better spacing and visual hierarchy */
+    <div className="min-h-screen bg-background">
+      <div className="container max-w-6xl mx-auto px-4 md:px-8">
+        <Editor isEditable={true} />
+      </div>
     </div>
-  );
+  )
 }

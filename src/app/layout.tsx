@@ -17,16 +17,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <EdgeStoreProvider>
-       <body>
+        <body className="antialiased">
           <QueryProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="light"
+              defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
-              
-              {children}
+              <main className="mt-10">
+                {children}
+              </main>
               <Toaster />
             </ThemeProvider>
           </QueryProvider>

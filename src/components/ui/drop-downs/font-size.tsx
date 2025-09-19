@@ -81,7 +81,7 @@ export default function FontSize({
       <Button
         type="button"
         className={
-          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer dark:bg-zinc-900 dark:text-zinc-50  shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",className)
+          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer",className)
         }
         tip={`decrement ${SHORTCUTS.INCREASE_FONT_SIZE}`}
         disabled={
@@ -104,7 +104,7 @@ export default function FontSize({
         value={inputValue}
         disabled={disabled}
         className={
-          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-text dark:bg-zinc-900 dark:text-zinc-50  shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",className)
+          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-text",className)
         }
         min={MIN_ALLOWED_FONT_SIZE}
         max={MAX_ALLOWED_FONT_SIZE}
@@ -117,7 +117,7 @@ export default function FontSize({
         tip={`increment ${SHORTCUTS.DECREASE_FONT_SIZE}`}
         
         className={
-          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer dark:bg-zinc-900 dark:text-zinc-50  shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",className)
+          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer",className)
         }
 
         disabled={

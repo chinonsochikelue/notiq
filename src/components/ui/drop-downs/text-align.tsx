@@ -110,6 +110,7 @@ export default function textAlign({
       values={Object.values(ELEMENT_FORMAT_OPTIONS)}
       TriggerClassName={{ width: "120px", border: "none" }}
       PopoverContentClassName={{width:"220px"}}
+      className="cursor-pointer"
       TriggerLabel={
         <>
             {value ? ELEMENT_FORMAT_OPTIONS[value].icon : ELEMENT_FORMAT_OPTIONS["left"].icon }

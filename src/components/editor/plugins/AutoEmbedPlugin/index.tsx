@@ -256,7 +256,7 @@ export function AutoEmbedDialog({
   };
 
   return (
-    <div className='flex flex-col space-y-3'>
+    <div className='flex items-center justify-center flex-col space-y-3'>
       <div >
         <Input
           type="text"
@@ -320,7 +320,7 @@ export default function AutoEmbedPlugin(): React.JSX.Element {
           anchorElementRef.current
             ? ReactDOM.createPortal(
                 <div
-                  className="typeahead-popover auto-embed-menu"
+                  className="typeahead-popover flex items-center auto-embed-menu"
                   style={{
                     marginLeft: `${Math.max(
                       parseFloat(anchorElementRef.current.style.width) - 200,

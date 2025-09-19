@@ -145,7 +145,7 @@ export default function BlockFormatDropDown({
       disabled={disabled}
       side={side}
       sideOffset={sideOffset}
-      className="h-7 min-w-[29px] w-[29px] px-2 border-none cursor-pointer dark:bg-zinc-850 dark:text-zinc-50  shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+      className="h-7 min-w-[29px] w-[29px] px-2 border-none cursor-pointer dark:bg-zinc-850  hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800"
       TriggerLabel={
         <>
           {currentBlock.icon}

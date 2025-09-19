@@ -111,7 +111,10 @@ function TweetComponent({
         <Skeleton className="max-h-[200px] w-full h-full max-w-[400px]" />
       ) : null}
       <div
-        style={{ display: "inline-block", width: "550px" }}
+        style={{ 
+          display: "inline-block", 
+          width: "100%",
+         }}
         ref={containerRef}
       />
     </BlockWithAlignableContents>

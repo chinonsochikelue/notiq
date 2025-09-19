@@ -55,7 +55,7 @@ export default function LazyImage({
         />
       )}
       <img
-        className={cn("max-w-full transition-opacity", isLoading ? "opacity-0" : "opacity-100")}
+        className={cn("max-w-full transition-opacity border-amber-500 border-2", isLoading ? "opacity-0" : "opacity-100")}
         src={src}
         alt={altText}
         ref={imageRef}

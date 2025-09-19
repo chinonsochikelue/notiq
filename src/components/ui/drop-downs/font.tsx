@@ -144,7 +144,7 @@ export default function Font({
       ShowChevronsUpDown={ShowChevronsUpDown}
       side={side}
       sideOffset={sideOffset}
-      className="h-7 min-w-[29px] w-[29px] px-2 border-none cursor-pointer dark:bg-zinc-900 dark:text-zinc-50  shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+      className="h-7 min-w-[29px] w-[29px] px-2 border-none cursor-pointer hover:bg-zinc-100 hover:text-zinc-900"
       PopoverContentClassName={{ minWidth: "80px", width: "150px" }}
       TriggerClassName={{ ...style, width: "100%" }}
       disabled={disabled}

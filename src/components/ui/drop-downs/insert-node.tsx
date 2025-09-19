@@ -1,14 +1,14 @@
 import { LexicalEditor } from "lexical";
 import React, { useMemo, lazy, Suspense } from "react";
 import useModal from "../models/use-model";
-import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, FlipHorizontal2, Image, ImagePlay, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table, Twitter, Youtube } from "lucide-react";
+import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, Figma, FlipHorizontal2, Image, ImagePlay, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table, Twitter, Youtube } from "lucide-react";
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import { DropDown } from ".";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../../editor/plugins/ImagesPlugin";
 import { Skeleton } from "@/components/ui/skeleton";
 import { INSERT_LAYOUT_COMMAND } from "../../editor/plugins/LayoutPlugin";
 import { INSERT_COLLAPSIBLE_COMMAND } from "../../editor/plugins/CollapsiblePlugin";
-import { AutoEmbedDialog, TwitterEmbedConfig, YoutubeEmbedConfig } from "../../editor/plugins/AutoEmbedPlugin";
+import { AutoEmbedDialog, FigmaEmbedConfig, TwitterEmbedConfig, YoutubeEmbedConfig } from "../../editor/plugins/AutoEmbedPlugin";
 import { INSERT_HINT_COMMAND } from "../../editor/nodes/Hint";
 import { INSERT_EXCALIDRAW_COMMAND } from "../../editor/plugins/ExcalidrawPlugin";
 
@@ -172,6 +172,16 @@ export default function InsertNode({
         },
       },
       {
+        label: "Figma",
+        icon: <Figma />,
+        func: () => {
+
+          showModal("Figma", "Insert a URL to embed a live preview. Works with Figma.", (onClose) => (
+            <AutoEmbedDialog embedConfig={FigmaEmbedConfig} onClose={onClose} />
+          ), true);
+        },
+      },
+      {
         label: "Hint",
         icon: <AlertCircle />,
         func: () => {
@@ -188,6 +198,7 @@ export default function InsertNode({
       <DropDown
         values={items}
         TriggerClassName={{ width: "115px", border: "none" }}
+        className="cursor-pointer"
         TriggerLabel={
           <>
             <Plus />
