@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+'use client'
+
 import type {Position} from '../../nodes/InlineImageNode/InlineImageNode';
 import type {JSX} from 'react';
 
@@ -41,10 +43,10 @@ import {
   InlineImageNode,
   InlineImagePayload,
 } from '../../nodes/InlineImageNode/InlineImageNode';
-import { Button } from '@/components/ui/button';
-import TextInput from '@/components/ui/TextInput';
+import {Button} from '@/components/ui/button';
 import FileInput from '@/components/ui/FileInput';
 import Select from '@/components/ui/Select';
+import TextInput from '@/components/ui/TextInput';
 import { DialogActions } from '@/components/ui/dialog/Dialog';
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
@@ -212,16 +214,11 @@ export default function InlineImagePlugin(): JSX.Element | null {
 const TRANSPARENT_IMAGE =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-// Create the transparent image lazily when needed
-function getTransparentImage(): HTMLImageElement {
-  if (typeof document === 'undefined') {
-    // Return a mock object for SSR
-    return {} as HTMLImageElement;
-  }
-  
-  const img = document.createElement('img');
+let img: HTMLImageElement | null = null;
+
+if (typeof document !== "undefined") {
+  img = document.createElement("img");
   img.src = TRANSPARENT_IMAGE;
-  return img;
 }
 
 function $onDragStart(event: DragEvent): boolean {
@@ -233,15 +230,8 @@ function $onDragStart(event: DragEvent): boolean {
   if (!dataTransfer) {
     return false;
   }
-  
   dataTransfer.setData('text/plain', '_');
-  
-  // Only create the image if document is available
-  if (typeof document !== 'undefined') {
-    const img = getTransparentImage();
-    dataTransfer.setDragImage(img, 0, 0);
-  }
-  
+  dataTransfer.setDragImage(img, 0, 0);
   dataTransfer.setData(
     'application/x-lexical-drag',
     JSON.stringify({

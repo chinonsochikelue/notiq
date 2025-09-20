@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type {Position} from './InlineImageNode';
+import type {InlineImageNode, Position} from './InlineImageNode';
 import type {BaseSelection, LexicalEditor, NodeKey} from 'lexical';
 import type {JSX} from 'react';
 
@@ -34,16 +34,13 @@ import {
 import * as React from 'react';
 import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
 
-// import useModal from '../../hooks/useModal';
+import useModal from '../../hooks/useModal';
 import LinkPlugin from '../../plugins/LinkPlugin';
-// import ContentEditable from '@/components/ui/ContentEditable';
-import {InlineImageNode} from './InlineImageNode';
-import { Button } from '@/components/ui/button';
 import TextInput from '@/components/ui/TextInput';
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { DialogActions } from '@/components/ui/dialog/Dialog';
 import Select from '@/components/ui/Select';
-import useModal from '@/components/ui/models/use-model';
+import { DialogActions } from '@/components/ui/dialog/Dialog';
+import LexicalContentEditable from '@/components/ui/ContentEditable';
+import { Button } from '@/components/ui/button';
 
 const imageCache = new Set();
 
@@ -365,7 +362,7 @@ export default function InlineImageComponent({
               <LinkPlugin />
               <RichTextPlugin
                 contentEditable={
-                  <ContentEditable
+                  <LexicalContentEditable
                     placeholder="Enter a caption..."
                     placeholderClassName="InlineImageNode__placeholder"
                     className="InlineImageNode__contentEditable"
