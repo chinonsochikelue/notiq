@@ -50,7 +50,6 @@ import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { sanitizeUrl } from "../../utils/url";
 import CodeList from "@/components/ui/drop-downs/code"
 import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
-import { ModeToggle } from "@/components/theme/ModeToggle";
 import { downloadHTML, exportEditorToHTML } from "@/utils/htmlExport";
 const BlockFormatDropDown = dynamic(
   () => import("@/components/ui/drop-downs/block-format")
@@ -324,7 +323,7 @@ export default function index({
           className={cn(
             "group flex flex-row items-center gap-x-2 dark:border dark:border-gray-500/20",
             "md:rounded-2xl h-14 px-4 py-2 shadow-md",
-            "overflow-x-auto whitespace-nowrap max-w-full scrollbar-none",
+            "overflow-x-auto whitespace-nowrap max-w-[90%] scrollbar-none",
             "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           )}
         >
@@ -524,8 +523,6 @@ export default function index({
               </div>
             </Button>
           )}
-
-          <ModeToggle />
 
           <Button
             variant={"outline"}

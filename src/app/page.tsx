@@ -1,11 +1,12 @@
 import Editor from "@/components/editor"
+import { ModeToggle } from "@/components/theme/ModeToggle"
 
 export default function Home() {
   return (
-    /* Enhanced page layout with better spacing and visual hierarchy */
     <div className="min-h-screen bg-background">
+      <ModeToggle />
       <div className="container max-w-6xl mx-auto md:px-8">
-        <Editor isEditable={true} />
+        <Editor isEditable={false} />
       </div>
     </div>
   )
