@@ -525,6 +525,8 @@ export default function index({
             </Button>
           )}
 
+          <ModeToggle />
+
           <Button
             variant={"outline"}
             size={"Toolbar"}
@@ -536,8 +538,6 @@ export default function index({
           >
             <DownloadIcon className="size-4" />
           </Button>
-
-          <ModeToggle />
         </div>
       </div>
     </nav>
