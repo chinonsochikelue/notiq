@@ -47,6 +47,7 @@ import StoryBuilderPlugin from "./plugins/StoryBuilderPlugin"
 import DynamicBlockPlugin from "./plugins/DynamicBlockPluggin"
 import { motion, AnimatePresence } from "framer-motion"
 import { Sparkles, Lightbulb, Quote } from "lucide-react"
+import ContentAnalyticsPlugin from "./plugins/ContentAnalyticsPlugin"
 
 const SlashCommand = dynamic(() => import("@/components/editor/plugins/SlashCommand"), { ssr: false })
 const ToolbarPlugin = dynamic(() => import("@/components/editor/plugins/ToolbarPlugin"), {
@@ -316,6 +317,8 @@ export default function Core() {
         />
       )}
 
+      {isEditable && <ContentAnalyticsPlugin />}
+
       <div className={cn(
         "flex justify-center w-full min-h-screen transition-all duration-300",
         "dark:md:from-gray-900/50 dark:md:to-gray-800/30",
@@ -356,12 +359,9 @@ export default function Core() {
                     "min-h-[80vh] md:min-h-[70vh]",
                     "focus:outline-none focus:ring-0",
                     "text-foreground selection:bg-blue-100 dark:selection:bg-blue-900/30",
-                    // Typography improvements
                     "font-['Inter',_system-ui,_sans-serif] antialiased",
-                    "leading-relaxed tracking-wide",
-                    // Smooth transitions
+                    "leading-relaxed prose prose-lg dark:prose-invert lg:prose-xl tracking-wide",
                     "transition-all duration-200 ease-in-out",
-                    // Enhanced rounded corners for mobile
                     "rounded-2xl"
                   )}
                 />
