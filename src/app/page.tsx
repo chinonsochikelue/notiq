@@ -6,7 +6,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <ModeToggle />
       <div className="container max-w-6xl mx-auto md:px-8">
-        <Editor isEditable={false} />
+        <Editor isEditable={true} />
       </div>
     </div>
   )
