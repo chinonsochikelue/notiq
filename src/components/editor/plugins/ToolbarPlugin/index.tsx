@@ -24,7 +24,7 @@ import {
 } from "@/components/providers/ToolbarContext";
 import { cn } from "@/lib/utils";
 
-import { Bold, Code, Italic, Link, Mic, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
+import { Bold, Code, DownloadIcon, Italic, Link, Mic, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,7 @@ import { sanitizeUrl } from "../../utils/url";
 import CodeList from "@/components/ui/drop-downs/code"
 import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
 import { ModeToggle } from "@/components/theme/ModeToggle";
+import { downloadHTML, exportEditorToHTML } from "@/utils/htmlExport";
 const BlockFormatDropDown = dynamic(
   () => import("@/components/ui/drop-downs/block-format")
 );
@@ -302,17 +303,27 @@ export default function index({
   );
 
 
+  const handleDownloadHTML = useCallback(() => {
+    try {
+      const htmlContent = exportEditorToHTML(activeEditor)
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-")
+      downloadHTML(htmlContent, `document-${timestamp}.html`)
+    } catch (error) {
+      console.error("Failed to export HTML:", error)
+    }
+  }, [activeEditor])
+
   return (
     <nav
       className={cn(
-        "z-[200] fixed top-0 left-0 w-full",
+        "z-[200] fixed md:top-0 left-0 w-full",
       )}
     >
       <div className="flex justify-center p-4">
         <div
           className={cn(
             "group flex flex-row items-center gap-x-2 dark:border dark:border-gray-500/20",
-            "rounded-2xl h-14 px-4 py-2 shadow-md",
+            "md:rounded-2xl h-14 px-4 py-2 shadow-md",
             "overflow-x-auto whitespace-nowrap max-w-full scrollbar-none",
             "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           )}
@@ -513,6 +524,18 @@ export default function index({
               </div>
             </Button>
           )}
+
+          <Button
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={handleDownloadHTML}
+            tip="Download as HTML"
+            aria-label="Download document as HTML file"
+            className="border-none"
+          >
+            <DownloadIcon className="size-4" />
+          </Button>
 
           <ModeToggle />
         </div>

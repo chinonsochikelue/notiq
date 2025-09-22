@@ -7,7 +7,7 @@ import {
   MakeShortInstruction,
   SimplifyLanguageInstruction,
   StepsInstruction,
-} from "@/components/editor/hooks/instructions-messages";
+} from "@/hooks/instructions-messages";
 import { ExtractedBlock } from "@/components/editor/utils/extract-data";
 import { openai } from "@ai-sdk/openai";
 import { CoreMessage, streamText } from "ai";

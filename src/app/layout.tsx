@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <EdgeStoreProvider>
-        <body className="antialiased">
+        <body className="font-sans antialiased w-full min-h-screen dark:text-white text-slate-800 dark:bg-[#020b19] bg-white">
           <QueryProvider>
             <ThemeProvider
               attribute="class"

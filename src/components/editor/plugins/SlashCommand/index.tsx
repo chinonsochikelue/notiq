@@ -49,6 +49,8 @@ import {
   ListOrdered,
   Table,
   SigmaIcon,
+  GitBranch,
+  Zap,
 } from "lucide-react";
 
 import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
@@ -73,6 +75,8 @@ import { AutoEmbedDialog, FigmaEmbedConfig, TwitterEmbedConfig, YoutubeEmbedConf
 import { initialEditorState, INSERT_STEPPER_COMMAND } from "../../nodes/Stepper";
 import { InsertInlineImageDialog } from "../InlineImagePlugin";
 import { InsertEquationDialog } from "../EquationsPlugin";
+import { INSERT_STORY_BUILDER_COMMAND } from "../StoryBuilderPlugin";
+import { createDefaultDynamicBlock, INSERT_DYNAMIC_BLOCK_COMMAND } from "../DynamicBlockPluggin";
 const InsertGif = React.lazy(() => import("@/components/ui/models/insert-gif"));
 const InsertImageDialog = React.lazy(() =>
   import("@/components/ui/models/insert-image").then((module) => ({
@@ -263,12 +267,12 @@ function getBaseOptions(
           }
         }),
     }),
-    new ComponentPickerOption("Pool", {
+    new ComponentPickerOption("Poll", {
       icon: <SquarePenIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
-      keywords: ["pool", "vote", "survey"],
-      desc: "Add pool to take people votes.",
+      keywords: ["poll", "vote", "survey"],
+      desc: "Add poll to take people votes.",
       onSelect: () =>
-        editor.dispatchCommand(INSERT_POLL_COMMAND, "type the Question"),
+        editor.dispatchCommand(INSERT_POLL_COMMAND, "Type the Question"),
     }),
     new ComponentPickerOption("Code", {
       icon: <Code2 className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
@@ -421,13 +425,6 @@ function getBaseOptions(
         ),
     }),
 
-    new ComponentPickerOption("Poll", {
-      icon: <SquarePenIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
-      keywords: ["collapse", "collapsible", "toggle"],
-      desc: "make poll to take people votes.",
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_POLL_COMMAND, "type the Question"),
-    }),
     new ComponentPickerOption("Collapsible", {
       icon: <StepForward className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["collapse", "collapsible", "toggle"],
@@ -491,6 +488,26 @@ function getBaseOptions(
           true
         );
       },
+    }),
+
+    new ComponentPickerOption("Interactive Story", {
+      icon: <GitBranch className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
+      keywords: ["story", "interactive", "branching", "narrative", "choose", "adventure"],
+      desc: "Create branching narratives with reader choices",
+      onSelect: () =>
+        editor.dispatchCommand(INSERT_STORY_BUILDER_COMMAND, {
+          nodes: [],
+          currentNodeId: "",
+          title: "Interactive Story",
+        }),
+    }),
+
+
+    new ComponentPickerOption("Dynamic Block", {
+      icon: <Zap className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
+      keywords: ["dynamic", "interactive", "content", "block", "trigger", "animation", "responsive"],
+      desc: "Create interactive content that responds to user actions",
+      onSelect: () => editor.dispatchCommand(INSERT_DYNAMIC_BLOCK_COMMAND, createDefaultDynamicBlock()),
     }),
 
     new ComponentPickerOption("4 columns", {
@@ -562,10 +579,7 @@ export default function SlashCommand(): React.JSX.Element {
             ? ReactDOM.createPortal(
               <div
                 id={"toolbar"}
-                className={`
-                   overflow-x-hidden  z-[100]  relative  max-w-[300px] max-sm:w-[200px] w-[300px] max-h-[300px] h-fit   border rounded-sm  bg-background shadow-sm shadow-muted-foreground/20
-                   
-                   `}
+                className="overflow-x-hidden z-[100] relative max-w-[300px] max-sm:w-[200px] w-[300px] max-h-[300px] h-fit border rounded-sm bg-white/80 dark:bg-[#020b19]/95 shadow-sm shadow-muted-foreground/20"
               >
                 <Command>
                   <CommandInput placeholder="Type a command" />
@@ -576,10 +590,10 @@ export default function SlashCommand(): React.JSX.Element {
                       <CommandItem
                         ref={option.ref as React.Ref<HTMLDivElement>}
                         className={cn(
-                          selectedIndex == i &&
-                          "dark:bg-gray-300/10 bg-gray-400/60",
-                          "gap-x-2 h-full items-start hover:bg-transparent border-0 bg-transparent  transition-colors  cursor-pointer rounded-sm relative"
-                        )}
+                          selectedIndex === i
+              ? "bg-gray-200 dark:bg-gray-700"
+              : "hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm gap-x-2 relative h-full border-0 transition-colors items-start"
+          )}
                         onSelect={() => {
                           setHighlightedIndex(i);
                           selectOptionAndCleanUp(option);
@@ -600,7 +614,7 @@ export default function SlashCommand(): React.JSX.Element {
                             </span>
                           </div>
                           {option.keyboardShortcut && (
-                            <CommandShortcut className=" absolute top-1 right-2">
+                            <CommandShortcut className="absolute top-1 right-2">
                               {option.keyboardShortcut}
                             </CommandShortcut>
                           )}

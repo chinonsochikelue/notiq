@@ -33,7 +33,7 @@ import { useCompletion } from "@ai-sdk/react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { ExtractData } from "../../editor/utils/extract-data";
-import { AIAction } from "../../editor/hooks/instructions-messages";
+import { AIAction } from "../../../hooks/instructions-messages";
 const placeholders = [
   "Chat with what you are writing.",
   "Click on the stepper to generate tasks step by step.",

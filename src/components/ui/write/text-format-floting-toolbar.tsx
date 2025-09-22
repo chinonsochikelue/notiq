@@ -14,7 +14,7 @@ import { setFloatingElemPosition } from "@/components/editor/utils/setFloatingEl
 import { mergeRegister } from "@lexical/utils";
 import { Separator } from "@/components/ui/separator";
 import BlockFormatDropDown from "../drop-downs/block-format";
-import { useIsMobile } from "@/components/editor/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Toggle } from "@/components/ui/toggle";
 import { SHORTCUTS } from "@/components/editor/plugins/ShortcutsPlugin/shortcuts";
 import { Bold, Code, Italic, Link, UnderlineIcon } from "lucide-react";

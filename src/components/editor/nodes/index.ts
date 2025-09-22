@@ -26,6 +26,8 @@ import { InlineImageNode } from './InlineImageNode/InlineImageNode';
 import { ExcalidrawNode } from './ExcalidrawNode';
 import { FigmaNode } from './FigmaNode/FigmaNode';
 import { EquationNode } from './EquationNode/EquationNode';
+import { StoryBuilderNode } from '../plugins/StoryBuilderPlugin';
+import { DynamicBlockNode } from './DynamicBlockNode/DynamicBlockNode';
 
 
 
@@ -60,6 +62,8 @@ const nodes: Array<Klass<LexicalNode>> = [
   ExcalidrawNode,
   FigmaNode,
   EquationNode,
+  StoryBuilderNode,
+  DynamicBlockNode,
 ];
 
 export  const nestedNodes: Array<Klass<LexicalNode>>=[
@@ -77,5 +81,7 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   ExcalidrawNode,
   FigmaNode,
   EquationNode,
+  StoryBuilderNode,
+  DynamicBlockNode,
 ]
 export default nodes

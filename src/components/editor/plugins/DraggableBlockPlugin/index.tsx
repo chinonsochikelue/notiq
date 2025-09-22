@@ -27,7 +27,7 @@ export default function DraggableBlockPlugin({
       targetLineRef={targetLineRef}
       menuComponent={
         <div ref={menuRef} className={
-          cn("draggable-block-menu  transition-all  z-50 absolute top-0 -left-4",className)
+          cn("draggable-block-menu  transition-all  z-50 absolute top-0 left-0",className)
         }>
           <svg
             xmlns="http://www.w3.org/2000/svg"
