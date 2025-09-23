@@ -1,5 +1,4 @@
 import { $getRoot } from "lexical"
-import { $generateHtmlFromNodes } from "@lexical/html"
 import type { LexicalEditor, LexicalNode } from "lexical"
 import { $isPollNode, type PollNode } from "@/components/editor/nodes/PollNode"
 import {
@@ -25,9 +24,21 @@ export function exportEditorToHTML(editor: LexicalEditor): string {
       return "<div></div>"
     }
 
-    const htmlString = $generateHtmlFromNodes(editor, null)
+    const htmlContent = ""
 
-    // Process special nodes that need custom HTML representations
+    // Walk through all nodes in the editor state
+    const processNode = (node: LexicalNode): string => {
+      // Check if this is a special decorator node
+      const specialHTML = convertSpecialNodeToHTML(node)
+      if (specialHTML) {
+        return specialHTML
+      }
+
+      // For regular nodes, we'll fall back to DOM processing
+      return ""
+    }
+
+    // Get all top-level nodes
     const children = root.getChildren()
     const specialNodesHTML: string[] = []
 
@@ -38,47 +49,44 @@ export function exportEditorToHTML(editor: LexicalEditor): string {
       }
     })
 
-    // If we have special nodes, replace the basic HTML with enhanced versions
-    let finalHTML = htmlString
-    if (specialNodesHTML.length > 0) {
-      // Clone the root element to avoid modifying the original
-      const clonedElement = rootElement.cloneNode(true) as HTMLElement
+    // Clone the root element to avoid modifying the original
+    const clonedElement = rootElement.cloneNode(true) as HTMLElement
 
-      const cleanElement = (element: Element) => {
-        // Only remove editor-specific interaction classes, keep visual styling
-        element.classList.remove(
-          "editor-content",
-          "relative",
-          "z-20",
-          "outline-none",
-          "focus:outline-none",
-          "focus:ring-0",
-          "selection:bg-blue-100",
-          "dark:selection:bg-blue-900/30",
-          "transition-all",
-          "duration-200",
-          "ease-in-out",
-        )
+    const cleanElement = (element: Element) => {
+      // Only remove editor-specific interaction classes, keep visual styling
+      element.classList.remove(
+        "editor-content",
+        "relative",
+        "z-20",
+        "outline-none",
+        "focus:outline-none",
+        "focus:ring-0",
+        "selection:bg-blue-100",
+        "dark:selection:bg-blue-900/30",
+        "transition-all",
+        "duration-200",
+        "ease-in-out",
+      )
 
-        // Remove contenteditable and other editor attributes
-        element.removeAttribute("contenteditable")
-        element.removeAttribute("role")
-        element.removeAttribute("spellcheck")
-        element.removeAttribute("data-lexical-editor")
+      // Remove contenteditable and other editor attributes
+      element.removeAttribute("contenteditable")
+      element.removeAttribute("role")
+      element.removeAttribute("spellcheck")
+      element.removeAttribute("data-lexical-editor")
 
-        // Recursively clean child elements
-        Array.from(element.children).forEach((child) => {
-          cleanElement(child)
-        })
-      }
-
-      cleanElement(clonedElement)
-
-      const regularHTML = clonedElement.innerHTML || "<div></div>"
-      finalHTML = specialNodesHTML.length > 0 ? regularHTML + "\n\n" + specialNodesHTML.join("\n\n") : regularHTML
+      // Recursively clean child elements
+      Array.from(element.children).forEach((child) => {
+        cleanElement(child)
+      })
     }
 
-    return finalHTML
+    cleanElement(clonedElement)
+
+    const regularHTML = clonedElement.innerHTML || "<div></div>"
+    const combinedHTML =
+      specialNodesHTML.length > 0 ? regularHTML + "\n\n" + specialNodesHTML.join("\n\n") : regularHTML
+
+    return combinedHTML
   })
 }
 
@@ -305,28 +313,16 @@ export function downloadHTML(htmlContent: string, filename = "document.html") {
         
         /* Story builder styles */
         .story-node {
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-            transform: translateY(0);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
         
         .story-node.hidden {
             display: none;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
-        .story-choice {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .story-choice:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .story-choice:active {
             transform: translateY(-1px);
-            transition: all 0.1s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         .story-choice:disabled {
@@ -453,62 +449,40 @@ export function downloadHTML(htmlContent: string, filename = "document.html") {
         });
         
         window.showStoryNode = function(nodeId) {
-            console.log('[v0] Navigating to story node:', nodeId);
-            
-            // Hide all story nodes with smooth transition
-            const allNodes = document.querySelectorAll('.story-node');
-            allNodes.forEach(node => {
+            // Hide all story nodes with fade out effect
+            document.querySelectorAll('.story-node').forEach(node => {
                 node.style.opacity = '0';
-                node.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    node.classList.add('hidden');
+                }, 150);
             });
             
-            // After transition, hide nodes and show target
+            // Show target node with fade in effect
             setTimeout(() => {
-                allNodes.forEach(node => {
-                    node.classList.add('hidden');
-                });
-                
                 const targetNode = document.getElementById('story-node-' + nodeId);
                 if (targetNode) {
-                    console.log('[v0] Found target node:', targetNode);
                     targetNode.classList.remove('hidden');
                     targetNode.style.opacity = '0';
-                    targetNode.style.transform = 'translateY(20px)';
-                    
-                    // Scroll to the story container smoothly
-                    const storyContainer = document.getElementById('story-container');
-                    if (storyContainer) {
-                        storyContainer.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'start',
-                            inline: 'nearest'
-                        });
-                    }
+                    targetNode.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     
                     // Fade in the new node
                     setTimeout(() => {
                         targetNode.style.opacity = '1';
-                        targetNode.style.transform = 'translateY(0)';
                     }, 100);
-                } else {
-                    console.error('[v0] Target node not found:', nodeId);
                 }
             }, 200);
         };
         
         window.restartStory = function() {
-            console.log('[v0] Restarting story');
-            // Find the first story node (should be the start node)
-            const firstNode = document.querySelector('.story-node[data-node-id]');
-            if (firstNode) {
-                const startNodeId = firstNode.getAttribute('data-node-id');
-                console.log('[v0] Found start node:', startNodeId);
+            // Find the start node
+            const startNode = document.querySelector('.story-node[data-node-id]');
+            if (startNode) {
+                const startNodeId = startNode.getAttribute('data-node-id');
                 window.showStoryNode(startNodeId);
-            } else {
-                console.error('[v0] No story nodes found');
             }
         };
         
+        // Dynamic block functionality
         window.showDynamicBlock = function(containerId, blockId) {
             const container = document.getElementById('dynamic-content-' + containerId);
             if (container) {
@@ -531,24 +505,16 @@ export function downloadHTML(htmlContent: string, filename = "document.html") {
         };
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('[v0] DOM loaded, initializing story');
-            
             // Ensure the first story node is visible and others are hidden
             const storyNodes = document.querySelectorAll('.story-node');
-            console.log('[v0] Found story nodes:', storyNodes.length);
-            
             if (storyNodes.length > 0) {
                 storyNodes.forEach((node, index) => {
                     if (index === 0) {
-                        console.log('[v0] Showing first node:', node.id);
                         node.classList.remove('hidden');
                         node.style.opacity = '1';
-                        node.style.transform = 'translateY(0)';
                     } else {
-                        console.log('[v0] Hiding node:', node.id);
                         node.classList.add('hidden');
                         node.style.opacity = '0';
-                        node.style.transform = 'translateY(20px)';
                     }
                 });
             }
@@ -648,21 +614,32 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
   }
 
   const renderStoryNode = (storyNode: StoryNode, index: number): string => {
+    const enhancedNode = storyNode as any // Cast to access enhanced properties
     const choicesHTML = storyNode.choices
       .map((choice) => {
         const targetNode = nodes.find((n) => n.id === choice.targetId)
+        const enhancedChoice = choice as any // Cast to access enhanced properties
         return `
         <button 
-          class="story-choice w-full justify-start text-left h-auto p-4 group transition-all duration-300 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:shadow-lg hover:scale-[1.02] mb-3 ${!targetNode ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}"
+          class="story-choice w-full justify-start text-left h-auto p-6 group transition-all duration-300 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:shadow-lg hover:scale-[1.02] mb-3 ${!targetNode ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}"
           onclick="${targetNode ? `window.showStoryNode('${choice.targetId}')` : ""}"
           ${!targetNode ? "disabled" : ""}
         >
           <div class="flex items-start gap-4 w-full">
-            <div class="text-2xl">➤</div>
+            <div class="text-2xl">${enhancedChoice.icon || storyNode.icon || "➤"}</div>
             <div class="flex-1">
               <div class="font-semibold text-base group-hover:text-blue-600 transition-colors">
                 ${choice.text}
               </div>
+              ${
+                enhancedChoice.consequence || storyNode.consequence
+                  ? `
+                <p class="text-sm text-gray-500 mt-1 italic">
+                  → ${enhancedChoice.consequence || storyNode.consequence}
+                </p>
+              `
+                  : ""
+              }
             </div>
             <svg class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -673,10 +650,57 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
       })
       .join("")
 
+    // Determine mood styling
+    const mood = enhancedNode.mood || "neutral"
+    const moodColors = {
+      neutral: {
+        bg: "bg-gray-50 dark:bg-gray-800",
+        border: "border-gray-200 dark:border-gray-700",
+        text: "text-gray-900 dark:text-gray-100",
+      },
+      happy: {
+        bg: "bg-yellow-50 dark:bg-yellow-900/20",
+        border: "border-yellow-200 dark:border-yellow-700",
+        text: "text-yellow-900 dark:text-yellow-100",
+      },
+      sad: {
+        bg: "bg-blue-50 dark:bg-blue-900/20",
+        border: "border-blue-200 dark:border-blue-700",
+        text: "text-blue-900 dark:text-blue-100",
+      },
+      mysterious: {
+        bg: "bg-purple-50 dark:bg-purple-900/20",
+        border: "border-purple-200 dark:border-purple-700",
+        text: "text-purple-900 dark:text-purple-100",
+      },
+      exciting: {
+        bg: "bg-orange-50 dark:bg-orange-900/20",
+        border: "border-orange-200 dark:border-orange-700",
+        text: "text-orange-900 dark:text-orange-100",
+      },
+      dark: {
+        bg: "bg-slate-50 dark:bg-slate-900/20",
+        border: "border-slate-200 dark:border-slate-700",
+        text: "text-slate-900 dark:text-slate-100",
+      },
+    }
+    const moodStyle = moodColors[mood] || moodColors.neutral
+
     return `
       <div id="story-node-${storyNode.id}" class="story-node ${storyNode.id !== startNode.id ? "hidden" : ""}" data-node-id="${storyNode.id}">
+        ${
+          enhancedNode.image
+            ? `
+          <div class="relative h-64 w-full mb-6 rounded-lg overflow-hidden">
+            <img src="${enhancedNode.image}" alt="${storyNode.title}" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+        `
+            : ""
+        }
+        
         <div class="prose prose-xl max-w-none mb-6">
-          <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+          <h2 class="text-3xl font-bold mb-6 ${moodStyle.text}">
             ${storyNode.title}
           </h2>
           <div class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
@@ -685,10 +709,41 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
         </div>
 
         ${
+          enhancedNode.tags && enhancedNode.tags.length > 0
+            ? `
+          <div class="flex flex-wrap gap-2 mb-6">
+            ${enhancedNode.tags
+              .map(
+                (tag) => `
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                #${tag}
+              </span>
+            `,
+              )
+              .join("")}
+          </div>
+        `
+            : ""
+        }
+
+        ${
+          enhancedNode.estimatedReadTime
+            ? `
+          <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            ${enhancedNode.estimatedReadTime} min read
+          </div>
+        `
+            : ""
+        }
+
+        ${
           storyNode.choices.length > 0
             ? `
           <div class="space-y-4 mt-8">
-            <h3 class="font-bold text-xl flex items-center gap-2 text-gray-900 dark:text-gray-100">
+            <h3 class="font-bold text-xl flex items-center gap-2 ${moodStyle.text}">
               <span class="text-blue-600">🎯</span>
               What's your next move?
             </h3>
@@ -703,7 +758,7 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
         ${
           storyNode.isEnd
             ? `
-          <div class="text-center py-8 bg-gray-50 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl mt-8">
+          <div class="text-center py-8 ${moodStyle.bg} ${moodStyle.border} border-2 rounded-2xl mt-8">
             <div class="text-6xl mb-4">🎭</div>
             <span class="inline-flex items-center px-6 py-3 rounded-full text-lg font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
               The End

@@ -26,7 +26,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <main className="mt-10">
+              <main>
                 {children}
               </main>
               <Toaster />

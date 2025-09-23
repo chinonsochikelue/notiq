@@ -53,8 +53,8 @@ const SlashCommand = dynamic(() => import("@/components/editor/plugins/SlashComm
 const ToolbarPlugin = dynamic(() => import("@/components/editor/plugins/ToolbarPlugin"), {
   ssr: false,
   loading: () => (
-    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4">
-      <Skeleton className="h-12 w-full max-w-4xl rounded-2xl" />
+    <div className="fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4">
+      <Skeleton className="h-12 w-full max-w-6xl rounded-2xl" />
     </div>
   ),
 })
@@ -172,7 +172,7 @@ function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: {
   }
 
   return (
-    <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+    <div className="absolute md:-mt-26 -mt-56 inset-0 pointer-events-none select-none overflow-hidden">
       <motion.div 
         className="relative h-full w-full"
         initial={{ opacity: 0 }}
@@ -360,7 +360,7 @@ export default function Core() {
                     "focus:outline-none focus:ring-0",
                     "text-foreground selection:bg-blue-100 dark:selection:bg-blue-900/30",
                     "font-['Inter',_system-ui,_sans-serif] antialiased",
-                    "leading-relaxed prose prose-lg dark:prose-invert lg:prose-xl tracking-wide",
+                    "leading-relaxed tracking-wide",
                     "transition-all duration-200 ease-in-out",
                     "rounded-2xl"
                   )}

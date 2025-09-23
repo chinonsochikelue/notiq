@@ -315,14 +315,14 @@ export default function index({
   return (
     <nav
       className={cn(
-        "z-[200] fixed md:top-0 left-0 w-full",
+        "z-40 fixed md:top-20 top-14 left-0 w-full",
       )}
     >
-      <div className="flex justify-center p-4">
+      <div className="flex justify-center pt-4">
         <div
           className={cn(
-            "group flex flex-row items-center gap-x-2 dark:border dark:border-gray-500/20",
-            "md:rounded-2xl h-14 px-4 py-2 shadow-md",
+            "group flex flex-row items-center bg-background/70 gap-x-2 dark:border dark:border-gray-500/20",
+            "md:rounded-2xl rounded-md h-14 px-4 py-2 shadow-md",
             "overflow-x-auto whitespace-nowrap max-w-[90%] scrollbar-none",
             "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           )}
