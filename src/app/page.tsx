@@ -182,10 +182,17 @@ export default function NotiqLanding() {
               </div>
 
               <div className="flex items-center space-x-4">
-                <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                  <Github className="h-4 w-4 mr-2" />
-                  GitHub
-                </Button>
+                <a
+                  href="https://github.com/chinonsochikelue/notiq.git"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                // className="text-blue-600 hover:underline"
+                >
+                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+                    <Github className="h-4 w-4 mr-2" />
+                    GitHub
+                  </Button>
+                </a>
                 <Button size="sm" className="hidden md:flex bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
                   <Download className="h-4 w-4 mr-2" />
                   Get Started
@@ -586,14 +593,27 @@ export default function NotiqLanding() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white">
-              <Heart className="mr-2 h-5 w-5" />
-              Sponsor on GitHub
-            </Button>
-            <Button variant="outline" size="lg" className="border-2 border-slate-300 dark:border-slate-600">
+            <a
+              href="https://github.com/sponsors/chinonsochikelue"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button size="lg" className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white cursor-pointer">
+                <Heart className="mr-2 h-5 w-5" />
+                Sponsor on GitHub
+              </Button>
+            </a>
+
+            <a
+            href="https://buymeacoffee.com/chinonsone6"
+            target="_blank"
+            rel="noopener noreferrer"
+            >
+            <Button variant="outline" size="lg" className="border-2 border-slate-300 dark:border-slate-600 cursor-pointer">
               <Coffee className="mr-2 h-5 w-5" />
               Buy Me a Coffee
             </Button>
+            </a>
           </div>
         </div>
       </section>
