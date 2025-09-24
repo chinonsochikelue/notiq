@@ -37,6 +37,9 @@ import {
   Link
 } from "lucide-react"
 import { ModeToggle } from '@/components/theme/ModeToggle'
+import { default as Redirect } from "next/link";
+
+
 
 export default function NotiqLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -179,11 +182,11 @@ export default function NotiqLanding() {
               </div>
 
               <div className="flex items-center space-x-4">
-                <Button variant="ghost" size="sm" className="hidden sm:flex text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
                   <Github className="h-4 w-4 mr-2" />
                   GitHub
                 </Button>
-                <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
+                <Button size="sm" className="hidden md:flex bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
                   <Download className="h-4 w-4 mr-2" />
                   Get Started
                 </Button>
@@ -254,20 +257,30 @@ export default function NotiqLanding() {
             </h1>
 
             <p className="text-xl leading-8 text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-12">
-              Built with Lexical, Next.js, and TypeScript. Features GPT-4 integration, 40+ content blocks, 
+              Built with Lexical, Next.js, and TypeScript. Features GPT-4 integration, 40+ content blocks,
               drag & drop interface, and advanced formatting. Free, open source, and ready to contribute to.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <Button size="lg" className="h-14 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group">
-                <Download className="mr-2 h-5 w-5" />
-                Try Notiq Free
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" size="lg" className="h-14 px-8 border-2 border-slate-300 dark:border-slate-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-all duration-300 group">
-                <Github className="mr-2 h-5 w-5" />
-                View on GitHub
-              </Button>
+              <Redirect href="/editor">
+                <Button size="lg" className="h-14 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group cursor-pointer">
+                  <Download className="mr-2 h-5 w-5" />
+                  Try Notiq Free
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Redirect>
+
+              <a
+                href="https://github.com/chinonsochikelue/notiq.git"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                <Button variant="outline" size="lg" className="cursor-pointer h-14 px-8 border-2 border-slate-300 dark:border-slate-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-all duration-300 group">
+                  <Github className="mr-2 h-5 w-5" />
+                  View on GitHub
+                </Button>
+              </a>
             </div>
 
             {/* Open Source Stats */}
@@ -428,7 +441,7 @@ export default function NotiqLanding() {
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     <span className="text-slate-400 ml-4">Terminal</span>
                   </div>
-                  
+
                   <div className="space-y-4 font-mono text-sm">
                     <div className="flex items-center space-x-2">
                       <span className="text-green-400">$</span>
@@ -527,13 +540,13 @@ export default function NotiqLanding() {
             <Coffee className="mr-2 h-4 w-4" />
             Support the Project
           </Badge>
-          
+
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8">
             Help us <span className="bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">keep building</span>
           </h2>
-          
+
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-12">
-            Notiq is free and open source. Your sponsorship helps us maintain the project, add new features, 
+            Notiq is free and open source. Your sponsorship helps us maintain the project, add new features,
             and support the community.
           </p>
 
@@ -600,7 +613,7 @@ export default function NotiqLanding() {
           </h2>
 
           <p className="text-xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join our open source community and help shape the next generation of AI-powered writing tools. 
+            Join our open source community and help shape the next generation of AI-powered writing tools.
             Whether you code, design, or write docs - there's a place for you.
           </p>
 
@@ -653,7 +666,7 @@ export default function NotiqLanding() {
                 </div>
 
                 <p className="text-slate-300 mb-8 leading-relaxed max-w-md">
-                  A powerful, AI-enhanced rich text editor built with Lexical, Next.js, and TypeScript. 
+                  A powerful, AI-enhanced rich text editor built with Lexical, Next.js, and TypeScript.
                   Free, open source, and built by the community.
                 </p>
 

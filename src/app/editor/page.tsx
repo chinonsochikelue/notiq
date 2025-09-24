@@ -17,13 +17,9 @@ import Editor from '@/components/editor';
 
 
 export default function EditorPage() {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    const [wordCount, setWordCount] = useState(0)
-    const [readingTime, setReadingTime] = useState(0)
-    const [aiAssistantActive, setAiAssistantActive] = useState(false)
+    const [aiAssistantActive,] = useState(false)
     const [documentTitle, setDocumentTitle] = useState("Untitled Document")
-    const [lastSaved, setLastSaved] = useState(new Date())
-    const [previewMode, setPreviewMode] = useState(false)
+    const [, setLastSaved] = useState(new Date())
 
     // Auto-save simulation
     useEffect(() => {
@@ -45,11 +41,9 @@ export default function EditorPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-            {/* Enhanced Header */}
             <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between">
-                        {/* Logo and Title */}
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-3">
                                 <div className="relative">
@@ -94,7 +88,7 @@ export default function EditorPage() {
             {/* Main Editor Area */}
             <main className="flex-1">
                 <div className="container mx-auto max-w-6xl md:px-8 sm:px-6 lg:px-8 py-8 md:mt-10">
-                            <Editor isEditable={true} />
+                    <Editor isEditable={true} />
                 </div>
             </main>
         </div>
