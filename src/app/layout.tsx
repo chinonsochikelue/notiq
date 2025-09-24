@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   // Keywords for better discoverability
   keywords: [
     "rich text editor",
+    "collabchron",
+    "fluantix",
+    "chinonso chikelue",
     "AI editor",
     "open source editor",
     "Lexical editor",
@@ -45,27 +48,27 @@ export const metadata: Metadata = {
       url: "https://github.com/chinonsochikelue"
     }
   ],
-  creator: "Chinonso Chikelue",
+  creator: "Chinonso Chikelue (fluantix)",
   publisher: "Notiq Open Source Project",
   
   // Open Graph metadata for social sharing
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://notiq.dev", // Replace with your actual domain
+    url: "https://notiq-editor.vercel.app/",
     title: "Notiq - Open Source AI-Powered Rich Text Editor",
     description: "Powerful AI-enhanced rich text editor built with Lexical, Next.js, and TypeScript. Features GPT-4 integration, 40+ content blocks, and advanced formatting capabilities.",
     siteName: "Notiq",
     images: [
       {
-        url: "/og-image.png", // Create this image (1200x630px)
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Notiq - AI-Powered Rich Text Editor Screenshot",
         type: "image/png",
       },
       {
-        url: "/og-image-square.png", // Square version (1200x1200px)
+        url: "/og-image-square.png",
         width: 1200,
         height: 1200,
         alt: "Notiq Editor Logo",
@@ -77,11 +80,11 @@ export const metadata: Metadata = {
   // Twitter Card metadata
   twitter: {
     card: "summary_large_image",
-    site: "@notiq_editor", // Create Twitter account
-    creator: "@chinonsochikelue", // Replace with actual Twitter handle
+    site: "@notiq_editor",
+    creator: "@_fluantix",
     title: "Notiq - Open Source AI-Powered Rich Text Editor",
     description: "Build beautiful documents with AI assistance. Features 40+ content blocks, GPT-4 integration, and real-time analytics.",
-    images: ["/twitter-card.png"], // Create this image (1200x675px)
+    images: ["/twitter-card.png"],
   },
   
   // Additional metadata
@@ -118,12 +121,12 @@ export const metadata: Metadata = {
     },
   },
   
-  // Canonical and alternate URLs
+  
   alternates: {
-    canonical: "https://notiq.dev", // Replace with your actual domain
+    canonical: "https://notiq-editor.vercel.app/",
     languages: {
-      "en-US": "https://notiq.dev/en-US",
-      "x-default": "https://notiq.dev",
+      "en-US": "https://notiq-editor.vercel.app/en-US",
+      "x-default": "https://notiq-editor.vercel.app/",
     },
   },
   
@@ -184,11 +187,11 @@ export default function RootLayout({
               "@graph": [
                 {
                   "@type": "WebApplication",
-                  "@id": "https://notiq.dev/#webapp",
+                  "@id": "https://notiq-editor.vercel.app/#webapp",
                   "name": "Notiq",
                   "alternateName": "Notiq Editor",
                   "description": "Open-source AI-powered rich text editor built with Lexical, Next.js, and TypeScript",
-                  "url": "https://notiq.dev",
+                  "url": "https://notiq-editor.vercel.app/",
                   "applicationCategory": "ProductivityApplication",
                   "operatingSystem": "Web Browser",
                   "offers": {
@@ -204,7 +207,7 @@ export default function RootLayout({
                   },
                   "author": {
                     "@type": "Person",
-                    "name": "Chinonso Chikelue",
+                    "name": "Chinonso Chikelue (fluantix)",
                     "url": "https://github.com/chinonsochikelue"
                   },
                   "programmingLanguage": ["TypeScript", "JavaScript", "React"],
@@ -221,17 +224,17 @@ export default function RootLayout({
                     "Voice input",
                     "Markdown support",
                     "Export capabilities",
-                    "Theme customization"
+                    "Theme customization",
                   ]
                 },
                 {
                   "@type": "Organization",
-                  "@id": "https://notiq.dev/#organization",
+                  "@id": "https://notiq-editor.vercel.app/#organization",
                   "name": "Notiq",
-                  "url": "https://notiq.dev",
+                  "url": "https://notiq-editor.vercel.app/",
                   "logo": {
                     "@type": "ImageObject",
-                    "url": "https://notiq.dev/logo.png",
+                    "url": "https://notiq-editor.vercel.app/logo.png",
                     "width": 512,
                     "height": 512
                   },
@@ -241,7 +244,7 @@ export default function RootLayout({
                   ],
                   "founder": {
                     "@type": "Person",
-                    "name": "Chinonso Chikelue"
+                    "name": "Chinonso Chikelue (fluantix)",
                   }
                 },
                 {
@@ -249,13 +252,20 @@ export default function RootLayout({
                   "@id": "https://github.com/chinonsochikelue/notiq",
                   "name": "Notiq",
                   "description": "AI-enhanced rich text editor source code",
-                  "programmingLanguage": ["TypeScript", "JavaScript"],
+                  "programmingLanguage": ["TypeScript", "JavaScript", "React", "Node.js"],
                   "runtimePlatform": "Next.js",
                   "codeRepository": "https://github.com/chinonsochikelue/notiq",
                   "license": "https://opensource.org/licenses/MIT",
                   "author": {
                     "@type": "Person",
-                    "name": "Chinonso Chikelue"
+                    "name": "Chinonso Chikelue (fluantix)",
+                    "url": "https://github.com/chinonsochikelue",
+                    "sameAs": [
+                      "https://twitter.com/_fluantix",
+                      "https://www.linkedin.com/in/chinonsochikelue/",
+                      "https://www.facebook.com/chinonso.dev",
+                      "https://www.collabchron.com.ng/fluantix"
+                    ]
                   }
                 }
               ]
