@@ -101,7 +101,7 @@ export const metadata: Metadata = {
   
   // Verification and ownership
   verification: {
-    // google: "your-google-site-verification-code", // Add when you set up Google Search Console
+    google: "ayqp5JY2qzW_am918ybg1JSEJ84P5xCGxdbeD4JK0ik",
     // yandex: "your-yandex-verification-code",
     // bing: "your-bing-verification-code",
   },

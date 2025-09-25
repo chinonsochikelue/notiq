@@ -18,14 +18,16 @@ export default function Editor({
   const initialConfig = {
     namespace: "Bloger editor",
     theme,
-    // editorState:
-    //   typeof content === "string" ? content : JSON.stringify(content),
+    editorState:
+      typeof content === "string" ? content : JSON.stringify(content),
     nodes: [...nodes],
     onError: (error: Error) => {
         throw error;
     },
     editable: isEditable,
   };
+
+  console.log("Editor content:", content);
 
   return (
     <LexicalComposer initialConfig={initialConfig}>

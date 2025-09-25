@@ -5,6 +5,7 @@ import { setNodePlaceholderFromSelection } from "./utils/setNodePlaceholderFromS
 export function LexicalOnChangePlugin() {
   const [editor] = useLexicalComposerContext();
 
+
   useLayoutEffectImpl(() => {
     const unregisterListener = editor.registerUpdateListener(
       ({ editorState, dirtyElements, dirtyLeaves, prevEditorState, tags }) => {
