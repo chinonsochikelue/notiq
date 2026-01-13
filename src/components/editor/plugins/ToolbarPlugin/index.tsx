@@ -23,8 +23,10 @@ import {
   blockTypeToBlockName,
 } from "@/components/providers/ToolbarContext";
 import { cn } from "@/lib/utils";
+import { TemplateDialog } from "../TemplatePlugin/TemplateDialog";
 
-import { Bold, Code, DownloadIcon, Italic, Link, Mic, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
+import { Bold, Code, DownloadIcon, FileJson, FileText, Italic, Link, Mic, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
+import { EXPORT_MARKDOWN_COMMAND, EXPORT_PDF_COMMAND } from "../ExportPlugin";
 
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -524,6 +526,7 @@ export default function index({
             </Button>
           )}
 
+          <TemplateDialog />
           <Button
             variant={"outline"}
             size={"Toolbar"}
@@ -534,6 +537,33 @@ export default function index({
             className="border-none"
           >
             <DownloadIcon className="size-4" />
+          </Button>
+          <Separator className="h-6 mx-2" orientation="vertical" />
+          <Button
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={() => {
+              editor.dispatchCommand(EXPORT_MARKDOWN_COMMAND, undefined);
+            }}
+            tip="Export to Markdown"
+            aria-label="Export document to Markdown"
+            className="border-none"
+          >
+            <FileJson className="size-4" />
+          </Button>
+          <Button
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={() => {
+              editor.dispatchCommand(EXPORT_PDF_COMMAND, undefined);
+            }}
+            tip="Export to PDF"
+            aria-label="Export document to PDF"
+            className="border-none"
+          >
+            <FileText className="size-4" />
           </Button>
         </div>
       </div>

@@ -58,6 +58,8 @@ const ToolbarPlugin = dynamic(() => import("@/components/editor/plugins/ToolbarP
     </div>
   ),
 })
+const ExportPlugin = dynamic(() => import("@/components/editor/plugins/ExportPlugin"), { ssr: false });
+const TemplatePlugin = dynamic(() => import("@/components/editor/plugins/TemplatePlugin"), { ssr: false });
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
   ssr: false
 });
@@ -100,18 +102,18 @@ function useRotatingQuote() {
 
   const loadNewQuote = useCallback(() => {
     setIsAnimating(true);
-    
+
     setTimeout(() => {
       const newQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
       setQuote(newQuote);
-      
+
       if (typeof window !== 'undefined') {
         localStorage.setItem(
           "editorQuote",
           JSON.stringify({ ...newQuote, timestamp: Date.now() })
         );
       }
-      
+
       setIsAnimating(false);
     }, 300);
   }, []);
@@ -134,7 +136,7 @@ function useRotatingQuote() {
           }
         }
       }
-      
+
       // Load new quote if no valid stored quote
       const newQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
       setQuote(newQuote);
@@ -151,7 +153,7 @@ function useRotatingQuote() {
 }
 
 // Enhanced placeholder component
-function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: { 
+function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: {
   quote: { text: string; author: string } | null;
   isAnimating: boolean;
   onRefresh: () => void;
@@ -173,7 +175,7 @@ function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: {
 
   return (
     <div className="absolute md:-mt-26 -mt-56 inset-0 pointer-events-none select-none overflow-hidden">
-      <motion.div 
+      <motion.div
         className="relative h-full w-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -193,14 +195,14 @@ function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: {
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                transition={{ 
-                  duration: 0.6, 
-                  ease: [0.4, 0, 0.2, 1] 
+                transition={{
+                  duration: 0.6,
+                  ease: [0.4, 0, 0.2, 1]
                 }}
                 className="max-w-4xl"
               >
                 {/* Quote Icon */}
-                <motion.div 
+                <motion.div
                   className="flex items-center gap-3 mb-6"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -218,7 +220,7 @@ function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: {
                 </motion.div>
 
                 {/* Quote Text */}
-                <motion.blockquote 
+                <motion.blockquote
                   className="text-2xl md:text-4xl lg:text-5xl font-light italic leading-relaxed text-gray-400 dark:text-gray-500 mb-6"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -228,7 +230,7 @@ function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: {
                 </motion.blockquote>
 
                 {/* Author */}
-                <motion.div 
+                <motion.div
                   className="flex items-center gap-3"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -302,7 +304,7 @@ export default function Core() {
     const unregister = editor.registerTextContentListener((textContent) => {
       setHasContent(textContent.trim().length > 0)
     })
-    
+
     return unregister
   }, [editor])
 
@@ -335,10 +337,10 @@ export default function Core() {
           )}
           initial={{ opacity: 0, y: 20, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ 
-            duration: 0.6, 
+          transition={{
+            duration: 0.6,
             ease: [0.4, 0, 0.2, 1],
-            delay: 0.1 
+            delay: 0.1
           }}
         >
           {/* Subtle background pattern */}
@@ -369,8 +371,8 @@ export default function Core() {
             }
             placeholder={
               !hasContent ? (
-                <EnhancedPlaceholder 
-                  quote={quote} 
+                <EnhancedPlaceholder
+                  quote={quote}
                   isAnimating={isAnimating}
                   onRefresh={loadNewQuote}
                 />
@@ -416,6 +418,8 @@ export default function Core() {
           <StoryBuilderPlugin />
           <DynamicBlockPlugin />
           <HistoryPlugin externalHistoryState={historyState} />
+          <ExportPlugin />
+          <TemplatePlugin />
           <MarkdownShortcutPlugin />
           <ClickableLinkPlugin disabled={isEditable} />
           <TablePlugin hasCellMerge={true} hasCellBackgroundColor={true} hasHorizontalScroll={true} />

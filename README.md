@@ -1,4 +1,7 @@
+<!-- logo -->
+
 # Notiq
+
 
 A powerful, AI-enhanced rich text editor built with Lexical, Next.js, TypeScript, and Tailwind CSS. Create beautiful documents with intelligent writing assistance and advanced content blocks.
 
@@ -164,11 +167,9 @@ npm run start
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started, submitting bug reports, and suggesting enhancements.
+
+Please note that this project is released with a [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 ## 📄 License
 
