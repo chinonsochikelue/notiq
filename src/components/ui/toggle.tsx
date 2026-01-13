@@ -24,8 +24,8 @@ const toggleVariants = cva(
         default: "h-9 px-2 min-w-9",
         sm: "h-7 rounded-md px-[6px] ",
         lg: "h-10 px-2.5 min-w-10",
-        Toolbar:"h-7 w-7 p-3",
-        floting:" h-5 w-5 p-3"
+        Toolbar: "h-7 w-7 p-3",
+        floting: " h-5 w-5 p-3"
       },
     },
     defaultVariants: {
@@ -38,7 +38,7 @@ const toggleVariants = cva(
 const Toggle = React.forwardRef<
   React.ElementRef<typeof TogglePrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
-    VariantProps<typeof toggleVariants>
+  VariantProps<typeof toggleVariants> & { tip?: string }
 >(({ className, variant, tip, size, ...props }, ref) =>
   tip ? (
     <TooltipProvider>

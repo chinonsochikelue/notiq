@@ -46,6 +46,8 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.7",
+    "@ai-sdk/groq": "^3.0.7",
     "@ai-sdk/openai": "^2.0.30",
     "@ai-sdk/react": "^2.0.44",
     "@edgestore/react": "^0.5.4",

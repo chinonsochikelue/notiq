@@ -114,12 +114,23 @@ export default function TextFormatFloatingToolbar({
 
   useEffect(() => {
     if (popupCharStylesEditorRef?.current) {
+      // Ensure we start with interaction enabled
+      popupCharStylesEditorRef.current.style.pointerEvents = "auto";
+    }
+  });
+
+  useEffect(() => {
+    if (popupCharStylesEditorRef?.current) {
       document.addEventListener("mousemove", mouseMoveListener);
       document.addEventListener("mouseup", mouseUpListener);
 
       return () => {
         document.removeEventListener("mousemove", mouseMoveListener);
         document.removeEventListener("mouseup", mouseUpListener);
+        // Reset to auto on unmount/cleanup to be safe
+        if (popupCharStylesEditorRef.current) {
+          popupCharStylesEditorRef.current.style.pointerEvents = "auto";
+        }
       };
     }
   }, [popupCharStylesEditorRef]);
@@ -198,12 +209,12 @@ export default function TextFormatFloatingToolbar({
       id="toolbar"
       ref={popupCharStylesEditorRef}
       className={`
-            h-[30px] p-1 px-2 max-sm:p-2   max-sm:h-[295px] max-sm:w-[32px]  max-sm:overflow-y-auto
+            z-[50] h-[30px] p-1 px-2 max-sm:p-2   max-sm:h-[295px] max-sm:w-[32px]  max-sm:overflow-y-auto
             border dark:border-zinc-800 dark:bg-zinc-900  text-zinc-950 dark:text-zinc-50  border-zinc-200 bg-white/90 
             inline-flex flex-row max-sm:flex-col items-center shadow-md absolute top-0 left-0  text-sm rounded-[6px]
         `}
     >
-      <AiButton editor={editor}/>
+      <AiButton editor={editor} />
       <Separator
         orientation="vertical"
         className="max-sm:h-[1px] max-sm:my-1 max-sm:w-5 h-5 mx-1"
