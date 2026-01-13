@@ -26,7 +26,7 @@ import {
   Heart,
   Code,
   GitBranch,
-  Download,
+  // Download,
   Github,
   Coffee,
   Rocket,
@@ -133,7 +133,7 @@ export default function NotiqLanding() {
   ]
 
   const contributors = [
-    { name: "Alex Chen", role: "Core Developer", contributions: "Frontend & AI Integration" },
+    { name: "Chinonso Chikelue", role: "Core Developer", contributions: "Frontend & AI Integration" },
     { name: "Sarah Kim", role: "Plugin Developer", contributions: "Content Blocks & Extensions" },
     { name: "Marcus Rodriguez", role: "UX Designer", contributions: "Interface Design & Interactions" }
   ]
@@ -152,8 +152,8 @@ export default function NotiqLanding() {
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
-                    <BookOpen className="h-5 w-5 text-white" />
+                  <div >
+                    <img src="/logo.png" className="flex h-12 w-12" alt="Notiq Logo" />
                   </div>
                   <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
@@ -161,7 +161,7 @@ export default function NotiqLanding() {
                   <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
                     Notiq
                   </span>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Open Source</div>
+                  {/* <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Open Source</div> */}
                 </div>
               </div>
 
@@ -193,10 +193,6 @@ export default function NotiqLanding() {
                     GitHub
                   </Button>
                 </a>
-                <Button size="sm" className="hidden md:flex bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-                  <Download className="h-4 w-4 mr-2" />
-                  Get Started
-                </Button>
 
                 <ModeToggle />
 
@@ -271,7 +267,7 @@ export default function NotiqLanding() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Redirect href="/editor">
                 <Button size="lg" className="h-14 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group cursor-pointer">
-                  <Download className="mr-2 h-5 w-5" />
+                  {/* <Download className="mr-2 h-5 w-5" /> */}
                   Try Notiq Free
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -639,10 +635,10 @@ export default function NotiqLanding() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
             <Button size="lg" className="h-16 px-12 bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 text-lg font-bold">
-              <Download className="mr-3 h-6 w-6" />
+              {/* <Download className="mr-3 h-6 w-6" /> */}
               Get Started Now
             </Button>
-            <Button variant="outline" size="lg" className="h-16 px-12 border-2 border-white text-white hover:bg-white hover:text-blue-600 transition-all duration-300 hover:scale-105 text-lg font-bold">
+            <Button variant="outline" size="lg" className="h-16 px-12 border-2 border-white text-blue-500 hover:bg-white hover:text-blue-600 transition-all duration-300 hover:scale-105 text-lg font-bold">
               <Github className="mr-3 h-6 w-6" />
               View Source Code
             </Button>
@@ -736,36 +732,10 @@ export default function NotiqLanding() {
               </div>
             </div>
 
-            {/* Newsletter/Updates signup */}
-            <div className="mt-16 pt-8 border-t border-slate-800">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Stay updated</h3>
-                  <p className="text-slate-400">Get notified about new features, releases, and community updates.</p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                  <div className="relative">
-                    <input
-                      type="email"
-                      placeholder="Enter your email"
-                      className="w-full md:w-80 h-12 px-4 pr-12 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400"
-                    />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <ArrowRight className="h-5 w-5 text-slate-400" />
-                    </div>
-                  </div>
-                  <Button className="h-12 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium">
-                    Subscribe
-                  </Button>
-                </div>
-              </div>
-            </div>
-
             {/* Bottom section */}
             <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="text-slate-400 text-sm">
-                © 2025 Notiq. Open source under MIT License.
+                © 2026 Notiq. Open source under MIT License.
               </div>
 
               <div className="flex items-center gap-6 text-sm text-slate-400">

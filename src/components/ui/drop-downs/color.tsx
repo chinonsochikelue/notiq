@@ -232,7 +232,7 @@ export default function Color({
             aria-label="Text color options"
           >
             <div className="flex items-center gap-1">
-              <PaletteIcon className="w-4 h-4" />
+              <PaletteIcon className="w-4 h-4 dark:text-white" />
               {/* Color indicator bar */}
               <div 
                 className="w-3 h-1 rounded-sm border border-border/50 ml-1"

@@ -18,8 +18,8 @@ export default function Editor({
   const initialConfig = {
     namespace: "Bloger editor",
     theme,
-    editorState:
-      typeof content === "string" ? content : JSON.stringify(content),
+    editorState: typeof content === "string" && content,
+      // typeof content === "string" ? content : JSON.stringify(content),
     nodes: [...nodes],
     onError: (error: Error) => {
         throw error;
@@ -31,11 +31,11 @@ export default function Editor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <SharedHistoryContext>
-        <ToolbarContext>
-            <Core/>
+       <SharedHistoryContext>
+         <ToolbarContext>
+             <Core/>
         </ToolbarContext>
-      </SharedHistoryContext>
-    </LexicalComposer>
+     </SharedHistoryContext>
+     </LexicalComposer>
   );
 }

@@ -14,7 +14,8 @@ import {
   TextNode,
 } from "lexical";
 import {
-  $createHeadingNode,} from '@lexical/rich-text';
+  $createHeadingNode,
+} from '@lexical/rich-text';
 import { $createStepperNode, StepsType } from "../nodes/Stepper";
 
 function getWordsBeforeSelection(
@@ -118,7 +119,7 @@ function createEditorWithText(text: string): LexicalEditor {
   return editor;
 }
 
-function GenerateSteps(json:string, editor: LexicalEditor){
+function GenerateSteps(json: string, editor: LexicalEditor) {
   const stepsData = JSON.parse(json);
   const steps: StepsType = stepsData.map((step: { id: number; title: string; content: string }) => {
     return {
@@ -126,8 +127,8 @@ function GenerateSteps(json:string, editor: LexicalEditor){
       title: step.title,
       content: createEditorWithText(step.content),
     };
-  });    
-  editor.update(()=>{
+  });
+  editor.update(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
       const stepperNode = $createStepperNode(steps);
@@ -138,17 +139,17 @@ function GenerateSteps(json:string, editor: LexicalEditor){
 }
 
 // getMore = number of words to get if the selection was less than 30 len.
-const getSelectedText = (editor: LexicalEditor,getMore?:number) => {
+const getSelectedText = (editor: LexicalEditor, getMore?: number) => {
   let selectedText = "";
-  let context = getMore?getWordsBeforeSelection(editor, getMore):null
+  let context = getMore ? getWordsBeforeSelection(editor, getMore) : null
   editor.update(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
-      const selectionText = selection.getTextContent();      
+      const selectionText = selection.getTextContent();
       if (selectionText.length > 30) {
-        selectedText = selectionText; 
+        selectedText = selectionText;
       } else {
-        selectedText = context+selectionText ;
+        selectedText = context + selectionText;
       }
     }
   });
@@ -170,17 +171,32 @@ function applyStyles(AIString: string) {
   // Process all matches of code, bold, or inline code segments.
   AIString.replace(
     pattern,
-    (match, codeBlockMatch, boldMatch, codeMatch,headerMatch, offset) => {
+    (match, codeBlockMatch, boldMatch, codeMatch, headerMatch, offset) => {
       // Append any plain text before the matched segment.
       if (offset > lastIndex) {
         const plainText = AIString.slice(lastIndex, offset);
         nodes.push($createTextNode(plainText));
       }
       if (codeBlockMatch) {
-        // TODO: extract the code lang and apply it to the code block.
+        const matchContent = codeBlockMatch.slice(3, -3);
+        let language = "";
+        let content = matchContent;
 
-        const content = codeBlockMatch.slice(3, -3);
-        const codeNode = $createCodeNode();
+        // Try to extract language from the first line
+        // content usually looks like "typescript\nconst a = 1;"
+        const firstNewLine = matchContent.indexOf("\n");
+        if (firstNewLine !== -1) {
+          const firstLine = matchContent.slice(0, firstNewLine).trim();
+          // Check if the first line is likely a language identifier (alphanumeric)
+          // valid: "ts", "typescript", "python", "cpp"
+          // invalid: " ", "" or code immediately
+          if (firstLine.length > 0 && /^[a-zA-Z0-9_\-]+$/.test(firstLine)) {
+            language = firstLine;
+            content = matchContent.slice(firstNewLine + 1);
+          }
+        }
+
+        const codeNode = $createCodeNode(language);
         codeNode.append($createTextNode(content));
         nodes.push(codeNode);
       } else if (boldMatch) {
@@ -194,11 +210,11 @@ function applyStyles(AIString: string) {
         const codeTextNode = $createTextNode(content);
         codeTextNode.setFormat("code");
         nodes.push(codeTextNode);
-      }else if(headerMatch){
-         const content = headerMatch.slice(4).trim(); 
-         const headerNode = $createHeadingNode("h3"); 
-         headerNode.append($createTextNode(content));
-         nodes.push(headerNode);
+      } else if (headerMatch) {
+        const content = headerMatch.slice(4).trim();
+        const headerNode = $createHeadingNode("h3");
+        headerNode.append($createTextNode(content));
+        nodes.push(headerNode);
       }
       lastIndex = offset + match.length;
       return match;
@@ -215,8 +231,8 @@ function applyStyles(AIString: string) {
 
 
 function insertText(text: string, editor: LexicalEditor) {
-  if(isJSON(text) || text.startsWith("json")){
-    GenerateSteps(text,editor)
+  if (isJSON(text) || text.startsWith("json")) {
+    GenerateSteps(text, editor)
     return
   }
   editor.update(() => {
@@ -238,13 +254,13 @@ function insertText(text: string, editor: LexicalEditor) {
 }
 
 function replaceSelectedText(text: string, editor: LexicalEditor) {
-  
-  if(isJSON(text) || text.startsWith("json")){
-    GenerateSteps(text,editor)
+
+  if (isJSON(text) || text.startsWith("json")) {
+    GenerateSteps(text, editor)
     return
   }
 
-  
+
   editor.update(() => {
     const selection = $getSelection();
     if (!$isRangeSelection(selection)) {
@@ -259,8 +275,8 @@ function replaceSelectedText(text: string, editor: LexicalEditor) {
 
 
 function insertTextUnderSelected(text: string, editor: LexicalEditor) {
-  if(isJSON(text) || text.startsWith("json")){
-    GenerateSteps(text,editor)
+  if (isJSON(text) || text.startsWith("json")) {
+    GenerateSteps(text, editor)
     return
   }
   editor.update(() => {
@@ -288,4 +304,5 @@ export {
   getSelectedText,
   insertText,
   getWordsBeforeSelection,
+  applyStyles,
 };

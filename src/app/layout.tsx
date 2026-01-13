@@ -68,7 +68,7 @@ export const metadata: Metadata = {
         type: "image/png",
       },
       {
-        url: "/og-image-square.png",
+        url: "/logo.png",
         width: 1200,
         height: 1200,
         alt: "Notiq Editor Logo",

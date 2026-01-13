@@ -281,10 +281,17 @@ export default function InlineImageComponent({
         DRAGSTART_COMMAND,
         (event) => {
           if (event.target === imageRef.current) {
-            // TODO This is just a temporary workaround for FF to behave like other browsers.
-            // Ideally, this handles drag & drop too (and all browsers).
-            event.preventDefault()
-            return true
+            // Fix for Firefox: Ensure dataTransfer is set so the element is draggable
+            // and doesn't trigger the browser's default image dragging behavior.
+            const dataTransfer = event.dataTransfer
+            if (dataTransfer) {
+              dataTransfer.setData("text/plain", "_")
+              // Optionally set drag image if needed, or rely on default
+              if (imageRef.current) {
+                dataTransfer.setDragImage(imageRef.current, 0, 0)
+              }
+            }
+            return false // Allow propagation so Lexical handles the drag
           }
           return false
         },
