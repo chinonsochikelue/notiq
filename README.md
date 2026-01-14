@@ -1,9 +1,27 @@
-<!-- logo -->
+<div align="center">
+  <img src="public/logo.png" alt="Notiq Logo" width="120" />
+  <h1>Notiq</h1>
+  <p>
+    <strong>A powerful, AI-enhanced rich text editor built with Lexical, Next.js, TypeScript, and Tailwind CSS.</strong>
+  </p>
+  <p>
+    Create beautiful documents with intelligent writing assistance and advanced content blocks.
+  </p>
+</div>
 
-# Notiq
+![Notiq Banner](public/og-image.png)
 
+## 📸 Screenshots
 
-A powerful, AI-enhanced rich text editor built with Lexical, Next.js, TypeScript, and Tailwind CSS. Create beautiful documents with intelligent writing assistance and advanced content blocks.
+<div align="center">
+  <h3>Desktop View</h3>
+  <img src="public/screenshots/desktop.png" alt="Desktop Screenshot" width="100%" />
+</div>
+
+<div align="center">
+  <h3>Mobile View</h3>
+  <img src="public/screenshots/mobile.png" alt="Mobile Screenshot" width="300" />
+</div>
 
 ## ✨ Features
 
