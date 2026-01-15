@@ -53,7 +53,7 @@ const SlashCommand = dynamic(() => import("@/components/editor/plugins/SlashComm
 const ToolbarPlugin = dynamic(() => import("@/components/editor/plugins/ToolbarPlugin"), {
   ssr: false,
   loading: () => (
-    <div className="fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4">
+    <div className="hidden md:block fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4">
       <Skeleton className="h-12 w-full max-w-6xl rounded-2xl" />
     </div>
   ),
