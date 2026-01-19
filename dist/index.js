@@ -11821,12 +11821,11 @@ function EquationsPlugin() {
   }, [editor]);
   return null;
 }
-var import_katex3, import_LexicalComposerContext29, import_utils54, import_lexical51, import_react63, React66, INSERT_EQUATION_COMMAND;
+var import_LexicalComposerContext29, import_utils54, import_lexical51, import_react63, React66, INSERT_EQUATION_COMMAND;
 var init_EquationsPlugin = __esm({
   "src/components/editor/plugins/EquationsPlugin/index.tsx"() {
     "use strict";
     init_react_shim();
-    import_katex3 = require("katex/dist/katex.css");
     import_LexicalComposerContext29 = require("@lexical/react/LexicalComposerContext");
     import_utils54 = require("@lexical/utils");
     import_lexical51 = require("lexical");

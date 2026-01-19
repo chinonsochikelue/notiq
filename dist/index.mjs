@@ -6,7 +6,7 @@ import {
   LexicalAutoLinkPlugin,
   LinkWithMetaDataPlugin,
   nodes_default
-} from "./chunk-XLER2DHM.mjs";
+} from "./chunk-UNMJLVGC.mjs";
 import {
   Progress,
   UploadProvider,
@@ -17,7 +17,7 @@ import {
   EquationsPlugin,
   InlineImagePlugin,
   StoryBuilderPlugin
-} from "./chunk-WJRHXI2C.mjs";
+} from "./chunk-DSFQHA7I.mjs";
 import {
   PollPlugin
 } from "./chunk-U47ABU5Z.mjs";
@@ -41,7 +41,7 @@ import {
 } from "./chunk-YUDCJRJM.mjs";
 import {
   StepperPlugin
-} from "./chunk-6RNZQOH2.mjs";
+} from "./chunk-KLBJT6EH.mjs";
 import "./chunk-GXYD4VZM.mjs";
 import {
   CAN_USE_DOM,
@@ -1278,7 +1278,7 @@ function ContentAnalyticsPlugin() {
 }
 
 // src/components/editor/Core.tsx
-var SlashCommand = dynamic(() => import("./SlashCommand-GMT5JI33.mjs"), { ssr: false });
+var SlashCommand = dynamic(() => import("./SlashCommand-DTHJZRRO.mjs"), { ssr: false });
 var ToolbarPlugin = dynamic(() => import("./ToolbarPlugin-YKYA4NB4.mjs"), {
   ssr: false,
   loading: () => /* @__PURE__ */ React.createElement("div", { className: "hidden md:block fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4" }, /* @__PURE__ */ React.createElement(Skeleton, { className: "h-12 w-full max-w-6xl rounded-2xl" }))
@@ -1299,7 +1299,7 @@ var TableHoverActionsPlugin = dynamic(() => import("./TableHoverActionsPlugin-GJ
 });
 var CodeActionMenuPlugin = dynamic(() => import("./CodeActionMenuPlugin-EINOY4U4.mjs"), { ssr: false });
 var FloatingTextFormatToolbarPlugin = dynamic(
-  () => import("./FloatingTextFormatToolbarPlugin-F2GY6LMI.mjs"),
+  () => import("./FloatingTextFormatToolbarPlugin-XGVUIG42.mjs"),
   { ssr: false }
 );
 var QUOTES = [

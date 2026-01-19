@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 @plugin 'tailwind-scrollbar';
+@import 'katex/dist/katex.css';
 
 @custom-variant dark (&:is(.dark *));
 

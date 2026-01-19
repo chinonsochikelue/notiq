@@ -66,23 +66,12 @@ npm install @collabchron/notiq
 
 ### Integration
 
-#### 1. Configure Tailwind CSS
+#### 1. Import Styles
 
-Add the Notiq plugin to your `tailwind.config.js`:
+Import the CSS file in your root layout file (e.g., `app/layout.tsx` or `pages/_app.tsx`):
 
-```javascript
-import { notiqPlugin } from '@collabchron/notiq';
-
-export default {
-  content: [
-    // ... your content paths
-    "./node_modules/@collabchron/notiq/dist/**/*.{js,mjs}",
-  ],
-  plugins: [
-    notiqPlugin,
-    require('@tailwindcss/typography'),
-  ],
-}
+```tsx
+import "@collabchron/notiq/styles.css";
 ```
 
 #### 2. Usage in your component
