@@ -17,7 +17,7 @@ import {
 } from "@lexical/react/LexicalDecoratorBlockNode";
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../../../ui/skeleton";
 
 const WIDGET_SCRIPT_URL = "https://platform.twitter.com/widgets.js";
 
@@ -111,10 +111,10 @@ function TweetComponent({
         <Skeleton className="max-h-[200px] w-full h-full max-w-[400px]" />
       ) : null}
       <div
-        style={{ 
-          display: "inline-block", 
+        style={{
+          display: "inline-block",
           width: "100%",
-         }}
+        }}
         ref={containerRef}
       />
     </BlockWithAlignableContents>

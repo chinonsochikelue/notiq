@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils';
-import {DraggableBlockPlugin_EXPERIMENTAL} from '@lexical/react/LexicalDraggableBlockPlugin';
-import { JSX, useRef} from 'react';
+import { cn } from "../../../../lib/utils";
+import { DraggableBlockPlugin_EXPERIMENTAL } from '@lexical/react/LexicalDraggableBlockPlugin';
+import { JSX, useRef } from 'react';
 
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = 'draggable-block-menu';
 
@@ -9,17 +9,17 @@ export default function DraggableBlockPlugin({
   className
 }: {
   anchorElem?: HTMLElement;
-  className?:string
+  className?: string
 }): JSX.Element {
   const menuRef = useRef<any>(null);
   const targetLineRef = useRef<any>(null);
 
   const isOnMenu = (element: HTMLElement): boolean => {
- 
+
     return !!element.closest(`.${DRAGGABLE_BLOCK_MENU_CLASSNAME}`);
   };
 
-  
+
   return (
     <DraggableBlockPlugin_EXPERIMENTAL
       anchorElem={anchorElem}
@@ -27,7 +27,7 @@ export default function DraggableBlockPlugin({
       targetLineRef={targetLineRef}
       menuComponent={
         <div ref={menuRef} className={
-          cn("draggable-block-menu  transition-all  z-50 absolute top-0 left-0",className)
+          cn("draggable-block-menu  transition-all  z-50 absolute top-0 left-0", className)
         }>
           <svg
             xmlns="http://www.w3.org/2000/svg"

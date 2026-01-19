@@ -5,18 +5,18 @@ import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, Figma, 
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import { DropDown } from ".";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../../editor/plugins/ImagesPlugin";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../skeleton";
 import { INSERT_LAYOUT_COMMAND } from "../../editor/plugins/LayoutPlugin";
 import { INSERT_COLLAPSIBLE_COMMAND } from "../../editor/plugins/CollapsiblePlugin";
 import { AutoEmbedDialog, FigmaEmbedConfig, TwitterEmbedConfig, YoutubeEmbedConfig } from "../../editor/plugins/AutoEmbedPlugin";
 import { INSERT_HINT_COMMAND } from "../../editor/nodes/Hint";
 import { INSERT_EXCALIDRAW_COMMAND } from "../../editor/plugins/ExcalidrawPlugin";
 
-const InsertImageDialog = lazy(() => import("@/components/ui/models/insert-image").then(module => ({ default: module.InsertImageDialog })));
+const InsertImageDialog = lazy(() => import("../models/insert-image").then(module => ({ default: module.InsertImageDialog })));
 const InsertGif = lazy(() => import("../models/insert-gif"));
-const InsertTableBody = lazy(() => import("@/components/ui/models/insert-table").then(module => ({ default: module.InsertTable })));
+const InsertTableBody = lazy(() => import("../models/insert-table").then(module => ({ default: module.InsertTable })));
 const InsertPoll = lazy(() =>
-  import("@/components/ui/models/insert-poll").then(module => ({ default: module.InsertPoll }))
+  import("../models/insert-poll").then(module => ({ default: module.InsertPoll }))
 );
 
 interface Items {

@@ -1,0 +1,26 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "noEmit": false,
+        "outDir": "dist"
+    },
+    "include": [
+        "src/index.ts",
+        "src/components/editor/**/*",
+        "src/components/ui/**/*",
+        "src/components/providers/**/*",
+        "src/hooks/**/*",
+        "src/utils/**/*",
+        "src/lib/**/*",
+        "src/theme/**/*"
+    ],
+    "exclude": [
+        "src/app/**/*",
+        "src/api/**/*",
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/app/api/**/*"
+    ]
+}

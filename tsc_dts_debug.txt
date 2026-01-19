@@ -1,0 +1,3 @@
+src/app/api/edgestore/[...edgestore]/route.ts(11,7): error TS2742: The inferred type of 'edgeStoreRouter' cannot be named without a reference to '.pnpm/@edgestore+shared@0.5.4_rea_6ced8d96f45cb58c9cd0708d862c32ae/node_modules/@edgestore/shared'. This is likely not portable. A type annotation is necessary.
+src/app/api/edgestore/[...edgestore]/route.ts(11,7): error TS7056: The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed.
+src/lib/edgestore.ts(6,28): error TS2742: The inferred type of 'useEdgeStore' cannot be named without a reference to '../../node_modules/@edgestore/react/dist/createNextProxy'. This is likely not portable. A type annotation is necessary.

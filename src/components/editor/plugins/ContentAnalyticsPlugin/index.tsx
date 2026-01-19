@@ -6,12 +6,12 @@ import { useEffect, useState } from "react"
 import { $isHeadingNode } from "@lexical/rich-text"
 import { $isListNode } from "@lexical/list"
 import { $isCodeNode } from "@lexical/code"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/card"
+import { Badge } from "../../../ui/badge"
+import { Progress } from "../../../ui/progress"
 import { Clock, Eye, BarChart3, Target, BookOpen, TrendingUp, Zap, ChevronLeft, ChevronRight } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "../../../../lib/utils"
+import { Button } from "../../../ui/button"
 
 interface ContentMetrics {
   wordCount: number

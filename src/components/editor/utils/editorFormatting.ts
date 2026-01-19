@@ -1,12 +1,12 @@
 
-import { DEFAULT_FONT_SIZE, MAX_ALLOWED_FONT_SIZE, MIN_ALLOWED_FONT_SIZE } from '@/components/providers/ToolbarContext';
-import {$createCodeNode} from '@lexical/code';
+import { DEFAULT_FONT_SIZE, MAX_ALLOWED_FONT_SIZE, MIN_ALLOWED_FONT_SIZE } from "../../providers/ToolbarContext";
+import { $createCodeNode } from '@lexical/code';
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
-import {$isDecoratorBlockNode} from '@lexical/react/LexicalDecoratorBlockNode';
+import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode';
 import {
   $createHeadingNode,
   $createQuoteNode,
@@ -14,9 +14,9 @@ import {
   $isQuoteNode,
   HeadingTagType,
 } from '@lexical/rich-text';
-import {$patchStyleText, $setBlocksType} from '@lexical/selection';
-import { $isTableSelection} from '@lexical/table';
-import {$getNearestBlockElementAncestorOrThrow} from '@lexical/utils';
+import { $patchStyleText, $setBlocksType } from '@lexical/selection';
+import { $isTableSelection } from '@lexical/table';
+import { $getNearestBlockElementAncestorOrThrow } from '@lexical/utils';
 import {
   $createParagraphNode,
   $getSelection,

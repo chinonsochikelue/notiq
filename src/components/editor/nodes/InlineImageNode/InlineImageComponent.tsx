@@ -36,11 +36,11 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react"
 
 import useModal from "../../../../hooks/useModal"
 import LinkPlugin from "../../plugins/LinkPlugin"
-import TextInput from "@/components/ui/TextInput"
-import Select from "@/components/ui/Select"
-import { DialogActions } from "@/components/ui/dialog/Dialog"
-import LexicalContentEditable from "@/components/ui/ContentEditable"
-import { Button } from "@/components/ui/button"
+import TextInput from "../../../ui/TextInput"
+import Select from "../../../ui/Select"
+import { DialogActions } from "../../../ui/dialog/Dialog"
+import LexicalContentEditable from "../../../ui/ContentEditable"
+import { Button } from "../../../ui/button"
 
 const imageCache = new Set()
 

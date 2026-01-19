@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import { useSharedHistoryContext } from "../providers/SharedHistoryContext"
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable"
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
-import dynamic from "next/dynamic"
+import dynamic from "next/dynamic.js"
 import { Skeleton } from "../ui/skeleton"
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
 import { ContentEditable } from "@lexical/react/LexicalContentEditable"
@@ -42,15 +42,16 @@ import InlineImagePlugin from "./plugins/InlineImagePlugin"
 import FigmaPlugin from "./plugins/FigmaPlugin"
 import EquationsPlugin from "./plugins/EquationsPlugin"
 import SpeechToTextPlugin from "./plugins/SpeechToTextPlugin"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 import StoryBuilderPlugin from "./plugins/StoryBuilderPlugin"
 import DynamicBlockPlugin from "./plugins/DynamicBlockPluggin"
 import { motion, AnimatePresence } from "framer-motion"
 import { Sparkles, Lightbulb, Quote } from "lucide-react"
 import ContentAnalyticsPlugin from "./plugins/ContentAnalyticsPlugin"
+import { ToolbarConfig } from "./index"
 
-const SlashCommand = dynamic(() => import("@/components/editor/plugins/SlashCommand"), { ssr: false })
-const ToolbarPlugin = dynamic(() => import("@/components/editor/plugins/ToolbarPlugin"), {
+const SlashCommand = dynamic(() => import("./plugins/SlashCommand"), { ssr: false })
+const ToolbarPlugin = dynamic(() => import("./plugins/ToolbarPlugin"), {
   ssr: false,
   loading: () => (
     <div className="hidden md:block fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4">
@@ -58,23 +59,23 @@ const ToolbarPlugin = dynamic(() => import("@/components/editor/plugins/ToolbarP
     </div>
   ),
 })
-const ExportPlugin = dynamic(() => import("@/components/editor/plugins/ExportPlugin"), { ssr: false });
-const TemplatePlugin = dynamic(() => import("@/components/editor/plugins/TemplatePlugin"), { ssr: false });
+const ExportPlugin = dynamic(() => import("./plugins/ExportPlugin"), { ssr: false });
+const TemplatePlugin = dynamic(() => import("./plugins/TemplatePlugin"), { ssr: false });
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
   ssr: false
 });
-const FloatingLinkEditorPlugin = dynamic(() => import("@/components/editor/plugins/FloatingLinkEditorPlugin"), {
+const FloatingLinkEditorPlugin = dynamic(() => import("./plugins/FloatingLinkEditorPlugin"), {
   ssr: false,
 })
-const TableCellActionMenuPlugin = dynamic(() => import("@/components/editor/plugins/TableCellActionMenuPlugin"), {
+const TableCellActionMenuPlugin = dynamic(() => import("./plugins/TableCellActionMenuPlugin"), {
   ssr: false,
 })
-const TableHoverActionsPlugin = dynamic(() => import("@/components/editor/plugins/TableHoverActionsPlugin"), {
+const TableHoverActionsPlugin = dynamic(() => import("./plugins/TableHoverActionsPlugin"), {
   ssr: false,
 })
-const CodeActionMenuPlugin = dynamic(() => import("@/components/editor/plugins/CodeActionMenuPlugin"), { ssr: false })
+const CodeActionMenuPlugin = dynamic(() => import("./plugins/CodeActionMenuPlugin"), { ssr: false })
 const FloatingTextFormatToolbarPlugin = dynamic(
-  () => import("@/components/editor/plugins/FloatingTextFormatToolbarPlugin"),
+  () => import("./plugins/FloatingTextFormatToolbarPlugin"),
   { ssr: false },
 )
 
@@ -283,7 +284,11 @@ function EnhancedPlaceholder({ quote, isAnimating, onRefresh }: {
   );
 }
 
-export default function Core() {
+export default function Core({
+  toolbarConfig,
+}: {
+  toolbarConfig?: ToolbarConfig;
+}) {
   const { historyState } = useSharedHistoryContext()
   const { quote, isAnimating, loadNewQuote } = useRotatingQuote();
   const isEditable = useLexicalEditable()
@@ -316,6 +321,8 @@ export default function Core() {
           activeEditor={activeEditor}
           setActiveEditor={setActiveEditor}
           setIsLinkEditMode={setIsLinkEditMode}
+          toolbarConfig={toolbarConfig}
+          className="fixed z-40 md:top-40"
         />
       )}
 
@@ -335,13 +342,6 @@ export default function Core() {
             "bg-white dark:bg-gray-900",
             "md:border md:border-gray-200/50 dark:md:border-gray-800/50"
           )}
-          initial={{ opacity: 0, y: 20, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{
-            duration: 0.6,
-            ease: [0.4, 0, 0.2, 1],
-            delay: 0.1
-          }}
         >
           {/* Subtle background pattern */}
           <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">

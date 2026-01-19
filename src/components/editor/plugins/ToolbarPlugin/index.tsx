@@ -23,15 +23,16 @@ import {
 import {
   useToolbarState,
   blockTypeToBlockName,
-} from "@/components/providers/ToolbarContext";
-import { cn } from "@/lib/utils";
+} from "../../../providers/ToolbarContext";
+import { cn } from "../../../../lib/utils";
 import { TemplateDialog } from "../TemplatePlugin/TemplateDialog";
+import { ToolbarConfig, ToolbarItem } from "../../index";
 
 import { Bold, Code, DownloadIcon, FileJson, FileText, Italic, Link, Mic, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
 import { EXPORT_MARKDOWN_COMMAND, EXPORT_PDF_COMMAND } from "../ExportPlugin";
 
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { Separator } from "../../../ui/separator";
+import { Button } from "../../../ui/button";
 import {
   $findMatchingParent,
   $getNearestNodeOfType,
@@ -48,33 +49,33 @@ import { $isTableNode, $isTableSelection } from "@lexical/table";
 import { $isListNode, ListNode } from "@lexical/list";
 import { $isHeadingNode } from "@lexical/rich-text";
 import { $isCodeNode, CODE_LANGUAGE_MAP } from "@lexical/code";
-import dynamic from "next/dynamic";
-import { Toggle } from "@/components/ui/toggle";
+import dynamic from "next/dynamic.js";
+import { Toggle } from "../../../ui/toggle";
 import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { sanitizeUrl } from "../../utils/url";
-import CodeList from "@/components/ui/drop-downs/code"
+import CodeList from "../../../ui/drop-downs/code"
 import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
-import { downloadHTML, exportEditorToHTML } from "@/utils/htmlExport";
+import { downloadHTML, exportEditorToHTML } from "../../../../utils/htmlExport";
 const BlockFormatDropDown = dynamic(
-  () => import("@/components/ui/drop-downs/block-format")
+  () => import("../../../ui/drop-downs/block-format")
 );
 const MobileToolbar = dynamic(() => import("./MobileToolbar"), { ssr: false });
 const FontDropDown = dynamic(
-  () => import("@/components/ui/drop-downs/font")
+  () => import("../../../ui/drop-downs/font")
 );
 const FontSize = dynamic(
-  () => import("@/components/ui/drop-downs/font-size")
+  () => import("../../../ui/drop-downs/font-size")
 );
-const Color = dynamic(() => import("@/components/ui/drop-downs/color"));
-const BackgroundColor = dynamic(() => import("@/components/ui/drop-downs/background-color"));
+const Color = dynamic(() => import("../../../ui/drop-downs/color"));
+const BackgroundColor = dynamic(() => import("../../../ui/drop-downs/background-color"));
 const TextFormat = dynamic(
-  () => import("@/components/ui/drop-downs/text-format")
+  () => import("../../../ui/drop-downs/text-format")
 );
 const InsertNode = dynamic(
-  () => import("@/components/ui/drop-downs/insert-node")
+  () => import("../../../ui/drop-downs/insert-node")
 );
 const TextAlign = dynamic(
-  () => import("@/components/ui/drop-downs/text-align")
+  () => import("../../../ui/drop-downs/text-align")
 );
 // import { type } from './../../../providers/ToolbarContext';
 
@@ -83,16 +84,20 @@ const rootTypeToRootName = {
   root: 'Root',
   table: 'Table',
 };
-export default function index({
+export default function ToolbarPlugin({
   editor,
   activeEditor,
   setActiveEditor,
   setIsLinkEditMode,
+  toolbarConfig,
+  className,
 }: {
   editor: LexicalEditor;
   activeEditor: LexicalEditor;
   setActiveEditor: Dispatch<LexicalEditor>;
   setIsLinkEditMode: Dispatch<boolean>;
+  toolbarConfig?: ToolbarConfig;
+  className?: string;
 }) {
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const [isSpeechToText, setIsSpeechToText] = useState(false);
@@ -334,11 +339,310 @@ export default function index({
     }
   }, [activeEditor])
 
+  const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
+    "undo", "redo", "separator",
+    "block-format", "separator",
+    "font-family", "separator",
+    "font-size", "separator",
+    "bold", "italic", "underline", "code", "link", "separator",
+    "color", "bg-color", "separator",
+    "text-format", "separator",
+    "insert", "separator",
+    "align", "separator",
+    "speech", "template", "download", "separator",
+    "export-md", "export-pdf"
+  ];
+
+  const itemsToRender = toolbarConfig?.items || DEFAULT_TOOLBAR_ITEMS;
+  const customClassName = toolbarConfig?.className || className;
+  const itemClassName = toolbarConfig?.itemClassName;
+  const activeItemClassName = toolbarConfig?.activeItemClassName;
+
+  const renderItem = (item: ToolbarItem, index: number) => {
+    switch (item) {
+      case "undo":
+        return (
+          <Button
+            key={`undo-${index}`}
+            size={"Toolbar"}
+            variant={"outline"}
+            disabled={!toolbarState.canUndo || !isEditable}
+            onClick={() => {
+              activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
+            }}
+            tip={false ? "Undo (⌘Z)" : "Undo (Ctrl+Z)"}
+            type="button"
+            aria-label="Undo"
+            className={cn("border-none", itemClassName)}
+          >
+            <Undo2Icon className=" size-4" />
+          </Button>
+        );
+      case "redo":
+        return (
+          <Button
+            key={`redo-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            disabled={!toolbarState.canRedo || !isEditable}
+            onClick={() => {
+              activeEditor.dispatchCommand(REDO_COMMAND, undefined);
+            }}
+            tip={false ? "Redo (⇧⌘Z)" : "Redo (Ctrl+Y)"}
+            type="button"
+            className={cn("toolbar-item border-none", itemClassName)}
+            aria-label="Redo"
+          >
+            <Redo2Icon className=" size-4" />
+          </Button>
+        );
+      case "separator":
+        return <Separator key={`sep-${index}`} className="h-6 mx-2" orientation="vertical" />;
+      case "block-format":
+        return toolbarState.blockType in blockTypeToBlockName && activeEditor === editor ? (
+          <div key={`block-${index}`} className="flex flex-row gap-x-[5px] items-center">
+            <BlockFormatDropDown
+              disabled={!isEditable}
+              blockType={toolbarState.blockType}
+              editor={activeEditor}
+            />
+          </div>
+        ) : null;
+      case "font-family":
+        return (
+          <FontDropDown
+            key={`font-${index}`}
+            disabled={!isEditable}
+            style={{ fontFamily: toolbarState.fontFamily }}
+            value={toolbarState.fontFamily}
+            editor={activeEditor}
+          />
+        );
+      case "font-size":
+        return (
+          <FontSize
+            key={`size-${index}`}
+            selectionFontSize={toolbarState.fontSize.slice(0, -2)}
+            editor={activeEditor}
+            disabled={!isEditable}
+          />
+        );
+      case "bold":
+        return (
+          <Toggle
+            key={`bold-${index}`}
+            disabled={!isEditable}
+            variant={"outline"}
+            size={"Toolbar"}
+            pressed={toolbarState.isBold}
+            onPressedChange={() => {
+              activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+            }}
+            tip={`Bold ${SHORTCUTS.BOLD}`}
+            aria-label={`Format text as bold. Shortcut: ${SHORTCUTS.BOLD}`}
+            className={cn(itemClassName, toolbarState.isBold && activeItemClassName)}
+          >
+            <Bold size={16} />
+          </Toggle>
+        );
+      case "italic":
+        return (
+          <Toggle
+            key={`italic-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            disabled={!isEditable}
+            pressed={toolbarState.isItalic}
+            onPressedChange={() => {
+              activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+            }}
+            tip={`Italic (${SHORTCUTS.ITALIC})`}
+            type="button"
+            aria-label={`Format text as italics. Shortcut: ${SHORTCUTS.ITALIC}`}
+            className={cn(itemClassName, toolbarState.isItalic && activeItemClassName)}
+          >
+            <Italic size={16} />
+          </Toggle>
+        );
+      case "underline":
+        return (
+          <Toggle
+            key={`underline-${index}`}
+            disabled={!isEditable}
+            variant={"outline"}
+            size={"Toolbar"}
+            pressed={toolbarState.isUnderline}
+            onPressedChange={() => {
+              activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
+            }}
+            tip={`Underline (${SHORTCUTS.UNDERLINE})`}
+            type="button"
+            aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
+            className={cn(itemClassName, toolbarState.isUnderline && activeItemClassName)}
+          >
+            <Underline size={16} />
+          </Toggle>
+        );
+      case "code":
+        return (
+          <Toggle
+            key={`code-${index}`}
+            disabled={!isEditable}
+            variant={"outline"}
+            size={"Toolbar"}
+            pressed={toolbarState.isCode}
+            onPressedChange={() => {
+              activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+            }}
+            tip={`Insert code block (${SHORTCUTS.INSERT_CODE_BLOCK})`}
+            type="button"
+            aria-label="Insert code block"
+            className={cn(itemClassName, toolbarState.isCode && activeItemClassName)}
+          >
+            <Code size={16} />
+          </Toggle>
+        );
+      case "link":
+        return (
+          <Toggle
+            key={`link-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            disabled={!isEditable}
+            onPressedChange={insertLink}
+            pressed={toolbarState.isLink}
+            aria-label="Insert link"
+            tip={`Insert link (${SHORTCUTS.INSERT_LINK})`}
+            type="button"
+            className={cn(itemClassName, toolbarState.isLink && activeItemClassName)}
+          >
+            <Link size={16} />
+          </Toggle>
+        );
+      case "color":
+        return (
+          <Color
+            key={`color-${index}`}
+            disabled={!isEditable}
+            color={toolbarState.fontColor}
+            bgColor={toolbarState.bgColor}
+            editor={editor}
+          />
+        );
+      case "bg-color":
+        return (
+          <BackgroundColor
+            key={`bg-${index}`}
+            disabled={!isEditable}
+            color={toolbarState.fontColor}
+            bgColor={toolbarState.bgColor}
+            editor={editor}
+          />
+        );
+      case "text-format":
+        return (
+          <TextFormat
+            key={`format-${index}`}
+            disabled={!isEditable}
+            editor={editor}
+            toolbarState={toolbarState}
+          />
+        );
+      case "insert":
+        return <InsertNode key={`insert-${index}`} disabled={!isEditable} editor={editor} />;
+      case "align":
+        return (
+          <TextAlign
+            key={`align-${index}`}
+            disabled={!isEditable}
+            value={toolbarState.elementFormat}
+            editor={activeEditor}
+            isRTL={toolbarState.isRTL}
+          />
+        );
+      case "speech":
+        return SUPPORT_SPEECH_RECOGNITION ? (
+          <Button
+            key={`speech-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={() => {
+              editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
+              setIsSpeechToText(!isSpeechToText);
+            }}
+            className={cn(
+              "relative inline-flex items-center justify-center p-3 rounded-lg border-none font-medium transition-all duration-300 ease-in-out active:scale-95",
+              isSpeechToText ? "animate-pulse bg-gray-800" : "bg-transparent hover:bg-gray-900 cursor-pointer shadow-sm hover:shadow-md",
+              itemClassName
+            )}
+            title="Speech To Text"
+            aria-label={`${isSpeechToText ? "Disable" : "Enable"} speech to text`}
+          >
+            <Mic className={cn("w-4 h-4 transition-all duration-300", isSpeechToText && "animate-bounce")} />
+          </Button>
+        ) : null;
+      case "template":
+        return <TemplateDialog key={`template-${index}`} />;
+      case "download":
+        return (
+          <Button
+            key={`download-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={handleDownloadHTML}
+            tip="Download as HTML"
+            aria-label="Download document as HTML file"
+            className={cn("border-none", itemClassName)}
+          >
+            <DownloadIcon className="size-4" />
+          </Button>
+        );
+      case "export-md":
+        return (
+          <Button
+            key={`md-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={() => {
+              editor.dispatchCommand(EXPORT_MARKDOWN_COMMAND, undefined);
+            }}
+            tip="Export to Markdown"
+            aria-label="Export document to Markdown"
+            className={cn("border-none", itemClassName)}
+          >
+            <FileJson className="size-4" />
+          </Button>
+        );
+      case "export-pdf":
+        return (
+          <Button
+            key={`pdf-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            type="button"
+            onClick={() => {
+              editor.dispatchCommand(EXPORT_PDF_COMMAND, undefined);
+            }}
+            tip="Export to PDF"
+            aria-label="Export document to PDF"
+            className={cn("border-none", itemClassName)}
+          >
+            <FileText className="size-4" />
+          </Button>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       <nav
         className={cn(
-          "z-40 fixed md:top-20 top-14 left-0 w-full hidden md:block" // Hide on mobile, show on desktop
+          "z-40 left-0 w-full hidden md:block" // Hide on mobile, show on desktop
         )}
       >
         <div className="flex justify-center pt-4">
@@ -347,245 +651,19 @@ export default function index({
               "group flex flex-row items-center bg-background/70 gap-x-2 dark:border dark:border-gray-500/20",
               "md:rounded-2xl rounded-md h-14 px-4 py-2 shadow-md",
               "overflow-x-auto whitespace-nowrap max-w-[90%] scrollbar-none",
-              "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+              "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+              customClassName
             )}
           >
-            <div className="flex flex-row gap-x-2">
-              <Button
-                size={"Toolbar"}
-                variant={"outline"}
-                disabled={!toolbarState.canUndo || !isEditable}
-                onClick={() => {
-                  activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
-                }}
-                tip={false ? "Undo (⌘Z)" : "Undo (Ctrl+Z)"}
-                type="button"
-                aria-label="Undo"
-                className="border-none"
-              >
-                <Undo2Icon className=" size-4" />
-              </Button>
-              <Button
-                variant={"outline"}
-                size={"Toolbar"}
-                disabled={!toolbarState.canRedo || !isEditable}
-                onClick={() => {
-                  activeEditor.dispatchCommand(REDO_COMMAND, undefined);
-                }}
-                tip={false ? "Redo (⇧⌘Z)" : "Redo (Ctrl+Y)"}
-                type="button"
-                className="toolbar-item border-none"
-                aria-label="Redo"
-              >
-                <Redo2Icon className=" size-4" />
-              </Button>
-            </div>
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            {toolbarState.blockType in blockTypeToBlockName &&
-              activeEditor === editor && (
-                <div className="flex flex-row gap-x-[5px]  items-center">
-                  <BlockFormatDropDown
-                    disabled={!isEditable}
-                    blockType={toolbarState.blockType}
-                    editor={activeEditor}
-                  />
-                  <Separator orientation={"vertical"} />
-                </div>
-              )}
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            {toolbarState.blockType == "code" ? (
+            {toolbarState.blockType === "code" ? (
               <CodeList
                 onCodeLanguageSelect={onCodeLanguageSelect}
                 codeLanguage={toolbarState.codeLanguage}
                 disabled={!isEditable}
               />
             ) : (
-              <div className="flex flex-row items-center">
-                <FontDropDown
-                  disabled={!isEditable}
-                  style={{ fontFamily: toolbarState.fontFamily }}
-                  value={toolbarState.fontFamily}
-                  editor={activeEditor}
-                />
-                <Separator className="h-6 mx-2" orientation="vertical" />
-                <FontSize
-                  selectionFontSize={toolbarState.fontSize.slice(0, -2)}
-                  editor={activeEditor}
-                  disabled={!isEditable}
-                />
-                <Separator className="h-6 mx-2" orientation="vertical" />
-                <div className="flex flex-row gap-x-1">
-                  <Toggle
-                    disabled={!isEditable}
-                    variant={"outline"}
-                    size={"Toolbar"}
-                    pressed={toolbarState.isBold}
-                    onPressedChange={() => {
-                      activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
-                    }}
-                    tip={`Bold ${SHORTCUTS.BOLD}`}
-                    aria-label={`Format text as bold. Shortcut: ${SHORTCUTS.BOLD}`}
-                  >
-                    <Bold />
-                  </Toggle>
-                  <Toggle
-                    variant={"outline"}
-                    size={"Toolbar"}
-                    disabled={!isEditable}
-                    pressed={toolbarState.isItalic}
-                    onPressedChange={() => {
-                      activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
-                    }}
-                    tip={`Italic (${SHORTCUTS.ITALIC})`}
-                    type="button"
-                    aria-label={`Format text as italics. Shortcut: ${SHORTCUTS.ITALIC}`}
-                  >
-                    <Italic />
-                  </Toggle>
-                  <Toggle
-                    disabled={!isEditable}
-                    variant={"outline"}
-                    size={"Toolbar"}
-                    pressed={toolbarState.isUnderline}
-                    onPressedChange={() => {
-                      activeEditor.dispatchCommand(
-                        FORMAT_TEXT_COMMAND,
-                        "underline"
-                      );
-                    }}
-                    tip={`Underline (${SHORTCUTS.UNDERLINE})`}
-                    type="button"
-                    aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
-                  >
-                    <Underline />
-                  </Toggle>
-                  <Toggle
-                    disabled={!isEditable}
-                    variant={"outline"}
-                    size={"Toolbar"}
-                    pressed={toolbarState.isCode}
-                    onPressedChange={() => {
-                      activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
-                    }}
-                    tip={`Insert code block (${SHORTCUTS.INSERT_CODE_BLOCK})`}
-                    type="button"
-                    aria-label="Insert code block"
-                  >
-                    <Code />
-                  </Toggle>
-                  <Toggle
-                    variant={"outline"}
-                    size={"Toolbar"}
-                    disabled={!isEditable}
-                    onPressedChange={insertLink}
-                    pressed={toolbarState.isLink}
-                    aria-label="Insert link"
-                    tip={`Insert link (${SHORTCUTS.INSERT_LINK})`}
-                    type="button"
-                  >
-                    <Link />
-                  </Toggle>
-                </div>
-                <Separator className="h-6 mx-2" orientation="vertical" />
-                <Color
-                  disabled={!isEditable}
-                  color={toolbarState.fontColor}
-                  bgColor={toolbarState.bgColor}
-                  editor={editor}
-                />
-                <BackgroundColor
-                  disabled={!isEditable}
-                  color={toolbarState.fontColor}
-                  bgColor={toolbarState.bgColor}
-                  editor={editor}
-                />
-                <Separator className="h-6 mx-2" orientation="vertical" />
-                <TextFormat
-                  disabled={!isEditable}
-                  editor={editor}
-                  toolbarState={toolbarState}
-                />
-                <Separator className="h-6 mx-2" orientation="vertical" />
-                <InsertNode disabled={!isEditable} editor={editor} />
-              </div>
+              itemsToRender.map((item, index) => renderItem(item, index))
             )}
-            <Separator className="h-6 mx-2" orientation="vertical" />
-
-            <TextAlign
-              disabled={!isEditable}
-              value={toolbarState.elementFormat}
-              editor={activeEditor}
-              isRTL={toolbarState.isRTL}
-            />
-
-            {SUPPORT_SPEECH_RECOGNITION && (
-              <Button
-                variant={"outline"}
-                size={"Toolbar"}
-                type="button"
-                onClick={() => {
-                  editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
-                  setIsSpeechToText(!isSpeechToText);
-                }}
-                className={`
-        relative inline-flex items-center justify-center
-        p-3 rounded-lg border-none font-medium
-        transition-all duration-300 ease-in-out
-        active:scale-95
-        ${isSpeechToText
-                    ? "border-none animate-pulse bg-gray-800"
-                    : 'bg-transparent hover:bg-gray-900 cursor-pointer border-none shadow-sm hover:shadow-md'
-                  }
-      `}
-                title="Speech To Text"
-                aria-label={`${isSpeechToText ? 'Disable' : 'Enable'} speech to text`}
-              >
-                <div className="relative z-10 flex items-center space-x-2">
-                  <Mic className={`w-4 h-4 transition-all duration-300 ${isSpeechToText ? 'animate-bounce' : ''
-                    }`} />
-                </div>
-              </Button>
-            )}
-
-            <TemplateDialog />
-            <Button
-              variant={"outline"}
-              size={"Toolbar"}
-              type="button"
-              onClick={handleDownloadHTML}
-              tip="Download as HTML"
-              aria-label="Download document as HTML file"
-              className="border-none"
-            >
-              <DownloadIcon className="size-4" />
-            </Button>
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            <Button
-              variant={"outline"}
-              size={"Toolbar"}
-              type="button"
-              onClick={() => {
-                editor.dispatchCommand(EXPORT_MARKDOWN_COMMAND, undefined);
-              }}
-              tip="Export to Markdown"
-              aria-label="Export document to Markdown"
-              className="border-none"
-            >
-              <FileJson className="size-4" />
-            </Button>
-            <Button
-              variant={"outline"}
-              size={"Toolbar"}
-              type="button"
-              onClick={() => {
-                editor.dispatchCommand(EXPORT_PDF_COMMAND, undefined);
-              }}
-              tip="Export to PDF"
-              aria-label="Export document to PDF"
-              className="border-none"
-            >
-              <FileText className="size-4" />
-            </Button>
           </div>
         </div>
       </nav>
@@ -596,6 +674,7 @@ export default function index({
         toolbarState={toolbarState}
         setIsLinkEditMode={setIsLinkEditMode}
         isVisible={isFocused}
+        toolbarConfig={toolbarConfig}
       />
     </>
   );

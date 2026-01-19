@@ -1,10 +1,10 @@
 import { Loader2, RotateCcw, StarsIcon, WandSparkles } from "lucide-react";
-import React, {  useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "../popover";
 import {
   Command,
   CommandEmpty,
@@ -13,12 +13,12 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command";
+} from "../command";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card";
+} from "../hover-card";
 import { HoverBorderGradient } from "./border";
 import { PlaceholdersAndVanishInput } from "./placeholder-input-vanish";
 import { motion } from "framer-motion";
@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { ExtractData } from "../../editor/utils/extract-data";
 import { AIAction } from "../../../hooks/instructions-messages";
+import { useAI } from "../../providers/AIContext";
 const placeholders = [
   "Chat with what you are writing.",
   "Click on the stepper to generate tasks step by step.",
@@ -44,20 +45,21 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
   const [actionType, setActionType] = useState<AIAction | null>(null); // track the user action
   const [streamedResponse, setStreamedResponse] = useState<string>("");
 
-  const { completion, isLoading, complete, handleInputChange, input } =useCompletion({
-      api: "/api/ai",
-      onError: (err) => {
-        toast.error(err.message);
-      },
-      onResponse: (response) => {
-        setStreamedResponse("");
-      },
-      onFinish: (prompt,compeletion) => {
-        if (actionType === "Steps") {
-          setStreamedResponse(compeletion)
-        }
-      },
-  });
+  const { apiEndpoint } = useAI();
+  const { completion, isLoading, complete, handleInputChange, input } = useCompletion({
+    api: apiEndpoint,
+    onError: (err: any) => {
+      toast.error(err.message);
+    },
+    onResponse: (response: any) => {
+      setStreamedResponse("");
+    },
+    onFinish: (prompt: string, completion: string) => {
+      if (actionType === "Steps") {
+        setStreamedResponse(completion)
+      }
+    },
+  } as any);
   const handleAction = async (
     action: AIAction,
     payload: {
@@ -134,7 +136,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
   };
 
   const renderSteps = () => {
-    if (!streamedResponse  ) return null;
+    if (!streamedResponse) return null;
 
     try {
       const steps = JSON.parse(streamedResponse);
@@ -143,7 +145,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
           {steps.map((step: { id: number; title: string; content: string }) => (
             <li key={step.id} className="rounded-md shadow-md p-1">
               <h3 className="font-semibold text-lg">
-                {step.id+1}. {step.title}
+                {step.id + 1}. {step.title}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mtx-2">
                 {step.content}
@@ -153,8 +155,8 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
         </ul>
       );
     } catch (error) {
-      return 
-      
+      return
+
     }
   };
   const Actions = useMemo(
@@ -237,7 +239,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
           HoverCard: {
             desc: "Enhance your text by adding more detail and context. Let AI expand your ideas! 🚀",
           },
-          onClick:handleMakeLong,
+          onClick: handleMakeLong,
         },
         {
           icon: (
@@ -393,10 +395,10 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
     ],
     [completion]
   );
- 
+
   return (
     <Popover >
-      <PopoverTrigger  asChild>
+      <PopoverTrigger asChild>
         <button className="inline-flex px-6 max-sm:py-2 max-sm:px-[5px]  h-6 animate-background-shine items-center justify-center rounded-md border border-gray-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%]   font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50">
           <WandSparkles className=" size-4 text-purple-400" />
         </button>
@@ -411,7 +413,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="cursor-text w-full p-2 z-20 break-words max-h-64 h-fit overflow-y-auto"
               >
-                {streamedResponse!==""  ? (
+                {streamedResponse !== "" ? (
                   renderSteps()
                 ) : (
                   <ReactMarkdown>
@@ -445,8 +447,8 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
               />
             </div>
           </div>
-           <div className="w-[200px] h-[180px] z-50 rounded border mt-2 fixed">
-            {!completion  ? (
+          <div className="w-[200px] h-[180px] z-50 rounded border mt-2 fixed">
+            {!completion ? (
               <Command id="toolbar" className="w-full ">
                 <CommandInput placeholder="Type a command" />
                 <CommandList>
@@ -542,7 +544,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
                       <HoverCard key={sug.label}>
                         <HoverCardTrigger
                           onClick={sug.func}
-                        
+
                           className="w-full p-0"
                         >
                           <CommandItem disabled={isLoading} className="w-full">

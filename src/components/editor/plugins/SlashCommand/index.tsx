@@ -54,11 +54,11 @@ import {
 } from "lucide-react";
 
 import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
-import { cn } from "@/lib/utils";
+import { cn } from "../../../../lib/utils";
 import { INSERT_LAYOUT_COMMAND } from "../LayoutPlugin";
 import { INSERT_POLL_COMMAND } from "../PollPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
-import useModal from "@/components/ui/models/use-model";
+import useModal from "../../../ui/models/use-model";
 import {
   Command,
   CommandItem,
@@ -66,9 +66,9 @@ import {
   CommandInput,
   CommandEmpty,
   CommandShortcut,
-} from "@/components/ui/command";
+} from "../../../ui/command";
 import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../../../ui/skeleton";
 import { ImagePayload } from "../../nodes/ImageNode";
 import { INSERT_IMAGE_COMMAND } from "../ImagesPlugin";
 import { AutoEmbedDialog, FigmaEmbedConfig, TwitterEmbedConfig, YoutubeEmbedConfig } from "../AutoEmbedPlugin";
@@ -77,9 +77,9 @@ import { InsertInlineImageDialog } from "../InlineImagePlugin";
 import { InsertEquationDialog } from "../EquationsPlugin";
 import { INSERT_STORY_BUILDER_COMMAND } from "../StoryBuilderPlugin";
 import { createDefaultDynamicBlock, INSERT_DYNAMIC_BLOCK_COMMAND } from "../DynamicBlockPluggin";
-const InsertGif = React.lazy(() => import("@/components/ui/models/insert-gif"));
+const InsertGif = React.lazy(() => import("../../../ui/models/insert-gif"));
 const InsertImageDialog = React.lazy(() =>
-  import("@/components/ui/models/insert-image").then((module) => ({
+  import("../../../ui/models/insert-image").then((module) => ({
     default: module.InsertImageDialog,
   }))
 );
@@ -591,9 +591,9 @@ export default function SlashCommand(): React.JSX.Element {
                         ref={option.ref as React.Ref<HTMLDivElement>}
                         className={cn(
                           selectedIndex === i
-              ? "bg-gray-200 dark:bg-gray-700"
-              : "hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm gap-x-2 relative h-full border-0 transition-colors items-start"
-          )}
+                            ? "bg-gray-200 dark:bg-gray-700"
+                            : "hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm gap-x-2 relative h-full border-0 transition-colors items-start"
+                        )}
                         onSelect={() => {
                           setHighlightedIndex(i);
                           selectOptionAndCleanUp(option);

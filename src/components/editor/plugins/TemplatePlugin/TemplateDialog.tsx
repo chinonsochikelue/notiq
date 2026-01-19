@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../ui/button";
 import {
     Dialog,
     DialogContent,
@@ -6,7 +6,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog";
+} from "../../../ui/dialog";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LayoutTemplate } from "lucide-react";
 import { useState } from "react";

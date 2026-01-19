@@ -27,8 +27,8 @@ import {
     Quote,
     CheckSquare,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { useToolbarState } from "@/components/providers/ToolbarContext"
+import { cn } from "../../../../lib/utils"
+import { useToolbarState } from "../../../providers/ToolbarContext"
 import { TOGGLE_LINK_COMMAND } from "@lexical/link"
 import { sanitizeUrl } from "../../utils/url"
 import {
@@ -38,6 +38,7 @@ import {
 } from "@lexical/list"
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text"
 import { $setBlocksType } from "@lexical/selection"
+import { ToolbarConfig } from "../../index"
 
 export default function MobileToolbar({
     editor,
@@ -45,12 +46,14 @@ export default function MobileToolbar({
     toolbarState,
     setIsLinkEditMode,
     isVisible,
+    toolbarConfig,
 }: {
     editor: any
     activeEditor: any
     toolbarState: any
     setIsLinkEditMode: (mode: boolean) => void
     isVisible: boolean
+    toolbarConfig?: ToolbarConfig
 }) {
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
     const [bottomOffset, setBottomOffset] = useState(0)
@@ -117,8 +120,8 @@ export default function MobileToolbar({
             className={cn(
                 "flex items-center justify-center min-w-[36px] h-9 rounded-xl transition-all duration-200 active:scale-95 touch-manipulation",
                 isActive
-                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                    : "bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? cn("bg-blue-600 text-white shadow-md shadow-blue-500/20", toolbarConfig?.activeItemClassName)
+                    : cn("bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800", toolbarConfig?.mobileItemClassName)
             )}
             aria-label={label}
         >
@@ -158,6 +161,7 @@ export default function MobileToolbar({
                 className={cn(
                     "w-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-800/50 pointer-events-auto",
                     "pb-[env(safe-area-inset-bottom)]",
+                    toolbarConfig?.mobileClassName
                 )}
                 onMouseDown={(e) => {
                     // Prevent focus loss

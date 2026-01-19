@@ -6,13 +6,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
+} from "../popover";
+import { Button } from "../button";
+import { Input } from "../input";
+import { Label } from "../label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../tabs";
+import { cn } from "../../../lib/utils";
+import { Separator } from "../separator";
 import { PaintBucketIcon, PaletteIcon, XIcon } from "lucide-react";
 
 export default function BackgroundColor({
@@ -57,7 +57,7 @@ export default function BackgroundColor({
   const onBgColorSelect = useCallback(
     (value: string, skipHistoryStack: boolean) => {
       applyStyleText({ "background-color": value }, skipHistoryStack);
-      
+
       // Add to recent colors if it's not already there and not a default color
       if (value && value !== "transparent" && !recentBgColors.includes(value) && !value.startsWith('var(--')) {
         setRecentBgColors(prev => [value, ...prev.slice(0, 7)]); // Keep max 8 recent colors
@@ -87,7 +87,7 @@ export default function BackgroundColor({
   const generateShades = (baseColor: string) => {
     const rgb = hexToRgb(baseColor);
     if (!rgb) return [];
-    
+
     const shades = [];
     for (let i = 10; i <= 90; i += 10) {
       const factor = i / 100;
@@ -102,7 +102,7 @@ export default function BackgroundColor({
   const generateTints = (baseColor: string) => {
     const rgb = hexToRgb(baseColor);
     if (!rgb) return [];
-    
+
     const tints = [];
     for (let i = 10; i <= 90; i += 10) {
       const factor = i / 100;
@@ -139,7 +139,7 @@ export default function BackgroundColor({
       { name: "Light Orange", value: "#fff3e0" },
       { name: "Light Brown", value: "#efebe9" },
       { name: "Light Gray", value: "#fafafa" },
-      
+
       // Medium backgrounds
       { name: "Red", value: "#ffcdd2" },
       { name: "Pink", value: "#f8bbd9" },
@@ -151,7 +151,7 @@ export default function BackgroundColor({
       { name: "Orange", value: "#ffe0b2" },
       { name: "Brown", value: "#d7ccc8" },
       { name: "Gray", value: "#f5f5f5" },
-      
+
       // Darker backgrounds
       { name: "Dark Red", value: "#ef9a9a" },
       { name: "Dark Pink", value: "#f48fb1" },
@@ -163,7 +163,7 @@ export default function BackgroundColor({
       { name: "Dark Orange", value: "#ffcc02" },
       { name: "Dark Brown", value: "#bcaaa4" },
       { name: "Dark Gray", value: "#eeeeee" },
-      
+
       // Accent colors
       { name: "Mint", value: "#f0fff4" },
       { name: "Lavender", value: "#f0f8ff" },
@@ -201,9 +201,9 @@ export default function BackgroundColor({
             <div className="flex items-center gap-1">
               <PaintBucketIcon className="w-4 h-4" />
               {/* Background color indicator */}
-              <div 
+              <div
                 className="w-3 h-1 rounded-sm border border-border/50 ml-1"
-                style={{ 
+                style={{
                   backgroundColor: bgColor || "transparent",
                   backgroundImage: (!bgColor || bgColor === "transparent")
                     ? "linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)"
@@ -227,10 +227,10 @@ export default function BackgroundColor({
           </div>
         )}
       </PopoverTrigger>
-      
-      <PopoverContent 
-        className="w-60 p-4 z-[250] shadow-lg border-border/50" 
-        side={side} 
+
+      <PopoverContent
+        className="w-60 p-4 z-[250] shadow-lg border-border/50"
+        side={side}
         sideOffset={sideOffset}
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -269,7 +269,7 @@ export default function BackgroundColor({
                     Remove
                   </Button>
                 </div>
-                
+
                 <div className="grid grid-cols-5 gap-2">
                   {backgroundColorPalette.basic.map((colorItem, index) => (
                     <Button
@@ -280,11 +280,11 @@ export default function BackgroundColor({
                         "w-8 h-8 p-0 rounded-lg border-2 transition-all duration-200",
                         "hover:scale-110 hover:shadow-md",
                         "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        isActiveBgColor(colorItem.value) 
-                          ? "border-ring shadow-md scale-105" 
+                        isActiveBgColor(colorItem.value)
+                          ? "border-ring shadow-md scale-105"
                           : "border-border/30 hover:border-border"
                       )}
-                      style={{ 
+                      style={{
                         backgroundColor: colorItem.value === "transparent" ? "transparent" : colorItem.value,
                         backgroundImage: colorItem.value === "transparent"
                           ? "linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)"
@@ -316,7 +316,7 @@ export default function BackgroundColor({
                     Remove
                   </Button>
                 </div>
-                
+
                 <div className="grid grid-cols-5 gap-1.5 max-h-48 overflow-y-auto scrollbar-none">
                   {backgroundColorPalette.extended.map((colorItem, index) => (
                     <Button
@@ -327,11 +327,11 @@ export default function BackgroundColor({
                         "w-8 h-8 p-0 rounded-md border-2 transition-all duration-200",
                         "hover:scale-110 hover:shadow-md",
                         "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        isActiveBgColor(colorItem.value) 
-                          ? "border-ring shadow-md scale-105" 
+                        isActiveBgColor(colorItem.value)
+                          ? "border-ring shadow-md scale-105"
                           : "border-border/30 hover:border-border"
                       )}
-                      style={{ 
+                      style={{
                         backgroundColor: colorItem.value,
                       }}
                       onMouseDown={(e) => e.preventDefault()}
@@ -433,7 +433,7 @@ export default function BackgroundColor({
                     Clear
                   </Button>
                 </div>
-                
+
                 {recentBgColors.length > 0 ? (
                   <div className="grid grid-cols-4 gap-2">
                     {recentBgColors.map((recentColor, index) => (
@@ -445,11 +445,11 @@ export default function BackgroundColor({
                           "w-12 h-12 p-0 rounded-lg border-2 transition-all duration-200",
                           "hover:scale-110 hover:shadow-md",
                           "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                          isActiveBgColor(recentColor) 
-                            ? "border-ring shadow-md scale-105" 
+                          isActiveBgColor(recentColor)
+                            ? "border-ring shadow-md scale-105"
                             : "border-border/30 hover:border-border"
                         )}
-                        style={{ 
+                        style={{
                           backgroundColor: recentColor,
                         }}
                         onMouseDown={(e) => e.preventDefault()}

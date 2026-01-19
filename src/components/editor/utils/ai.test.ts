@@ -17,12 +17,12 @@ vi.mock("../nodes/Stepper", () => ({
 
 // Mock @lexical/code
 vi.mock("@lexical/code", () => ({
-    $createCodeNode: vi.fn((lang) => ({ type: "code", language: lang, children: [], append: function (child: any) { this.children.push(child); } })),
+    $createCodeNode: vi.fn((lang) => ({ type: "code", language: lang, children: [] as any[], append: function (child: any) { this.children.push(child); } })),
 }));
 
 // Mock @lexical/rich-text
 vi.mock("@lexical/rich-text", () => ({
-    $createHeadingNode: vi.fn((tag) => ({ type: "heading", tag, children: [], append: function (child: any) { this.children.push(child); } })),
+    $createHeadingNode: vi.fn((tag) => ({ type: "heading", tag, children: [] as any[], append: function (child: any) { this.children.push(child); } })),
 }));
 
 

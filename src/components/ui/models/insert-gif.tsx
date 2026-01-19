@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { InsertImagePayload } from "../../editor/plugins/ImagesPlugin";
 import { useQuery } from "@tanstack/react-query";
 import fetchGifs from "../../editor/utils/gif";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "../skeleton";
+import { Button } from "../button";
 import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Input } from "../input";
 
 export interface InsertGifProps {
   insertGifOnClick: (payload: InsertImagePayload) => void;
@@ -25,7 +25,7 @@ export default function InsertGif({ insertGifOnClick, onClose }: InsertGifProps)
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
-    }, 500); 
+    }, 500);
 
     return () => clearTimeout(handler);
   }, [search]);

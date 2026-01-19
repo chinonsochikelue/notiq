@@ -1,0 +1,117 @@
+
+> @collabchron/notiq@0.3.0 build:lib C:\Users\HP\notiq
+> tsup && pnpm build:styles
+
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.5.1
+[34mCLI[39m Using tsup config: C:\Users\HP\notiq\tsup.config.ts
+[34mCLI[39m Target: es2017
+[34mCLI[39m Cleaning output folder
+[34mCJS[39m Build start
+[34mESM[39m Build start
+[34mDTS[39m Build start
+[32mESM[39m [1mdist\ExcalidrawPlugin-2TM7ROA3.mjs                [22m[32m345.00 B[39m
+[32mESM[39m [1mdist\insert-table-YNONX365.mjs                    [22m[32m1.62 KB[39m
+[32mESM[39m [1mdist\insert-poll-O6QF2OEU.mjs                     [22m[32m891.00 B[39m
+[32mESM[39m [1mdist\chunk-T3H4K6QW.mjs                           [22m[32m2.04 KB[39m
+[32mESM[39m [1mdist\insert-node-55KYUM2L.mjs                     [22m[32m7.54 KB[39m
+[32mESM[39m [1mdist\TableCellActionMenuPlugin-Q53YMID2.mjs       [22m[32m21.87 KB[39m
+[32mESM[39m [1mdist\ToolbarPlugin-EXIOLGMH.mjs                   [22m[32m51.25 KB[39m
+[32mESM[39m [1mdist\text-align-MUJJFVK7.mjs                      [22m[32m3.31 KB[39m
+[32mESM[39m [1mdist\standalone-VKIGXCAA.mjs                      [22m[32m100.17 KB[39m
+[32mESM[39m [1mdist\CodeActionMenuPlugin-EPJYA4Z4.mjs            [22m[32m388.00 B[39m
+[32mESM[39m [1mdist\TableHoverActionsPlugin-2RU4FHT4.mjs         [22m[32m8.41 KB[39m
+[32mESM[39m [1mdist\chunk-AKOV2NRL.mjs                           [22m[32m23.62 KB[39m
+[32mESM[39m [1mdist\stepper-MVYKDQB4.mjs                         [22m[32m10.24 KB[39m
+[32mESM[39m [1mdist\chunk-3LE3UDBK.mjs                           [22m[32m470.00 B[39m
+[32mESM[39m [1mdist\TemplatePlugin-SFPAF7PY.mjs                  [22m[32m182.00 B[39m
+[32mESM[39m [1mdist\chunk-BFHEVZV4.mjs                           [22m[32m997.00 B[39m
+[32mESM[39m [1mdist\FloatingLinkEditorPlugin-YZEOMUHU.mjs        [22m[32m303.00 B[39m
+[32mESM[39m [1mdist\background-color-4ZZ6EK3W.mjs                [22m[32m16.42 KB[39m
+[32mESM[39m [1mdist\MobileToolbar-MDXXDLJ7.mjs                   [22m[32m8.45 KB[39m
+[32mESM[39m [1mdist\SlashCommand-56FQZOYY.mjs                    [22m[32m775.00 B[39m
+[32mESM[39m [1mdist\chunk-GDCXMA42.mjs                           [22m[32m2.13 KB[39m
+[32mESM[39m [1mdist\insert-image-VQXHYSJJ.mjs                    [22m[32m8.92 KB[39m
+[32mESM[39m [1mdist\chunk-OF4FHWTC.mjs                           [22m[32m21.26 KB[39m
+[32mESM[39m [1mdist\html-NZH2WLLX.mjs                            [22m[32m197.38 KB[39m
+[32mESM[39m [1mdist\postcss-LCADTOLA.mjs                         [22m[32m234.80 KB[39m
+[32mESM[39m [1mdist\babel-OP7YCTEM.mjs                           [22m[32m446.14 KB[39m
+[32mESM[39m [1mdist\markdown-6QCPHRTJ.mjs                        [22m[32m211.50 KB[39m
+[32mESM[39m [1mdist\block-format-KK5E7GOU.mjs                    [22m[32m386.00 B[39m
+[32mESM[39m [1mdist\color-J42MHXB6.mjs                           [22m[32m265.00 B[39m
+[32mESM[39m [1mdist\text-format-3X4ERIS3.mjs                     [22m[32m399.00 B[39m
+[32mESM[39m [1mdist\font-FFU6A6N3.mjs                            [22m[32m294.00 B[39m
+[32mESM[39m [1mdist\font-size-EQJIHU3E.mjs                       [22m[32m350.00 B[39m
+[32mESM[39m [1mdist\DynamicBlockComponent-2HR6XSNF.mjs           [22m[32m9.77 KB[39m
+[32mESM[39m [1mdist\estree-ENJZO627.mjs                          [22m[32m243.73 KB[39m
+[32mESM[39m [1mdist\chunk-Q53ZN3SL.mjs                           [22m[32m69.52 KB[39m
+[32mESM[39m [1mdist\FloatingTextFormatToolbarPlugin-6EE2KY3L.mjs [22m[32m875.00 B[39m
+[32mESM[39m [1mdist\chunk-QYZKJVC4.mjs                           [22m[32m2.37 KB[39m
+[32mESM[39m [1mdist\chunk-VRZC7URX.mjs                           [22m[32m13.44 KB[39m
+[32mESM[39m [1mdist\chunk-HZSNEXPK.mjs                           [22m[32m4.22 KB[39m
+[32mESM[39m [1mdist\chunk-FQU5TITX.mjs                           [22m[32m15.38 KB[39m
+[32mESM[39m [1mdist\chunk-F7USP2JP.mjs                           [22m[32m3.14 KB[39m
+[32mESM[39m [1mdist\chunk-X6B2RGNU.mjs                           [22m[32m3.46 KB[39m
+[32mESM[39m [1mdist\chunk-LX7UHTK3.mjs                           [22m[32m1.32 KB[39m
+[32mESM[39m [1mdist\chunk-IROSPDCG.mjs                           [22m[32m4.24 KB[39m
+[32mESM[39m [1mdist\index.mjs                                    [22m[32m72.55 KB[39m
+[32mESM[39m [1mdist\insert-gif-GZ2TL3II.mjs                      [22m[32m3.39 KB[39m
+[32mESM[39m [1mdist\chunk-6AYYB3G7.mjs                           [22m[32m4.68 KB[39m
+[32mESM[39m [1mdist\chunk-TIWBXGXV.mjs                           [22m[32m1.31 KB[39m
+[32mESM[39m [1mdist\chunk-LJZD7UH6.mjs                           [22m[32m2.84 KB[39m
+[32mESM[39m [1mdist\chunk-EP4LXGUU.mjs                           [22m[32m11.77 KB[39m
+[32mESM[39m [1mdist\chunk-X55GEM74.mjs                           [22m[32m22.03 KB[39m
+[32mESM[39m [1mdist\chunk-M7WVX6A2.mjs                           [22m[32m3.78 KB[39m
+[32mESM[39m [1mdist\chunk-GXJ62QBZ.mjs                           [22m[32m37.39 KB[39m
+[32mESM[39m [1mdist\chunk-AFAKSQ4M.mjs                           [22m[32m10.31 KB[39m
+[32mESM[39m [1mdist\chunk-OC6OFWWL.mjs                           [22m[32m2.28 KB[39m
+[32mESM[39m [1mdist\chunk-SJQZ6YJX.mjs                           [22m[32m509.00 B[39m
+[32mESM[39m [1mdist\chunk-IFA7SDST.mjs                           [22m[32m5.65 KB[39m
+[32mESM[39m [1mdist\chunk-YMU7B5XO.mjs                           [22m[32m4.62 KB[39m
+[32mESM[39m [1mdist\chunk-74K3GVNN.mjs                           [22m[32m6.65 KB[39m
+[32mESM[39m [1mdist\chunk-64BTLBSI.mjs                           [22m[32m7.97 KB[39m
+[32mESM[39m [1mdist\chunk-3QIBUN54.mjs                           [22m[32m2.34 KB[39m
+[32mESM[39m [1mdist\chunk-PZWLBOED.mjs                           [22m[32m1.23 KB[39m
+[32mESM[39m [1mdist\image-PAIL4CAB.mjs                           [22m[32m29.60 KB[39m
+[32mESM[39m [1mdist\chunk-TLM6UWXY.mjs                           [22m[32m647.00 B[39m
+[32mESM[39m [1mdist\chunk-NEBFW5BI.mjs                           [22m[32m5.65 KB[39m
+[32mESM[39m [1mdist\chunk-C3QLJKRR.mjs                           [22m[32m885.00 B[39m
+[32mESM[39m [1mdist\chunk-N556MMVX.mjs                           [22m[32m457.00 B[39m
+[32mESM[39m [1mdist\poll-component-RJPYEGHJ.mjs                  [22m[32m8.92 KB[39m
+[32mESM[39m [1mdist\HintComponet-HWJ6V4NE.mjs                    [22m[32m8.44 KB[39m
+[32mESM[39m [1mdist\chunk-RUMB2JFD.mjs                           [22m[32m4.01 KB[39m
+[32mESM[39m [1mdist\chunk-H4QJMHI6.mjs                           [22m[32m3.87 KB[39m
+[32mESM[39m [1mdist\InlineImageComponent-SCSOFSC4.mjs            [22m[32m13.96 KB[39m
+[32mESM[39m [1mdist\chunk-3EUCWIZP.mjs                           [22m[32m851.00 B[39m
+[32mESM[39m [1mdist\ExportPlugin-VFUZ7PCV.mjs                    [22m[32m222.00 B[39m
+[32mESM[39m [1mdist\ExcalidrawComponent-YCFIQ232.mjs             [22m[32m15.42 KB[39m
+[32mESM[39m [1mdist\chunk-QF7WY32Q.mjs                           [22m[32m1.55 KB[39m
+[32mESM[39m [1mdist\chunk-UVI7MQH5.mjs                           [22m[32m12.55 KB[39m
+[32mESM[39m [1mdist\EquationComponent-Z4A54MJL.mjs               [22m[32m4.88 KB[39m
+[32mESM[39m [1mdist\chunk-S7KDXQGR.mjs                           [22m[32m3.90 KB[39m
+[32mESM[39m [1mdist\chunk-HPLCWBJX.mjs                           [22m[32m2.61 KB[39m
+[32mESM[39m [1mdist\chunk-7CE3SCTW.mjs                           [22m[32m4.86 KB[39m
+[32mESM[39m [1mdist\chunk-T7T3SFXU.mjs                           [22m[32m3.05 KB[39m
+[32mESM[39m [1mdist\chunk-EFSQGX6L.mjs                           [22m[32m2.22 KB[39m
+[32mESM[39m [1mdist\chunk-M5PVXWT3.mjs                           [22m[32m934.00 B[39m
+[32mESM[39m [1mdist\chunk-DKER2PST.mjs                           [22m[32m1.13 KB[39m
+[32mESM[39m [1mdist\chunk-A62W3BMC.mjs                           [22m[32m3.70 KB[39m
+[32mESM[39m [1mdist\chunk-PAVI7PL5.mjs                           [22m[32m4.05 KB[39m
+[32mESM[39m [1mdist\chunk-SZOFVBTZ.mjs                           [22m[32m168.00 B[39m
+[32mESM[39m [1mdist\chunk-T63GJ5KM.mjs                           [22m[32m1.65 KB[39m
+[32mESM[39m [1mdist\chunk-YUA6K5YD.mjs                           [22m[32m592.00 B[39m
+[32mESM[39m [1mdist\typescript-EIGUIC7C.mjs                      [22m[32m1.07 MB[39m
+[32mESM[39m [1mdist\chunk-GNTB7OEW.mjs                           [22m[32m4.86 KB[39m
+[32mESM[39m [1mdist\StoryBuilderComponent-3SWX3FQ7.mjs           [22m[32m34.34 KB[39m
+[32mESM[39m [1mdist\chunk-HLGT3AHB.mjs                           [22m[32m695.00 B[39m
+[32mESM[39m ÔÜí´©Å Build success in 5457ms
+[32mCJS[39m [1mdist\index.js [22m[32m3.25 MB[39m
+[32mCJS[39m ÔÜí´©Å Build success in 5951ms
+[32mDTS[39m ÔÜí´©Å Build success in 32437ms
+[32mDTS[39m [1mdist\index.d.ts  [22m[32m4.04 KB[39m
+[32mDTS[39m [1mdist\index.d.mts [22m[32m4.04 KB[39m
+
+> @collabchron/notiq@0.3.0 build:styles C:\Users\HP\notiq
+> pwsh -Command "if (!(Test-Path dist/styles)) { New-Item -ItemType Directory -Path dist/styles -Force }; Copy-Item src/styles/notiq.css -Destination dist/styles/notiq.css -Force"
+

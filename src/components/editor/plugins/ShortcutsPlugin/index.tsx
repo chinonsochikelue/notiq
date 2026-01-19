@@ -6,8 +6,8 @@
  *
  */
 
-import {TOGGLE_LINK_COMMAND} from '@lexical/link';
-import {HeadingTagType} from '@lexical/rich-text';
+import { TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { HeadingTagType } from '@lexical/rich-text';
 import {
   COMMAND_PRIORITY_NORMAL,
   FORMAT_ELEMENT_COMMAND,
@@ -17,9 +17,9 @@ import {
   LexicalEditor,
   OUTDENT_CONTENT_COMMAND,
 } from 'lexical';
-import {Dispatch, useEffect} from 'react';
+import { Dispatch, useEffect } from 'react';
 
-import {sanitizeUrl} from '../../utils/url';
+import { sanitizeUrl } from '../../utils/url';
 import {
   clearFormatting,
   formatBulletList,
@@ -31,7 +31,7 @@ import {
   formatQuote,
   updateFontSize,
   UpdateFontSizeType,
-} from '@/components/editor/utils/editorFormatting';
+} from "../../utils/editorFormatting";
 import {
   isCapitalize,
   isCenterAlign,
@@ -58,7 +58,7 @@ import {
   isSuperscript,
   isUppercase,
 } from './shortcuts';
-import { useToolbarState } from '@/components/providers/ToolbarContext';
+import { useToolbarState } from "../../../providers/ToolbarContext";
 
 export default function ShortcutsPlugin({
   editor,
@@ -67,7 +67,7 @@ export default function ShortcutsPlugin({
   editor: LexicalEditor;
   setIsLinkEditMode: Dispatch<boolean>;
 }): null {
-  const {toolbarState} = useToolbarState();
+  const { toolbarState } = useToolbarState();
 
   useEffect(() => {
     const keyboardShortcutsHandler = (payload: KeyboardEvent) => {
@@ -78,7 +78,7 @@ export default function ShortcutsPlugin({
         formatParagraph(editor);
       } else if (isFormatHeading(event)) {
         event.preventDefault();
-        const {code} = event;
+        const { code } = event;
         const headingSize = `h${code[code.length - 1]}` as HeadingTagType;
         formatHeading(editor, toolbarState.blockType, headingSize);
       } else if (isFormatBulletList(event)) {

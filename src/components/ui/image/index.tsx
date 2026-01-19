@@ -39,7 +39,7 @@ import {
 import * as React from "react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { $isImageNode } from "../../editor/nodes/ImageNode";
-import { useSharedHistoryContext } from "@/components/providers/SharedHistoryContext";
+import { useSharedHistoryContext } from "../../providers/SharedHistoryContext";
 import ErrorImage from "./error-image";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";

@@ -20,7 +20,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 
 import { useDebounce } from "../CodeActionMenuPlugin/utils";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../ui/button";
 import { Plus } from "lucide-react";
 
 const BUTTON_WIDTH_PX = 20;
@@ -307,8 +307,8 @@ export default function TableHoverActionsPlugin({
 
   return isEditable
     ? createPortal(
-        <TableHoverActionsContainer anchorElem={anchorElem} />,
-        anchorElem
-      )
+      <TableHoverActionsContainer anchorElem={anchorElem} />,
+      anchorElem
+    )
     : null;
 }

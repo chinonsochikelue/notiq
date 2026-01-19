@@ -7,8 +7,8 @@ import {
   MakeShortInstruction,
   SimplifyLanguageInstruction,
   StepsInstruction,
-} from "@/hooks/instructions-messages";
-import { ExtractedBlock } from "@/components/editor/utils/extract-data";
+} from "../../../hooks/instructions-messages";
+import { ExtractedBlock } from "../../../components/editor/utils/extract-data";
 import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
@@ -59,9 +59,9 @@ async function processContext(rawContext: string): Promise<string> {
         .join("\n\n");
 
       processedText = `${importantSections}\n\n${blocks
-          .filter((b) => !["heading", "quote", "Table", "paragraph"].includes(b.blockType))
-          .map((b) => b.content)
-          .join("\n")
+        .filter((b) => !["heading", "quote", "Table", "paragraph"].includes(b.blockType))
+        .map((b) => b.content)
+        .join("\n")
         }`.slice(0, MAX_TOKEN * 4);
     }
 
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
   try {
     if (provider === "google") {
       // NON-STREAMING path for Google (Gemini) due to SDK version mismatch
-      const model = google("gemini-1.5-flash");
+      const model = google("gemini-1.5-flash") as any;
       const result = await generateText({
         model,
         messages,
@@ -152,12 +152,12 @@ export async function POST(req: Request) {
       }
 
       const result = streamText({
-        model,
+        model: model as any,
         messages,
         temperature: 0.2,
       });
 
-      return result.toDataStreamResponse();
+      return (result as any).toDataStreamResponse();
     }
   } catch (error) {
     console.error("AI Generation failed:", error);

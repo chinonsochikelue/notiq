@@ -2,12 +2,12 @@ import * as React from "react";
 
 import { LexicalEditor } from "lexical";
 import { Minus, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { MAX_ALLOWED_FONT_SIZE, MIN_ALLOWED_FONT_SIZE } from "@/components/providers/ToolbarContext";
+import { Button } from "../button";
+import { cn } from "../../../lib/utils";
+import { MAX_ALLOWED_FONT_SIZE, MIN_ALLOWED_FONT_SIZE } from "../../providers/ToolbarContext";
 import { updateFontSize, updateFontSizeInSelection, UpdateFontSizeType } from "../../editor/utils/editorFormatting";
 import { SHORTCUTS } from "../../editor/plugins/ShortcutsPlugin/shortcuts";
-import { Input } from "@/components/ui/input";
+import { Input } from "../input";
 
 export function parseAllowedFontSize(input: string): string {
   const match = input.match(/^(\d+(?:\.\d+)?)px$/);
@@ -30,8 +30,8 @@ export default function FontSize({
   selectionFontSize: string;
   disabled: boolean;
   editor: LexicalEditor;
-  className?:string,
-  classNameContent?:string
+  className?: string,
+  classNameContent?: string
 }) {
   const [inputValue, setInputValue] = React.useState<string>(selectionFontSize);
   const [inputChangeFlag, setInputChangeFlag] = React.useState<boolean>(false);
@@ -77,11 +77,11 @@ export default function FontSize({
     setInputValue(selectionFontSize);
   }, [selectionFontSize]);
   return (
-    <div className={cn("flex flex-row items-center gap-1",classNameContent)}>
+    <div className={cn("flex flex-row items-center gap-1", classNameContent)}>
       <Button
         type="button"
         className={
-          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer",className)
+          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer", className)
         }
         tip={`decrement ${SHORTCUTS.INCREASE_FONT_SIZE}`}
         disabled={
@@ -100,11 +100,11 @@ export default function FontSize({
 
       <Input
         type="number"
-        
+
         value={inputValue}
         disabled={disabled}
         className={
-          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-text",className)
+          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-text", className)
         }
         min={MIN_ALLOWED_FONT_SIZE}
         max={MAX_ALLOWED_FONT_SIZE}
@@ -115,9 +115,9 @@ export default function FontSize({
       <Button
         type="button"
         tip={`increment ${SHORTCUTS.DECREASE_FONT_SIZE}`}
-        
+
         className={
-          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer",className)
+          cn("h-7 min-w-[29px] w-[29px]  px-[6px] border-none cursor-pointer", className)
         }
 
         disabled={

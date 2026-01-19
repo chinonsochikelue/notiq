@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from 'react'
 import Link from "next/link"
-import { ModeToggle } from '@/components/theme/ModeToggle'
-import Editor from '@/components/editor'
+import { ModeToggle } from '../../components/theme/ModeToggle'
+import Editor from '../../components/editor'
 
-export default function EditorPage() {
+export default function PlaygroundPage() {
     const [aiAssistantActive] = useState(false)
     const [documentTitle, setDocumentTitle] = useState("Untitled Document")
     const [lastSaved, setLastSaved] = useState(new Date())
@@ -965,17 +965,17 @@ export default function EditorPage() {
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-3">
                                 <Link href="/" className="flex items-center gap">
-                                <div className="relative">
-                                    <div >
-                                        <img src="/logo.png" className="flex h-12 w-12" alt="Notiq Logo" />
+                                    <div className="relative">
+                                        <div >
+                                            <img src="/logo.png" className="flex h-12 w-12" alt="Notiq Logo" />
+                                        </div>
+                                        {aiAssistantActive && (
+                                            <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
+                                        )}
                                     </div>
-                                    {aiAssistantActive && (
-                                        <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
-                                    )}
-                                </div>
-                                <span className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-                                    Notiq
-                                </span>
+                                    <span className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                                        Notiq
+                                    </span>
                                 </Link>
                             </div>
 

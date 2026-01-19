@@ -1,8 +1,8 @@
 import { LexicalEditor } from "lexical";
 import { useState } from "react";
 import { INSERT_POLL_COMMAND } from "../../editor/plugins/PollPlugin";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "../button";
+import { Input } from "../input";
 
 export function InsertPoll({
   activeEditor,
@@ -20,9 +20,9 @@ export function InsertPoll({
 
   return (
     <div className='space-y-4'>
-      <Input placeholder='Question?' onChange={(e)=>setQuestion(e.target.value)}   value={question} />
+      <Input placeholder='Question?' onChange={(e) => setQuestion(e.target.value)} value={question} />
       <Button disabled={question.trim() === ''} onClick={onClick}>
-          Confirm
+        Confirm
       </Button>
     </div>
   );

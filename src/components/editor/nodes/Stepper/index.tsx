@@ -17,7 +17,7 @@ import {
 } from "lexical";
 import React, { Suspense, useEffect } from "react";
 const StepperComponent = React.lazy(
-  () => import("@/components/ui/stepper/stepper")
+  () => import("../../../ui/stepper/stepper")
 );
 
 export interface StepType {
@@ -137,8 +137,8 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
     if (step) step.title = title;
     return self;
   }
-  
-  
+
+
   replaceSteps(steps: StepsType) {
     const self = this.getWritable();
     self.__steps = steps.map((step) => {

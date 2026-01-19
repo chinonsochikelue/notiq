@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import { EdgeStoreProvider } from "@/lib/edgestore";
-import QueryProvider from "@/components/providers/QueryProvider";
+import { ThemeProvider } from "../components/providers/theme-provider";
+import { EdgeStoreProvider } from "../lib/edgestore";
+import QueryProvider from "../components/providers/QueryProvider";
 import { Toaster } from "sonner";
 
 // Enhanced SEO Metadata
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     template: "%s | Notiq - AI Rich Text Editor"
   },
   description: "Notiq is a powerful, open-source AI-enhanced rich text editor built with Lexical, Next.js, and TypeScript. Features GPT-4 integration, 40+ content blocks, real-time analytics, drag & drop interface, and advanced formatting. Perfect for documentation, content creation, and collaborative writing.",
-  
+
   // Keywords for better discoverability
   keywords: [
     "rich text editor",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "blog editor",
     "note taking app"
   ],
-  
+
   // Author and creator information
   authors: [
     {
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   ],
   creator: "Chinonso Chikelue (fluantix)",
   publisher: "Notiq Open Source Project",
-  
+
   // Open Graph metadata for social sharing
   openGraph: {
     type: "website",
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
       }
     ],
   },
-  
+
   // Twitter Card metadata
   twitter: {
     card: "summary_large_image",
@@ -86,11 +86,11 @@ export const metadata: Metadata = {
     description: "Build beautiful documents with AI assistance. Features 40+ content blocks, GPT-4 integration, and real-time analytics.",
     images: ["/twitter-card.png"],
   },
-  
+
   // Additional metadata
   category: "Technology",
   classification: "Open Source Software",
-  
+
   // App-specific metadata
   applicationName: "Notiq Editor",
   appleWebApp: {
@@ -98,14 +98,14 @@ export const metadata: Metadata = {
     title: "Notiq Editor",
     statusBarStyle: "default",
   },
-  
+
   // Verification and ownership
   verification: {
     google: "ayqp5JY2qzW_am918ybg1JSEJ84P5xCGxdbeD4JK0ik",
     // yandex: "your-yandex-verification-code",
     // bing: "your-bing-verification-code",
   },
-  
+
   // Robots directives
   robots: {
     index: true,
@@ -120,8 +120,8 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  
-  
+
+
   alternates: {
     canonical: "https://notiq-editor.vercel.app/",
     languages: {
@@ -129,7 +129,7 @@ export const metadata: Metadata = {
       "x-default": "https://notiq-editor.vercel.app/",
     },
   },
-  
+
   // Additional structured data
   other: {
     "application-name": "Notiq",
@@ -164,20 +164,20 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        
+
         {/* Favicons and app icons */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        
+
         {/* Preload critical resources */}
         <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        
+
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//api.openai.com" />
-        
+
         {/* Structured Data - JSON-LD */}
         <script
           type="application/ld+json"
@@ -272,7 +272,7 @@ export default function RootLayout({
             }),
           }}
         />
-        
+
         {/* Additional structured data for software application */}
         <script
           type="application/ld+json"

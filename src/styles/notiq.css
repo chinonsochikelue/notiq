@@ -1,0 +1,1149 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+@plugin 'tailwind-scrollbar';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+
+  /* Editor color variables */
+  --font-gray: #9b9a97;
+  --font-brown: #64473a;
+  --font-orange: #d9730d;
+  --font-yellow: #dfab01;
+  --font-green: #0f7b6c;
+  --font-blue: #0b6e99;
+  --font-purple: #6940a5;
+  --font-pink: #ad1a72;
+  --font-red: #e03e3e;
+
+  --background-gray: #ebeced;
+  --background-brown: #e9e5e3;
+  --background-orange: #faebdd;
+  --background-yellow: #fbf3db;
+  --background-green: #ddedea;
+  --background-blue: #ddedea;
+  --background-purple: #eae4f2;
+  --background-pink: #f4dfeb;
+  --background-red: #fbe4e4;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+
+  --font-gray: #9b9a97;
+  --font-brown: #937264;
+  --font-orange: #ffa344;
+  --font-yellow: #ffdc49;
+  --font-green: #4dab9a;
+  --font-blue: #529cca;
+  --font-purple: #9a6dd7;
+  --font-pink: #e255a1;
+  --font-red: #ff7369;
+
+  --background-gray: #454b4e;
+  --background-brown: #434040;
+  --background-orange: #594a3a;
+  --background-yellow: #59563b;
+  --background-green: #354c4b;
+  --background-blue: #364954;
+  --background-purple: #443f57;
+  --background-pink: #533b4c;
+  --background-red: #594141;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
+
+/* Editor custom styles */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#toolbar {
+  scrollbar-width: none;
+}
+
+#toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.code {
+  scrollbar-width: none;
+}
+
+.code::-webkit-scrollbar {
+  display: none;
+}
+/* File: C:\Users\HP\notiq\src\components\editor\nodes\InlineImageNode\InlineImageNode.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.InlineImageNode__contentEditable {
+  min-height: 20px;
+  border: 0px;
+  resize: none;
+  cursor: text;
+  caret-color: rgb(5, 5, 5);
+  display: block;
+  position: relative;
+  tab-size: 1;
+  outline: 0px;
+  padding: 10px;
+  user-select: text;
+  font-size: 14px;
+  line-height: 1.4em;
+  width: calc(100% - 20px);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.InlineImageNode__placeholder {
+  font-size: 12px;
+  color: #888;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  bottom: 10px;
+  left: 10px;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.InlineImageNode_Checkbox:checked,
+.InlineImageNode_Checkbox:not(:checked) {
+  position: absolute;
+  left: -9999px;
+}
+
+.InlineImageNode_Checkbox:checked + label,
+.InlineImageNode_Checkbox:not(:checked) + label {
+  position: absolute;
+  padding-right: 55px;
+  cursor: pointer;
+  line-height: 20px;
+  display: inline-block;
+  color: #666;
+}
+
+.InlineImageNode_Checkbox:checked + label:before,
+.InlineImageNode_Checkbox:not(:checked) + label:before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #666;
+  background: #fff;
+}
+
+.InlineImageNode_Checkbox:checked + label:after,
+.InlineImageNode_Checkbox:not(:checked) + label:after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #222222;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.InlineImageNode_Checkbox:not(:checked) + label:after {
+  opacity: 0;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+}
+
+.InlineImageNode_Checkbox:checked + label:after {
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\editor\plugins\CollapsiblePlugin\Collapsible.css */
+.Collapsible__container {
+  margin-bottom: 8px;
+  
+}
+
+.Collapsible__title {
+  cursor: pointer;
+  padding: 5px 5px 5px 20px;
+  position: relative;
+  font-weight: bold;
+  list-style: none;
+  outline: none;
+  
+}
+
+
+.Collapsible__title::marker,
+.Collapsible__title::-webkit-details-marker {
+  display: none;
+  
+}
+
+
+
+
+
+.dark .Collapsible__title:before {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-left-color: white;
+  display: block;
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.Collapsible__title:before {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-left-color: #000;
+  display: block;
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dark .Collapsible__container[open] > .Collapsible__title:before {
+  border-color: transparent;
+  border-width: 6px 4px 0 4px;
+  border-top-color: white;
+
+  
+}
+
+.Collapsible__container[open] > .Collapsible__title:before {
+  border-color: transparent;
+  border-width: 6px 4px 0 4px;
+  border-top-color: #000;
+
+
+
+}
+
+.Collapsible__content {
+  padding: 0 5px 5px 20px;
+}
+
+.Collapsible__collapsed .Collapsible__content {
+  display: none;
+  user-select: none;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\editor\themes\theme.css */
+.PlaygroundEditorTheme__table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  overflow-x: auto;
+  table-layout: fixed;
+  display: block;
+  max-width: fit-content;
+  width: 100%;
+  margin: 0px 25px 30px 0px;
+}
+
+.PlaygroundEditorTheme__tableSelection *::selection {
+  background-color: transparent;
+}
+.PlaygroundEditorTheme__tableSelected {
+  outline: 2px solid rgb(60, 132, 244);
+}
+.PlaygroundEditorTheme__tableCell {
+  border: 1px solid #979797;
+  width: 75px;
+  min-width: 75px;
+  vertical-align: top;
+  text-align: start;
+  padding: 6px 8px;
+  position: relative;
+  outline: none;
+}
+.PlaygroundEditorTheme__tableCellSortedIndicator {
+  display: block;
+  opacity: 0.5;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  height: 4px;
+  background-color: #999;
+}
+.PlaygroundEditorTheme__tableCellResizer {
+  position: absolute;
+  right: -4px;
+  height: 100%;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 10;
+  top: 0;
+}
+.PlaygroundEditorTheme__tableCellHeader {
+  text-align: start;
+}
+.PlaygroundEditorTheme__tableCellSelected {
+  background-color: #c9dbf0;
+}
+.PlaygroundEditorTheme__tableCellPrimarySelected {
+  border: 2px solid rgb(60, 132, 244);
+  display: block;
+  height: calc(100% - 2px);
+  position: absolute;
+  width: calc(100% - 2px);
+  left: -1px;
+  top: -1px;
+  z-index: 2;
+}
+.PlaygroundEditorTheme__tableCellEditing {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+}
+.PlaygroundEditorTheme__tableAddColumns {
+  position: absolute;
+  background-color: #eee;
+  height: 100%;
+  animation: table-controls 0.2s ease;
+  border: 0;
+  cursor: pointer;
+}
+.PlaygroundEditorTheme__tableAddColumns:after {
+  background-image: url(/public/images/icons/plus.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: block;
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+}
+.PlaygroundEditorTheme__tableAddColumns:hover,
+.PlaygroundEditorTheme__tableAddRows:hover {
+  background-color: #c9dbf0;
+}
+.PlaygroundEditorTheme__tableAddRows {
+  position: absolute;
+  width: calc(100% - 25px);
+  background-color: #eee;
+  animation: table-controls 0.2s ease;
+  border: 0;
+  cursor: pointer;
+}
+.PlaygroundEditorTheme__tableAddRows:after {
+  background-image: url(/public/images/icons/plus.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: block;
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+}
+@keyframes table-controls {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.PlaygroundEditorTheme__tableCellResizeRuler {
+  display: block;
+  position: absolute;
+  width: 1px;
+  background-color: rgb(60, 132, 244);
+  height: 100%;
+  top: 0;
+}
+.PlaygroundEditorTheme__tableCellActionButtonContainer {
+  display: block;
+  right: 5px;
+  top: 6px;
+  position: absolute;
+  z-index: 4;
+  width: 20px;
+  height: 20px;
+}
+.PlaygroundEditorTheme__tableCellActionButton {
+  background-color: #eee;
+  display: block;
+  border: 0;
+  border-radius: 20px;
+  width: 20px;
+  height: 20px;
+  color: #222;
+  cursor: pointer;
+}
+.PlaygroundEditorTheme__tableCellActionButton:hover {
+  background-color: #ddd;
+}
+
+.PlaygroundEditorTheme__tokenComment {
+  color: slategray;
+}
+.PlaygroundEditorTheme__tokenPunctuation {
+  color: #999;
+}
+.PlaygroundEditorTheme__tokenProperty {
+  color: rgba(226, 113, 175, 0.5);
+}
+.PlaygroundEditorTheme__tokenSelector {
+  color: #690;
+}
+.PlaygroundEditorTheme__tokenOperator {
+  color: #9a6e3a;
+}
+.PlaygroundEditorTheme__tokenAttr {
+  color: #07a;
+}
+.PlaygroundEditorTheme__tokenVariable {
+  color: #e90;
+}
+.PlaygroundEditorTheme__tokenFunction {
+  color: #e398a7;
+}
+
+.PlaygroundEditorTheme__embedBlock {
+  user-select: none;
+}
+.PlaygroundEditorTheme__embedBlockFocus {
+  outline: 2px solid rgb(60, 132, 244);
+}
+
+.line-code{
+  tab-size: 2;
+}
+
+
+.line-code:before {
+  content: attr(data-gutter);
+  position: absolute;
+  background-color:transparent;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-right: 1px solid rgba(42, 42, 42, 0.158);
+  padding: 8px;
+  color: rgba(0, 0, 0, 0.349);
+  white-space: pre-wrap;
+  text-align: right;
+  min-width: 25px;
+}
+.line-code:before:hover{
+  background: red;
+}
+.dark .line-code:before{
+  border-right: 1px solid #3b3b3b65;
+  color: #777;
+  
+}
+
+.PlaygroundEditorTheme__ul1,
+.PlaygroundEditorTheme__ul2,
+.PlaygroundEditorTheme__ul3,
+.PlaygroundEditorTheme__ul4,
+.PlaygroundEditorTheme__ul5 {
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
+  
+}
+.PlaygroundEditorTheme__ol1,
+.PlaygroundEditorTheme__ol2,
+.PlaygroundEditorTheme__ol3,
+.PlaygroundEditorTheme__ol4,
+.PlaygroundEditorTheme__ol5 {
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
+}
+.PlaygroundEditorTheme__listItem {
+  margin: 2px 32px;
+  
+}
+
+
+.PlaygroundEditorTheme__listItemChecked,
+.PlaygroundEditorTheme__listItemUnchecked {
+  position: relative;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding-left: 24px;
+  padding-right: 24px;
+  list-style-type: none;
+  outline: none;
+}
+.ol {
+  list-style-type: decimal;
+}
+
+.ul {
+  list-style-type:disc;
+}
+
+.PlaygroundEditorTheme__listItemChecked {
+  text-decoration: line-through;
+}
+.PlaygroundEditorTheme__listItemUnchecked:before,
+.PlaygroundEditorTheme__listItemChecked:before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  top: 4px;
+  left: 0;
+  cursor: pointer;
+  display: block;
+  background-size: cover;
+  position: absolute;
+}
+.PlaygroundEditorTheme__listItemUnchecked[dir='rtl']:before,
+.PlaygroundEditorTheme__listItemChecked[dir='rtl']:before {
+  left: auto;
+  right: 0;
+}
+.PlaygroundEditorTheme__listItemUnchecked:focus:before,
+.PlaygroundEditorTheme__listItemChecked:focus:before {
+  box-shadow: 0 0 0 2px #a6cdfe;
+  border-radius: 2px;
+}
+.PlaygroundEditorTheme__listItemUnchecked:before {
+  border: 1px solid #999;
+  border-radius: 2px;
+}
+.PlaygroundEditorTheme__listItemChecked:before {
+  border: 1px solid rgb(61, 135, 245);
+  border-radius: 2px;
+  background-color: #3d87f5;
+  background-repeat: no-repeat;
+}
+.PlaygroundEditorTheme__listItemChecked:after {
+  content: '';
+  cursor: pointer;
+  border-color: #fff;
+  border-style: solid;
+  position: absolute;
+  display: block;
+  top: 9px;
+  width: 3px;
+  left: 7px;
+  right: 7px;
+  height: 6px;
+  transform: rotate(45deg);
+  border-width: 0 2px 2px 0;
+}
+
+.PlaygroundEditorTheme__ol1 {
+  padding: 0;
+  margin: 0;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ol2 {
+  padding: 0;
+  margin: 0;
+  list-style-type: upper-alpha;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ol3 {
+  padding: 0;
+  margin: 0;
+  list-style-type: lower-alpha;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ol4 {
+  padding: 0;
+  margin: 0;
+  list-style-type: upper-roman;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ol5 {
+  padding: 0;
+  margin: 0;
+  list-style-type: lower-roman;
+  list-style-position: outside;
+}
+
+.PlaygroundEditorTheme__ul1 {
+  padding: 0;
+  margin: 0;
+  list-style-type:disc;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul2 {
+  padding: 0;
+  margin: 0;
+  list-style-type:circle;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul3 {
+  padding: 0;
+  margin: 0;
+  list-style-type:square;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul4 {
+  padding: 0;
+  margin: 0;
+  list-style-type:circle;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul5 {
+  padding: 0;
+  margin: 0;
+  list-style-type:disc;
+  list-style-position: outside;
+}
+
+
+.PlaygroundEditorTheme__nestedListItem {
+  list-style-type: none;
+}
+.PlaygroundEditorTheme__nestedListItem:before,
+.PlaygroundEditorTheme__nestedListItem:after {
+  display: none;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\editor\utils\setNodePlaceholderFromSelection\styles.css */
+.node-placeholder:has(br):not(:has(span))::before {
+    position: absolute;
+    content: attr(data-placeholder);
+    color: rgba(136, 136, 136, 0.6);
+    
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\ContentEditable.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+.ContentEditable__root {
+  border: 0;
+  font-size: 15px;
+  display: block;
+  position: relative;
+  outline: 0;
+  padding: 8px 46px 40px;
+  min-height: 150px;
+}
+@media (max-width: 1025px) {
+  .ContentEditable__root {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+.ContentEditable__placeholder {
+  font-size: 15px;
+  color: #999;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 8px;
+  left: 46px;
+  right: 28px;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+  pointer-events: none;
+}
+@media (max-width: 1025px) {
+  .ContentEditable__placeholder {
+    left: 8px;
+    right: 8px;
+  }
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\Input.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.Input__wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.Input__label {
+  display: flex;
+  flex: 1;
+  color: #666;
+}
+.Input__input {
+  display: flex;
+  flex: 2;
+  border: 1px solid #999;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  min-width: 0;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\Modal.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.Modal__overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  flex-direction: column;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: rgba(40, 40, 40, 0.6);
+  flex-grow: 0px;
+  flex-shrink: 1px;
+  z-index: 100;
+}
+.Modal__modal {
+  padding: 20px;
+  min-height: 100px;
+  min-width: 300px;
+  display: flex;
+  flex-grow: 0px;
+  background-color: #fff;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 20px 0 #444;
+  border-radius: 10px;
+}
+.Modal__title {
+  color: #444;
+  margin: 0px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+.Modal__closeButton {
+  border: 0px;
+  position: absolute;
+  right: 20px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #eee;
+}
+.Modal__closeButton:hover {
+  background-color: #ddd;
+}
+.Modal__content {
+  padding-top: 20px;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\Select.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+
+  z-index: 1;
+  outline: none;
+}
+
+:root {
+  --select-border: #393939;
+  --select-focus: #101484;
+  --select-arrow: var(--select-border);
+}
+
+.select {
+  min-width: 160px;
+  max-width: 290px;
+  border: 1px solid var(--select-border);
+  border-radius: 0.25em;
+  padding: 0.25em 0.5em;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1.4;
+  background: linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\dialog\Dialog.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+.DialogActions {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  margin-top: 20px;
+}
+
+.DialogButtonsList {
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  margin-top: 20px;
+}
+
+.DialogButtonsList button {
+  margin-bottom: 20px;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\equation\EquationEditor.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.EquationEditor_inlineEditor {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  color: #8421a2;
+  background-color: inherit;
+  resize: none;
+}
+
+.EquationEditor_blockEditor {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  color: #8421a2;
+  background-color: inherit;
+  resize: none;
+  width: 100%;
+}
+
+.EquationEditor_inputBackground {
+  background-color: #eee;
+}
+
+.EquationEditor_dollarSign {
+  text-align: left;
+  color: #b0b0b0;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\equation\KatexEquationAlterer.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.KatexEquationAlterer_defaultRow {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.KatexEquationAlterer_dialogActions {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 0;
+  justify-content: right;
+}
+
+.KatexEquationAlterer_centerRow {
+  display: flex;
+  flex-direction: 'row';
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.KatexEquationAlterer_textArea {
+  width: 100%;
+  resize: none;
+  padding: 7px;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\excalidraw\ExcalidrawModal.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.ExcalidrawModal__overlay {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  flex-direction: column;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  flex-grow: 0px;
+  flex-shrink: 1px;
+  z-index: 100;
+  background-color: rgba(40, 40, 40, 0.6);
+}
+.ExcalidrawModal__actions {
+  text-align: end;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  z-index: 1;
+}
+.ExcalidrawModal__actions button {
+  background-color: #fff;
+  border-radius: 5px;
+}
+.ExcalidrawModal__row {
+  position: relative;
+  padding: 40px 5px 5px;
+  width: 70vw;
+  height: 70vh;
+  border-radius: 8px;
+  box-shadow:
+    0 12px 28px 0 rgba(0, 0, 0, 0.2),
+    0 2px 4px 0 rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+.ExcalidrawModal__row > div {
+  border-radius: 5px;
+}
+.ExcalidrawModal__modal {
+  position: relative;
+  z-index: 10;
+  top: 50px;
+  width: auto;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background-color: #eee;
+}
+.ExcalidrawModal__discardModal {
+  margin-top: 60px;
+  text-align: center;
+}
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\excalidraw\Modal.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.Modal__overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  flex-direction: column;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: rgba(40, 40, 40, 0.6);
+  flex-grow: 0px;
+  flex-shrink: 1px;
+  z-index: 100;
+}
+.Modal__modal {
+  padding: 20px;
+  min-height: 100px;
+  min-width: 300px;
+  display: flex;
+  flex-grow: 0px;
+  background-color: #fff;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 20px 0 #444;
+  border-radius: 10px;
+}
+.Modal__title {
+  color: #444;
+  margin: 0px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+.Modal__closeButton {
+  border: 0px;
+  position: absolute;
+  right: 20px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #eee;
+}
+.Modal__closeButton:hover {
+  background-color: #ddd;
+}
+.Modal__content {
+  padding-top: 20px;
+}
+
+

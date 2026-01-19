@@ -3,20 +3,20 @@
 import React, { useState, useCallback, useRef } from "react"
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
 import { $getNodeByKey } from "lexical"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { 
-  Plus, Play, Edit3, Trash2, ArrowRight, BookOpen, Zap, GitBranch, 
+import { Button } from "../../../ui/button"
+import { Input } from "../../../ui/input"
+import { Textarea } from "../../../ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/card"
+import { Badge } from "../../../ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../ui/tabs"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../../ui/dialog"
+import { Label } from "../../../ui/label"
+import {
+  Plus, Play, Edit3, Trash2, ArrowRight, BookOpen, Zap, GitBranch,
   Image, Upload, Eye, EyeOff, Settings, Copy, Save, Share2,
   MapPin, Timer, Users, Target, Palette, Volume2
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "../../../../lib/utils"
 import { $isStoryBuilderNode, type StoryNode, type StoryChoice, type StoryBuilderPayload } from "./StoryBuilderNode"
 
 interface StoryBuilderComponentProps {
@@ -26,22 +26,7 @@ interface StoryBuilderComponentProps {
   nodeKey: string
 }
 
-interface EnhancedStoryNode extends StoryNode {
-  image?: string
-  backgroundColor?: string
-  textColor?: string
-  mood?: 'neutral' | 'happy' | 'sad' | 'mysterious' | 'exciting' | 'dark'
-  music?: string
-  estimatedReadTime?: number
-  tags?: string[]
-}
 
-interface EnhancedStoryChoice extends StoryChoice {
-  consequence?: string
-  requiredItem?: string
-  probabilityWeight?: number
-  icon?: string
-}
 
 export default function StoryBuilderComponent({ nodes, currentNodeId, title, nodeKey }: StoryBuilderComponentProps) {
   const [editor] = useLexicalComposerContext()
@@ -65,13 +50,13 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
 
   const initializeStory = useCallback(() => {
     if (nodes.length === 0) {
-      const startNode: EnhancedStoryNode = {
+      const startNode: StoryNode = {
         id: "start",
         title: "The Beginning",
         content: "Your epic adventure begins here. The world awaits your decisions...",
-        choices: [{ 
-          id: "choice1", 
-          text: "Begin the adventure", 
+        choices: [{
+          id: "choice1",
+          text: "Begin the adventure",
           targetId: "node1",
           consequence: "You step into the unknown",
           icon: "🚀"
@@ -82,7 +67,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
         tags: ['beginning', 'adventure']
       }
 
-      const secondNode: EnhancedStoryNode = {
+      const secondNode: StoryNode = {
         id: "node1",
         title: "Chapter 1: The Journey",
         content: "The adventure continues as you face your first challenge...",
@@ -115,7 +100,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
 
   const addNewNode = useCallback(() => {
     const newNodeId = `node_${Date.now()}`
-    const newNode: EnhancedStoryNode = {
+    const newNode: StoryNode = {
       id: newNodeId,
       title: "New Chapter",
       content: "Write your story content here...",
@@ -133,7 +118,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
   }, [nodes, currentNodeId, storyTitle, updateStoryBuilder])
 
   const updateNode = useCallback(
-    (nodeId: string, updates: Partial<EnhancedStoryNode>) => {
+    (nodeId: string, updates: Partial<StoryNode>) => {
       const updatedNodes = nodes.map((node) => (node.id === nodeId ? { ...node, ...updates } : node))
 
       updateStoryBuilder({
@@ -167,7 +152,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
       const node = nodes.find((n) => n.id === nodeId)
       if (!node) return
 
-      const newChoice: EnhancedStoryChoice = {
+      const newChoice: StoryChoice = {
         id: `choice_${Date.now()}`,
         text: "New choice",
         targetId: "",
@@ -184,7 +169,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
   )
 
   const updateChoice = useCallback(
-    (nodeId: string, choiceId: string, updates: Partial<EnhancedStoryChoice>) => {
+    (nodeId: string, choiceId: string, updates: Partial<StoryChoice>) => {
       const node = nodes.find((n) => n.id === nodeId)
       if (!node) return
 
@@ -247,7 +232,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
         createdAt: new Date().toISOString()
       }
     }
-    
+
     const blob = new Blob([JSON.stringify(storyData, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -261,7 +246,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
     initializeStory()
   }, [initializeStory])
 
-  const currentPreviewNode = nodes.find((n) => n.id === previewNodeId) as EnhancedStoryNode
+  const currentPreviewNode = nodes.find((n) => n.id === previewNodeId)
 
   if (isPreviewMode) {
     const nodeMood = currentPreviewNode?.mood || 'neutral'
@@ -272,15 +257,15 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
         <div className={cn("relative", moodStyle.bg)}>
           {currentPreviewNode?.image && (
             <div className="relative h-64 w-full">
-              <img 
-                src={currentPreviewNode.image} 
+              <img
+                src={currentPreviewNode.image}
                 alt={currentPreviewNode.title}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             </div>
           )}
-          
+
           <CardHeader className="relative">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -427,25 +412,25 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                   </span>
                   <span className="flex items-center gap-1">
                     <Timer className="w-4 h-4" />
-                    ~{nodes.reduce((sum, node) => sum + ((node as EnhancedStoryNode).estimatedReadTime || 1), 0)} min
+                    ~{nodes.reduce((sum, node) => sum + (node.estimatedReadTime || 1), 0)} min
                   </span>
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="mr-4">
                 <TabsList className="bg-white/50 backdrop-blur-sm">
-                  <TabsTrigger value="grid" size="sm">Grid</TabsTrigger>
-                  <TabsTrigger value="list" size="sm">List</TabsTrigger>
+                  <TabsTrigger value="grid">Grid</TabsTrigger>
+                  <TabsTrigger value="list">List</TabsTrigger>
                 </TabsList>
               </Tabs>
-              
+
               <Button variant="outline" size="sm" onClick={exportStory}>
                 <Save className="w-4 h-4 mr-2" />
                 Export
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="sm"
@@ -462,7 +447,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                 <Play className="w-4 h-4 mr-2" />
                 Preview
               </Button>
-              
+
               <Button size="sm" onClick={addNewNode} className="bg-accent hover:bg-accent/90">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Chapter
@@ -477,7 +462,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
               <div className="text-8xl mb-6">✨</div>
               <h3 className="text-3xl font-bold mb-4">Create Your Interactive Story</h3>
               <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-                Build immersive, branching narratives where every choice matters. 
+                Build immersive, branching narratives where every choice matters.
                 Add images, set moods, and create unforgettable adventures.
               </p>
               <Button size="lg" onClick={addNewNode} className="px-8 py-4 text-lg">
@@ -491,8 +476,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
               viewMode === 'grid' ? "grid md:grid-cols-2" : "space-y-4"
             )}>
               {nodes.map((node) => {
-                const enhancedNode = node as EnhancedStoryNode
-                const nodeMood = enhancedNode.mood || 'neutral'
+                const nodeMood = node.mood || 'neutral'
                 const moodStyle = moodColors[nodeMood]
 
                 return (
@@ -506,10 +490,10 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                       "overflow-hidden"
                     )}
                   >
-                    {enhancedNode.image && (
+                    {node.image && (
                       <div className="relative h-32 w-full">
-                        <img 
-                          src={enhancedNode.image} 
+                        <img
+                          src={node.image}
                           alt={node.title}
                           className="w-full h-full object-cover"
                         />
@@ -538,7 +522,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                               🎯 End
                             </Badge>
                           )}
-                          {enhancedNode.tags?.map((tag, index) => (
+                          {node.tags?.map((tag, index) => (
                             <Badge key={index} variant="secondary" className="text-xs">
                               #{tag}
                             </Badge>
@@ -580,12 +564,12 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                             className="font-semibold text-lg"
                             placeholder="Chapter title"
                           />
-                          
+
                           <div className="grid grid-cols-2 gap-2">
                             <div>
                               <Label className="text-xs">Mood</Label>
                               <select
-                                value={enhancedNode.mood || 'neutral'}
+                                value={node.mood || 'neutral'}
                                 onChange={(e) => updateNode(node.id, { mood: e.target.value as any })}
                                 className="w-full text-sm border rounded px-2 py-1 bg-background"
                               >
@@ -601,7 +585,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                               <Label className="text-xs">Read Time (min)</Label>
                               <Input
                                 type="number"
-                                value={enhancedNode.estimatedReadTime || 1}
+                                value={node.estimatedReadTime || 1}
                                 onChange={(e) => updateNode(node.id, { estimatedReadTime: parseInt(e.target.value) || 1 })}
                                 className="text-sm"
                                 min={1}
@@ -612,7 +596,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                           <div>
                             <Label className="text-xs">Tags (comma-separated)</Label>
                             <Input
-                              value={enhancedNode.tags?.join(', ') || ''}
+                              value={node.tags?.join(', ') || ''}
                               onChange={(e) => updateNode(node.id, { tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })}
                               placeholder="adventure, fantasy, mystery"
                               className="text-sm"
@@ -627,7 +611,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <Timer className="w-3 h-3" />
-                              {enhancedNode.estimatedReadTime || 1}m
+                              {node.estimatedReadTime || 1}m
                             </span>
                             <span className="flex items-center gap-1">
                               <Users className="w-3 h-3" />
@@ -673,7 +657,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                             className="text-xs h-6 px-2"
                           >
                             <Upload className="w-3 h-3 mr-1" />
-                            {enhancedNode.image ? 'Change' : 'Upload'}
+                            {node.image ? 'Change' : 'Upload'}
                           </Button>
                         </div>
                       </div>
@@ -685,9 +669,9 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                             <GitBranch className="w-3 h-3" />
                             Choices ({node.choices.length})
                           </span>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => addChoice(node.id)}
                             className="text-xs h-6 px-2 hover:bg-accent/20"
                           >
@@ -696,12 +680,11 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                         </div>
 
                         {node.choices.map((choice) => {
-                          const enhancedChoice = choice as EnhancedStoryChoice
                           return (
                             <div key={choice.id} className="space-y-2 p-3 bg-muted/30 rounded-lg border border-border/30">
                               <div className="flex gap-2 items-start">
                                 <Input
-                                  value={enhancedChoice.icon || '⭐'}
+                                  value={choice.icon || '⭐'}
                                   onChange={(e) => updateChoice(node.id, choice.id, { icon: e.target.value })}
                                   placeholder="🎭"
                                   className="w-12 h-8 text-center text-sm p-1"
@@ -735,25 +718,25 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                                   <Trash2 className="w-3 h-3" />
                                 </Button>
                               </div>
-                              
+
                               {editingNode === node.id && (
                                 <div className="space-y-2">
                                   <Input
-                                    value={enhancedChoice.consequence || ''}
+                                    value={choice.consequence || ''}
                                     onChange={(e) => updateChoice(node.id, choice.id, { consequence: e.target.value })}
                                     placeholder="What happens when this choice is selected?"
                                     className="text-xs text-muted-foreground italic"
                                   />
                                   <div className="flex gap-2">
                                     <Input
-                                      value={enhancedChoice.requiredItem || ''}
+                                      value={choice.requiredItem || ''}
                                       onChange={(e) => updateChoice(node.id, choice.id, { requiredItem: e.target.value })}
                                       placeholder="Required item (optional)"
                                       className="text-xs flex-1"
                                     />
                                     <Input
                                       type="number"
-                                      value={enhancedChoice.probabilityWeight || 1}
+                                      value={choice.probabilityWeight || 1}
                                       onChange={(e) => updateChoice(node.id, choice.id, { probabilityWeight: parseInt(e.target.value) || 1 })}
                                       placeholder="Weight"
                                       className="text-xs w-16"
@@ -785,7 +768,7 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
               Advanced Story Settings
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-6">
             <div className="space-y-3">
               <Label>Story Metadata</Label>
@@ -796,10 +779,10 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
                 </div>
                 <div>
                   <Label className="text-xs">Total Choices</Label>
-                  <Input 
-                    value={nodes.reduce((sum, node) => sum + node.choices.length, 0)} 
-                    disabled 
-                    className="text-sm" 
+                  <Input
+                    value={nodes.reduce((sum, node) => sum + node.choices.length, 0)}
+                    disabled
+                    className="text-sm"
                   />
                 </div>
               </div>
@@ -810,19 +793,19 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 bg-accent/10 rounded-lg text-center">
                   <div className="text-2xl font-bold text-accent">
-                    {nodes.reduce((sum, node) => sum + ((node as EnhancedStoryNode).estimatedReadTime || 1), 0)}
+                    {nodes.reduce((sum, node) => sum + (node.estimatedReadTime || 1), 0)}
                   </div>
                   <div className="text-xs text-muted-foreground">Total Minutes</div>
                 </div>
                 <div className="p-3 bg-secondary/10 rounded-lg text-center">
                   <div className="text-2xl font-bold text-secondary">
-                    {nodes.filter(node => (node as EnhancedStoryNode).image).length}
+                    {nodes.filter(node => node.image).length}
                   </div>
                   <div className="text-xs text-muted-foreground">With Images</div>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg text-center">
                   <div className="text-2xl font-bold text-primary">
-                    {new Set(nodes.flatMap(node => (node as EnhancedStoryNode).tags || [])).size}
+                    {new Set(nodes.flatMap(node => node.tags || [])).size}
                   </div>
                   <div className="text-xs text-muted-foreground">Unique Tags</div>
                 </div>

@@ -20,7 +20,7 @@ export type Option = Readonly<{
 }>;
 
 const PollComponent = React.lazy(
-  () => import("@/components/ui/poll/poll-component")
+  () => import("../../../ui/poll/poll-component")
 );
 
 function createUID(): string {

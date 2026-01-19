@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../../lib/utils";
 
 export function PlaceholdersAndVanishInput({
   placeholders,
@@ -13,11 +13,11 @@ export function PlaceholdersAndVanishInput({
   placeholders: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  disabled:boolean
+  disabled: boolean
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
-  
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startAnimation = () => {
     intervalRef.current = setInterval(() => {
@@ -180,8 +180,8 @@ export function PlaceholdersAndVanishInput({
 
   return (
     <form
-    
-    suppressHydrationWarning
+
+      suppressHydrationWarning
       className={cn(
         "w-full relative max-w-xl mx-auto  h-9 rounded-sm overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
       )}

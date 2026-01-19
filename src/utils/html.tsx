@@ -1,16 +1,16 @@
 import { $getRoot } from "lexical"
 import type { LexicalEditor, LexicalNode } from "lexical"
-import { $isPollNode, type PollNode } from "@/components/editor/nodes/PollNode"
+import { $isPollNode, type PollNode } from "../components/editor/nodes/PollNode"
 import {
   $isStoryBuilderNode,
   type StoryBuilderNode,
   type StoryNode,
-} from "@/components/editor/nodes/StoryBuilderNode/StoryBuilderNode"
+} from "../components/editor/nodes/StoryBuilderNode/StoryBuilderNode"
 import {
   $isDynamicBlockNode,
   type DynamicBlockNode,
   type DynamicContentBlock,
-} from "@/components/editor/nodes/DynamicBlockNode/DynamicBlockNode"
+} from "../components/editor/nodes/DynamicBlockNode/DynamicBlockNode"
 
 /**
  * Converts the current editor content to HTML string
@@ -626,20 +626,19 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
           ${!targetNode ? "disabled" : ""}
         >
           <div class="flex items-start gap-4 w-full">
-            <div class="text-2xl">${enhancedChoice.icon || storyNode.icon || "➤"}</div>
+            <div class="text-2xl">${enhancedChoice.icon || (storyNode as any).icon || "➤"}</div>
             <div class="flex-1">
               <div class="font-semibold text-base group-hover:text-blue-600 transition-colors">
                 ${choice.text}
               </div>
-              ${
-                enhancedChoice.consequence || storyNode.consequence
-                  ? `
+              ${enhancedChoice.consequence || (storyNode as any).consequence
+            ? `
                 <p class="text-sm text-gray-500 mt-1 italic">
-                  → ${enhancedChoice.consequence || storyNode.consequence}
+                  → ${enhancedChoice.consequence || (storyNode as any).consequence}
                 </p>
               `
-                  : ""
-              }
+            : ""
+          }
             </div>
             <svg class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -652,7 +651,7 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
 
     // Determine mood styling
     const mood = enhancedNode.mood || "neutral"
-    const moodColors = {
+    const moodColors: Record<string, { bg: string; border: string; text: string }> = {
       neutral: {
         bg: "bg-gray-50 dark:bg-gray-800",
         border: "border-gray-200 dark:border-gray-700",
@@ -688,16 +687,15 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
 
     return `
       <div id="story-node-${storyNode.id}" class="story-node ${storyNode.id !== startNode.id ? "hidden" : ""}" data-node-id="${storyNode.id}">
-        ${
-          enhancedNode.image
-            ? `
+        ${enhancedNode.image
+        ? `
           <div class="relative h-64 w-full mb-6 rounded-lg overflow-hidden">
             <img src="${enhancedNode.image}" alt="${storyNode.title}" class="w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
         
         <div class="prose prose-xl max-w-none mb-6">
           <h2 class="text-3xl font-bold mb-6 ${moodStyle.text}">
@@ -708,27 +706,25 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
           </div>
         </div>
 
-        ${
-          enhancedNode.tags && enhancedNode.tags.length > 0
-            ? `
+        ${enhancedNode.tags && enhancedNode.tags.length > 0
+        ? `
           <div class="flex flex-wrap gap-2 mb-6">
             ${enhancedNode.tags
-              .map(
-                (tag) => `
+          .map(
+            (tag: string) => `
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
                 #${tag}
               </span>
             `,
-              )
-              .join("")}
+          )
+          .join("")}
           </div>
         `
-            : ""
-        }
+        : ""
+      }
 
-        ${
-          enhancedNode.estimatedReadTime
-            ? `
+        ${enhancedNode.estimatedReadTime
+        ? `
           <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -736,12 +732,11 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
             ${enhancedNode.estimatedReadTime} min read
           </div>
         `
-            : ""
-        }
+        : ""
+      }
 
-        ${
-          storyNode.choices.length > 0
-            ? `
+        ${storyNode.choices.length > 0
+        ? `
           <div class="space-y-4 mt-8">
             <h3 class="font-bold text-xl flex items-center gap-2 ${moodStyle.text}">
               <span class="text-blue-600">🎯</span>
@@ -752,12 +747,11 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
             </div>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
 
-        ${
-          storyNode.isEnd
-            ? `
+        ${storyNode.isEnd
+        ? `
           <div class="text-center py-8 ${moodStyle.bg} ${moodStyle.border} border-2 rounded-2xl mt-8">
             <div class="text-6xl mb-4">🎭</div>
             <span class="inline-flex items-center px-6 py-3 rounded-full text-lg font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
@@ -772,8 +766,8 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
             </button>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
       </div>
     `
   }
@@ -817,37 +811,33 @@ function convertDynamicBlockNodeToHTML(node: DynamicBlockNode): string {
   const renderContentBlock = (block: DynamicContentBlock): string => {
     switch (block.type) {
       case "text":
-        return `<div class="prose prose-sm max-w-none" ${
-          block.styles
-            ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
-            : ""
-        }>${block.content}</div>`
+        return `<div class="prose prose-sm max-w-none" ${block.styles
+          ? `style="${Object.entries(block.styles)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("; ")}"`
+          : ""
+          }>${block.content}</div>`
       case "image":
-        return `<img src="${block.content || "/placeholder.svg"}" alt="Dynamic content" class="max-w-full h-auto rounded-lg" ${
-          block.styles
-            ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
-            : ""
-        } />`
+        return `<img src="${block.content || "/placeholder.svg"}" alt="Dynamic content" class="max-w-full h-auto rounded-lg" ${block.styles
+          ? `style="${Object.entries(block.styles)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("; ")}"`
+          : ""
+          } />`
       case "video":
-        return `<video src="${block.content}" controls class="max-w-full h-auto rounded-lg" ${
-          block.styles
-            ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
-            : ""
-        }></video>`
+        return `<video src="${block.content}" controls class="max-w-full h-auto rounded-lg" ${block.styles
+          ? `style="${Object.entries(block.styles)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("; ")}"`
+          : ""
+          }></video>`
       case "html":
-        return `<div class="w-full" ${
-          block.styles
-            ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
-            : ""
-        }>${block.content}</div>`
+        return `<div class="w-full" ${block.styles
+          ? `style="${Object.entries(block.styles)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("; ")}"`
+          : ""
+          }>${block.content}</div>`
       default:
         return '<div class="text-gray-500">Unknown content type</div>'
     }
@@ -886,10 +876,9 @@ function convertDynamicBlockNodeToHTML(node: DynamicBlockNode): string {
       <div class="p-4 space-y-4">
          Content Display Area 
         <div class="min-h-[200px] p-4 rounded-lg border bg-gray-50 dark:bg-gray-700 relative overflow-hidden" id="dynamic-content-${payload.id}">
-          ${
-            currentBlock
-              ? renderContentBlock(currentBlock)
-              : `
+          ${currentBlock
+      ? renderContentBlock(currentBlock)
+      : `
             <div class="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
               <div class="text-center">
                 <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -899,7 +888,7 @@ function convertDynamicBlockNodeToHTML(node: DynamicBlockNode): string {
               </div>
             </div>
           `
-          }
+    }
         </div>
         
          Block Selection 

@@ -1,4 +1,4 @@
-import { blockTypeToBlockName } from "@/components/providers/ToolbarContext";
+import { blockTypeToBlockName } from "../../providers/ToolbarContext";
 import {
   $getSelection,
   COMMAND_PRIORITY_LOW,
@@ -9,17 +9,17 @@ import {
 } from "lexical";
 import { Dispatch, useCallback, useEffect, useRef } from "react";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
-import { getDOMRangeRect } from "@/components/editor/utils/getDOMRangeRect";
-import { setFloatingElemPosition } from "@/components/editor/utils/setFloatingElemPosition";
+import { getDOMRangeRect } from "../../editor/utils/getDOMRangeRect";
+import { setFloatingElemPosition } from "../../editor/utils/setFloatingElemPosition";
 import { mergeRegister } from "@lexical/utils";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "../separator";
 import BlockFormatDropDown from "../drop-downs/block-format";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Toggle } from "@/components/ui/toggle";
-import { SHORTCUTS } from "@/components/editor/plugins/ShortcutsPlugin/shortcuts";
+import { useIsMobile } from "../../../hooks/use-mobile";
+import { Toggle } from "../toggle";
+import { SHORTCUTS } from "../../editor/plugins/ShortcutsPlugin/shortcuts";
 import { Bold, Code, Italic, Link, UnderlineIcon } from "lucide-react";
 import Color from "../drop-downs/color";
-import { sanitizeUrl } from "@/components/editor/utils/url";
+import { sanitizeUrl } from "../../editor/utils/url";
 import TextFormat from "../drop-downs/text-format";
 import Font from "../drop-downs/font";
 import FontSize from "../drop-downs/font-size";

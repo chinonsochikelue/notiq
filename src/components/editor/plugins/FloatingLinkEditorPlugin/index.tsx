@@ -23,12 +23,12 @@ import {
   LexicalEditor,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import {  sanitizeUrl } from "../../utils/url";
+import { sanitizeUrl } from "../../utils/url";
 import { setFloatingElemPositionForLinkEditor } from "../../utils/setFloatingElemPositionForLinkEditor";
-import { Input } from "@/components/ui/input";
+import { Input } from "../../../ui/input";
 import { Check, Edit2Icon, Link, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { cn } from "../../../../lib/utils";
+import { Button } from "../../../ui/button";
 
 function preventDefault(
   event: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLElement>
@@ -191,14 +191,14 @@ function FloatingLinkEditor({
     }
   };
 
-  const handleLinkSubmission =  (
+  const handleLinkSubmission = (
     event: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLElement>
   ) => {
     event.preventDefault();
 
     if (lastSelection !== null) {
       if (linkUrl !== "") {
-        editor.update( () => {
+        editor.update(() => {
           editor.dispatchCommand(
             TOGGLE_LINK_COMMAND,
             sanitizeUrl(editedLinkUrl)
@@ -220,7 +220,7 @@ function FloatingLinkEditor({
       }
       // Fetch metadata asynchronously AFTER editor update
       setEditedLinkUrl("https://");
-    
+
       setIsLinkEditMode(false);
     }
   };
@@ -435,7 +435,7 @@ export default function FloatingLinkEditorPlugin({
 }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
 
-  
+
   return useFloatingLinkEditorToolbar(
     editor,
     anchorElem,

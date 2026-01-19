@@ -18,7 +18,7 @@ import { createPortal } from "react-dom";
 import { CopyButton } from "./components/CopyButton";
 import { canBePrettier, PrettierButton } from "./components/PrettierButton";
 import { useDebounce } from "./utils";
-import CodeList from "@/components/ui/drop-downs/code";
+import CodeList from "../../../ui/drop-downs/code";
 
 const CODE_PADDING = 8;
 
@@ -86,7 +86,7 @@ function CodeActionMenuContainer({
         setLang(_lang);
         setShown(true);
         setPosition({
-          right: `${editorElemRight - right  + CODE_PADDING}px`,
+          right: `${editorElemRight - right + CODE_PADDING}px`,
           top: `${y - editorElemY}px`,
         });
       }
@@ -153,7 +153,7 @@ function CodeActionMenuContainer({
     [editor, selectedElementKey]
   );
 
-  
+
   return (
     <div>
       {isShown ? (

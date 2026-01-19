@@ -1,7 +1,7 @@
 import { $getNodeByKey, LexicalEditor, NodeKey } from "lexical";
 import React, { useCallback, useEffect, useState } from "react";
 import { $isImageNode } from "../../editor/nodes/ImageNode";
-import { Button } from "@/components/ui/button";
+import { Button } from "../button";
 import {
   AlignCenterVertical,
   CaptionsIcon,
@@ -9,9 +9,9 @@ import {
   PanelLeftClose,
   Radius,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { cn } from "../../../lib/utils";
+import { Input } from "../input";
+import { Separator } from "../separator";
 
 export default function ImageToolBar({
   editor,

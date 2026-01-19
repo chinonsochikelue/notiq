@@ -6,19 +6,17 @@
  *
  */
 
-import type {JSX} from 'react';
-
-import './Dialog.css';
+import type { JSX } from 'react';
 
 import * as React from 'react';
-import {ReactNode} from 'react';
+import { ReactNode } from 'react';
 
 type Props = Readonly<{
   'data-test-id'?: string;
   children: ReactNode;
 }>;
 
-export function DialogButtonsList({children}: Props): JSX.Element {
+export function DialogButtonsList({ children }: Props): JSX.Element {
   return <div className="DialogButtonsList">{children}</div>;
 }
 

@@ -1,0 +1,32 @@
+Ôû▓ [WARNING] The condition "types" here will never be used as it comes after both "import" and "require" [package.json]
+
+    package.json:12:6:
+      12 Ôöé       "types": "./dist/index.d.ts"
+         ÔòÁ       ~~~~~~~
+
+  The "import" condition comes earlier and will be used for all "import" statements:
+
+    package.json:10:6:
+      10 Ôöé       "import": "./dist/index.mjs",
+         ÔòÁ       ~~~~~~~~
+
+  The "require" condition comes earlier and will be used for all "require" calls:
+
+    package.json:11:6:
+      11 Ôöé       "require": "./dist/index.js",
+         ÔòÁ       ~~~~~~~~~
+
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.5.1
+[34mCLI[39m Using tsup config: C:\Users\HP\notiq\tsup.config.ts
+[34mDTS[39m Build start
+error TS5074: Option '--incremental' can only be specified using tsconfig, emitting to single file or when option '--tsBuildInfoFile' is specified.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (C:\Users\HP\notiq\node_modules\.pnpm\tsup@8.5.1_jiti@2.5.1_postcss@8.5.6_typescript@5.9.2\node_modules\tsup\dist\index.js:1545:26)
+    at Worker.emit (node:events:518:28)
+    at MessagePort.<anonymous> (node:internal/worker:268:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error

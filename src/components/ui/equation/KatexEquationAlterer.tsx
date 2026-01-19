@@ -8,15 +8,13 @@
 
 import type { JSX } from 'react';
 
-import './KatexEquationAlterer.css';
-
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import KatexRenderer from './KatexRenderer';
-import { Button } from '@/components/ui/button';
+import { Button } from "../button";
 
 type Props = {
   initialEquation?: string;

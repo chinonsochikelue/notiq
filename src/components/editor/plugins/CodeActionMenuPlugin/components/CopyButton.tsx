@@ -8,7 +8,7 @@ import {
 import * as React from "react";
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../../ui/button";
 
 interface Props {
   editor: LexicalEditor;
@@ -56,14 +56,12 @@ export function CopyButton({ editor, getCodeDOMNode }: Props) {
     >
       <span className="sr-only">{isCopyCompleted ? "Copied" : "Copy"}</span>
       <Copy
-        className={`h-4 w-4 transition-all duration-300 ${
-          isCopyCompleted ? "scale-0" : "scale-100"
-        }`}
+        className={`h-4 w-4 transition-all duration-300 ${isCopyCompleted ? "scale-0" : "scale-100"
+          }`}
       />
       <Check
-        className={`absolute inset-0 m-auto h-4 w-4 transition-all duration-300 ${
-          isCopyCompleted ? "scale-100" : "scale-0"
-        }`}
+        className={`absolute inset-0 m-auto h-4 w-4 transition-all duration-300 ${isCopyCompleted ? "scale-100" : "scale-0"
+          }`}
       />
     </Button>
   );

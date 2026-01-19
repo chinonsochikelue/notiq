@@ -12,16 +12,16 @@ import type {
   ExcalidrawImperativeAPI,
   ExcalidrawInitialDataState,
 } from '@excalidraw/excalidraw/types';
-import type {JSX} from 'react';
+import type { JSX } from 'react';
 
 // import './ExcalidrawModal.css';
 
-import {Excalidraw} from '@excalidraw/excalidraw';
-import {isDOMNode} from 'lexical';
+import { Excalidraw } from '@excalidraw/excalidraw';
+import { isDOMNode } from 'lexical';
 import * as React from 'react';
-import {ReactPortal, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {createPortal} from 'react-dom';
-import {motion, AnimatePresence} from 'framer-motion';
+import { ReactPortal, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Dialog,
   DialogContent,
@@ -31,7 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '../button';
 import { Save, X, Trash2, AlertTriangle, Palette } from 'lucide-react';
 
 
@@ -84,7 +84,7 @@ const modalVariants = {
     scale: 1,
     y: 0,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 300,
       damping: 30,
     },
@@ -101,11 +101,11 @@ const modalVariants = {
 
 const backdropVariants = {
   initial: { opacity: 0 },
-  animate: { 
+  animate: {
     opacity: 1,
     transition: { duration: 0.3 }
   },
-  exit: { 
+  exit: {
     opacity: 0,
     transition: { duration: 0.2 }
   },
@@ -113,8 +113,8 @@ const backdropVariants = {
 
 const actionsVariants = {
   initial: { opacity: 0, y: 10 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
     transition: { delay: 0.2, duration: 0.3 }
   },
@@ -247,7 +247,7 @@ export default function ExcalidrawModal({
   function DiscardConfirmationDialog(): JSX.Element {
     return (
       <Dialog open={discardModalOpen} onOpenChange={setDiscardModalOpen}>
-        <DialogContent className="sm:max-w-md" showClose={false}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader className="text-center sm:text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
               <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -259,7 +259,7 @@ export default function ExcalidrawModal({
               You have unsaved changes in your drawing. Are you sure you want to discard them? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          
+
           <DialogFooter className="gap-3 pt-6">
             <Button
               variant="outline"
@@ -293,10 +293,12 @@ export default function ExcalidrawModal({
   ) => {
     setElements(els);
     setFiles(fls);
-    
+
     // Check if there are actual changes by comparing with initial state
-    const hasChanges = els.length !== initialElements.length || 
-      els.some((el, idx) => JSON.stringify(el) !== JSON.stringify(initialElements[idx]));
+    const hasChanges = (els && initialElements) ? (
+      els.length !== initialElements.length ||
+      els.some((el, idx) => JSON.stringify(el) !== JSON.stringify(initialElements[idx]))
+    ) : els !== initialElements;
     setHasUnsavedChanges(hasChanges);
   };
 
@@ -304,7 +306,7 @@ export default function ExcalidrawModal({
 
   return createPortal(
     <AnimatePresence mode="wait">
-      <motion.div 
+      <motion.div
         className="fixed inset-0 z-[250] flex items-center justify-center"
         initial="initial"
         animate="animate"
@@ -312,7 +314,7 @@ export default function ExcalidrawModal({
         variants={backdropVariants}
       >
         {/* Backdrop */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={() => {
             if (closeOnClickOutside) {
@@ -324,7 +326,7 @@ export default function ExcalidrawModal({
             }
           }}
         />
-        
+
         {/* Modal Content */}
         <motion.div
           className="relative z-10 mx-4 flex h-[90vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900"
@@ -343,14 +345,14 @@ export default function ExcalidrawModal({
                 <Palette className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h2 
-                  id="excalidraw-title" 
+                <h2
+                  id="excalidraw-title"
                   className="text-lg font-semibold text-gray-900 dark:text-gray-100"
                 >
                   Drawing Editor
                 </h2>
-                <p 
-                  id="excalidraw-description" 
+                <p
+                  id="excalidraw-description"
                   className="text-sm text-gray-500 dark:text-gray-400"
                 >
                   Create and edit your drawings with Excalidraw
@@ -362,7 +364,7 @@ export default function ExcalidrawModal({
                 </p>
               </div>
             </div>
-            
+
             <Button
               variant="ghost"
               size="icon"
@@ -387,7 +389,7 @@ export default function ExcalidrawModal({
                 onChange={onChange}
                 excalidrawAPI={setExcalidrawAPI}
                 initialData={{
-                  appState: initialAppState || {isLoading: false},
+                  appState: initialAppState || { isLoading: false },
                   elements: initialElements,
                   files: initialFiles,
                 }}
@@ -397,7 +399,7 @@ export default function ExcalidrawModal({
           </div>
 
           {/* Actions Footer */}
-          <motion.div 
+          <motion.div
             className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/50"
             variants={actionsVariants}
           >
@@ -420,7 +422,7 @@ export default function ExcalidrawModal({
                 <span className="ml-1">to close</span>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
@@ -430,7 +432,7 @@ export default function ExcalidrawModal({
                 <X className="mr-2 h-4 w-4" />
                 {hasUnsavedChanges ? 'Discard' : 'Close'}
               </Button>
-              
+
               <Button
                 onClick={save}
                 disabled={!hasContent}

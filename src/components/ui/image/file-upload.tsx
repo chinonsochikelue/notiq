@@ -12,10 +12,11 @@ import {
   Video,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { useEdgeStore } from "@/lib/edgestore";
+import { Card, CardContent } from "../card";
+import { Progress } from "../progress";
+import { Button } from "../button";
+import { useEdgeStore } from "../../../lib/edgestore";
+import { useUpload } from "../../providers/UploadContext";
 
 const FileUploadZone = ({
   InsertMedia,
@@ -28,6 +29,7 @@ const FileUploadZone = ({
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { edgestore } = useEdgeStore();
+  const uploadConfig = useUpload();
 
   const handleDragEnter = (index: number) => (e: React.DragEvent) => {
     e.preventDefault();
@@ -51,16 +53,28 @@ const FileUploadZone = ({
       const file = newFiles[i];
 
       try {
-        const response = await edgestore.publicFiles.upload({
-          file,
-          onProgressChange: (progress) => {
-            setProgress(
-              Math.round((progress / 100) * ((i + 1) / newFiles.length) * 100)
-            );
-          },
-        });
+        let url = "";
 
-        uploadedFiles.push({ url: response.url, alt: file.name });
+        if (uploadConfig?.uploadHandler) {
+          const res = await uploadConfig.uploadHandler(file, (p) => {
+            setProgress(
+              Math.round((p / 100) * ((i + 1) / newFiles.length) * 100)
+            );
+          });
+          url = res.url;
+        } else {
+          const response = await edgestore.publicFiles.upload({
+            file,
+            onProgressChange: (progress: number) => {
+              setProgress(
+                Math.round((progress / 100) * ((i + 1) / newFiles.length) * 100)
+              );
+            },
+          });
+          url = response.url;
+        }
+
+        uploadedFiles.push({ url, alt: file.name });
       } catch (error) {
         console.error(`Error uploading ${file.name}:`, error);
       }
@@ -134,14 +148,12 @@ const FileUploadZone = ({
               >
                 <div
                   className={`
-                    absolute inset-0 -z-10 rounded-xl bg-gradient-to-br ${
-                      zone.gradient
+                    absolute inset-0 -z-10 rounded-xl bg-gradient-to-br ${zone.gradient
                     }
                     opacity-0 blur-md transition-opacity duration-300
-                    ${
-                      draggedZone === index
-                        ? "opacity-70"
-                        : "group-hover:opacity-70"
+                    ${draggedZone === index
+                      ? "opacity-70"
+                      : "group-hover:opacity-70"
                     }
                   `}
                 />

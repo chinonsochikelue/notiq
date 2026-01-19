@@ -1,8 +1,26 @@
 {
   "name": "@collabchron/notiq",
-  "version": "0.3.0",
+  "version": "1.0.3",
   "private": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles/notiq.css",
+    "./package.json": "./package.json"
+  },
   "description": "Notion AI + Figma + Excalidraw + 3D + Code Editor + Markdown Editor + Real-time Collaboration + Embeds + More = Notiq",
+  "files": [
+    "dist",
+    "src/styles",
+    "README.md",
+    "LICENSE"
+  ],
   "author": "Chinonso Chikelue (fluantiX) <chinonsoneft@gmail.com>",
   "license": "MIT",
   "keywords": [
@@ -41,9 +59,12 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "pnpm install --no-frozen-lockfile && next build",
+    "build:lib": "tsup && pnpm build:css",
+    "build:css": "tailwindcss -i src/styles/notiq.css -o dist/styles/notiq.css --minify",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.7",
@@ -123,8 +144,27 @@
     "zod": "^4.1.8",
     "zustand": "^5.0.8"
   },
+  "peerDependencies": {
+    "@lexical/clipboard": ">=0.14.0",
+    "@lexical/code": ">=0.14.0",
+    "@lexical/history": ">=0.14.0",
+    "@lexical/html": ">=0.14.0",
+    "@lexical/link": ">=0.14.0",
+    "@lexical/list": ">=0.14.0",
+    "@lexical/markdown": ">=0.14.0",
+    "@lexical/react": ">=0.14.0",
+    "@lexical/rich-text": ">=0.14.0",
+    "@lexical/selection": ">=0.14.0",
+    "@lexical/table": ">=0.14.0",
+    "@lexical/utils": ">=0.14.0",
+    "lexical": ">=0.14.0",
+    "next": ">=14.0.0",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/cli": "^4.1.18",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/eslint-plugin-query": "^5.86.0",
     "@testing-library/dom": "^10.4.1",
@@ -141,12 +181,14 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9.35.0",
     "eslint-config-next": "15.5.3",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "next": "15.5.9",
     "postcss": "^8.5.6",
     "prettier": "3.6.2",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.13",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.2",
     "vitest": "^4.0.17"
   }

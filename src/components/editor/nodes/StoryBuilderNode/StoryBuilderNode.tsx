@@ -5,6 +5,7 @@ import type {
   EditorConfig,
   LexicalNode,
   NodeKey,
+  SerializedLexicalNode,
   SerializedElementNode,
   Spread,
 } from "lexical"
@@ -19,6 +20,10 @@ export interface StoryChoice {
   id: string
   text: string
   targetId: string
+  consequence?: string
+  requiredItem?: string
+  probabilityWeight?: number
+  icon?: string
 }
 
 export interface StoryNode {
@@ -28,6 +33,13 @@ export interface StoryNode {
   choices: StoryChoice[]
   isStart?: boolean
   isEnd?: boolean
+  image?: string
+  backgroundColor?: string
+  textColor?: string
+  mood?: 'neutral' | 'happy' | 'sad' | 'mysterious' | 'exciting' | 'dark'
+  music?: string
+  estimatedReadTime?: number
+  tags?: string[]
 }
 
 export interface StoryBuilderPayload {
@@ -42,7 +54,7 @@ export type SerializedStoryBuilderNode = Spread<
     currentNodeId: string
     title: string
   },
-  SerializedElementNode
+  SerializedLexicalNode
 >
 
 function convertStoryBuilderElement(domNode: HTMLElement): null | DOMConversionOutput {

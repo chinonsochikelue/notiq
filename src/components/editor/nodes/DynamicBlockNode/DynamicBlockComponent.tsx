@@ -9,11 +9,11 @@ import {
   type DynamicContentBlock,
   type BlockTrigger,
 } from "./DynamicBlockNode"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "../../../ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/card"
+import { Badge } from "../../../ui/badge"
 import { Play, Pause, Settings, Eye, EyeOff, Zap } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "../../../../lib/utils"
 
 interface DynamicBlockComponentProps {
   nodeKey: string
@@ -27,7 +27,7 @@ export default function DynamicBlockComponent({ nodeKey, payload }: DynamicBlock
   const [isPlaying, setIsPlaying] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   const currentBlock = payload.blocks.find((block) => block.id === currentBlockId)
   const activeTriggers = payload.triggers.filter(

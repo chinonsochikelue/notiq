@@ -1,0 +1,2 @@
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: C:\Users\HP\AppData\Local\npm-cache\_logs\2026-01-19T16_33_15_571Z-debug-0.log

@@ -14,7 +14,7 @@ function isKeyboardOpen(): boolean {
     activeElement &&
     (activeElement.tagName === "INPUT" ||
       activeElement.tagName === "TEXTAREA" ||
-      activeElement.contentEditable === "true" ||
+      (activeElement instanceof HTMLElement && activeElement.contentEditable === "true") ||
       activeElement.getAttribute("contenteditable") === "true")
 
   return !!isInputFocused

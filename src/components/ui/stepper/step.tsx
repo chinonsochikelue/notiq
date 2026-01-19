@@ -9,7 +9,7 @@ import { Reorder } from "framer-motion";
 import { StepType } from "../../editor/nodes/Stepper";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { useSharedHistoryContext } from "@/components/providers/SharedHistoryContext";
+import { useSharedHistoryContext } from "../../providers/SharedHistoryContext";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { nestedNodes } from "../../editor/nodes";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";

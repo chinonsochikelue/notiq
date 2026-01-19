@@ -6,13 +6,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
+} from "../popover";
+import { Button } from "../button";
+import { Input } from "../input";
+import { Label } from "../label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../tabs";
+import { cn } from "../../../lib/utils";
+import { Separator } from "../separator";
 import { BaselineIcon, PaletteIcon } from "lucide-react";
 
 export default function Color({
@@ -57,7 +57,7 @@ export default function Color({
   const onFontColorSelect = useCallback(
     (value: string, skipHistoryStack: boolean) => {
       applyStyleText({ color: value }, skipHistoryStack);
-      
+
       // Add to recent colors if it's not already there and not a default color
       if (value && !recentColors.includes(value) && !value.startsWith('var(--')) {
         setRecentColors(prev => [value, ...prev.slice(0, 7)]);
@@ -112,7 +112,7 @@ export default function Color({
   const generateShades = (baseColor: string) => {
     const rgb = hexToRgb(baseColor);
     if (!rgb) return [];
-    
+
     const shades = [];
     for (let i = 10; i <= 90; i += 10) {
       const factor = i / 100;
@@ -127,7 +127,7 @@ export default function Color({
   const generateTints = (baseColor: string) => {
     const rgb = hexToRgb(baseColor);
     if (!rgb) return [];
-    
+
     const tints = [];
     for (let i = 10; i <= 90; i += 10) {
       const factor = i / 100;
@@ -159,42 +159,42 @@ export default function Color({
       { name: "Dark Red", value: "#8b0000" },
       { name: "Crimson", value: "#dc143c" },
       { name: "Rose", value: "#ff69b4" },
-      
+
       // Oranges
       { name: "Light Orange", value: "#ffd700" },
       { name: "Orange", value: "#ffa500" },
       { name: "Dark Orange", value: "#ff8c00" },
       { name: "Coral", value: "#ff7f50" },
       { name: "Peach", value: "#ffcba4" },
-      
+
       // Yellows
       { name: "Light Yellow", value: "#ffffe0" },
       { name: "Yellow", value: "#ffff00" },
       { name: "Gold", value: "#ffd700" },
       { name: "Amber", value: "#ffbf00" },
       { name: "Khaki", value: "#f0e68c" },
-      
+
       // Greens
       { name: "Light Green", value: "#90ee90" },
       { name: "Green", value: "#008000" },
       { name: "Dark Green", value: "#006400" },
       { name: "Forest", value: "#228b22" },
       { name: "Emerald", value: "#50c878" },
-      
+
       // Blues
       { name: "Light Blue", value: "#add8e6" },
       { name: "Blue", value: "#0000ff" },
       { name: "Dark Blue", value: "#00008b" },
       { name: "Navy", value: "#000080" },
       { name: "Cyan", value: "#00ffff" },
-      
+
       // Purples
       { name: "Light Purple", value: "#dda0dd" },
       { name: "Purple", value: "#800080" },
       { name: "Dark Purple", value: "#4b0082" },
       { name: "Violet", value: "#8a2be2" },
       { name: "Indigo", value: "#4b0082" },
-      
+
       // Grays
       { name: "Light Gray", value: "#d3d3d3" },
       { name: "Gray", value: "#808080" },
@@ -205,7 +205,7 @@ export default function Color({
   }), [theme]);
 
   const isActiveColor = (colorValue: string) => {
-    return color === colorValue || 
+    return color === colorValue ||
       (!color && colorValue === (theme === "dark" ? "white" : "black"));
   };
 
@@ -234,7 +234,7 @@ export default function Color({
             <div className="flex items-center gap-1">
               <PaletteIcon className="w-4 h-4 dark:text-white" />
               {/* Color indicator bar */}
-              <div 
+              <div
                 className="w-3 h-1 rounded-sm border border-border/50 ml-1"
                 style={{ backgroundColor: color || (theme === "dark" ? "white" : "black") }}
               />
@@ -242,10 +242,10 @@ export default function Color({
           </Button>
         ) : null}
       </PopoverTrigger>
-      
-      <PopoverContent 
-        className="max-w-60 p-4 z-[250] shadow-lg border-border/50" 
-        side={side} 
+
+      <PopoverContent
+        className="max-w-60 p-4 z-[250] shadow-lg border-border/50"
+        side={side}
         sideOffset={sideOffset}
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -280,7 +280,7 @@ export default function Color({
                     Reset
                   </Button>
                 </div>
-                
+
                 <div className="grid grid-cols-5 gap-2">
                   {colorPalette.basic.map((colorItem, index) => (
                     <Button
@@ -291,11 +291,11 @@ export default function Color({
                         "w-8 h-8 p-0 rounded-lg border-2 transition-all duration-200",
                         "hover:scale-110 hover:shadow-md",
                         "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        isActiveColor(colorItem.value) 
-                          ? "border-ring shadow-md scale-105" 
+                        isActiveColor(colorItem.value)
+                          ? "border-ring shadow-md scale-105"
                           : "border-border/30 hover:border-border"
                       )}
-                      style={{ 
+                      style={{
                         backgroundColor: colorItem.value,
                       }}
                       onMouseDown={(e) => e.preventDefault()}
@@ -321,7 +321,7 @@ export default function Color({
                     Reset
                   </Button>
                 </div>
-                
+
                 <div className="grid grid-cols-5 gap-1.5 max-h-48 overflow-y-auto scrollbar-none">
                   {colorPalette.extended.map((colorItem, index) => (
                     <Button
@@ -332,11 +332,11 @@ export default function Color({
                         "w-8 h-8 p-0 rounded-md border-2 transition-all duration-200",
                         "hover:scale-110 hover:shadow-md",
                         "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        isActiveColor(colorItem.value) 
-                          ? "border-ring shadow-md scale-105" 
+                        isActiveColor(colorItem.value)
+                          ? "border-ring shadow-md scale-105"
                           : "border-border/30 hover:border-border"
                       )}
-                      style={{ 
+                      style={{
                         backgroundColor: colorItem.value,
                       }}
                       onMouseDown={(e) => e.preventDefault()}
@@ -437,7 +437,7 @@ export default function Color({
                     Clear
                   </Button>
                 </div>
-                
+
                 {recentColors.length > 0 ? (
                   <div className="grid grid-cols-4 gap-2">
                     {recentColors.map((recentColor, index) => (
@@ -449,11 +449,11 @@ export default function Color({
                           "w-12 h-12 p-0 rounded-lg border-2 transition-all duration-200",
                           "hover:scale-110 hover:shadow-md",
                           "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                          isActiveColor(recentColor) 
-                            ? "border-ring shadow-md scale-105" 
+                          isActiveColor(recentColor)
+                            ? "border-ring shadow-md scale-105"
                             : "border-border/30 hover:border-border"
                         )}
-                        style={{ 
+                        style={{
                           backgroundColor: recentColor,
                         }}
                         onMouseDown={(e) => e.preventDefault()}

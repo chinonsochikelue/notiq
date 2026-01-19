@@ -1,5 +1,5 @@
 import type { ElementNode, LexicalEditor } from "lexical";
-import {  Compact } from '@uiw/react-color';
+import { Compact } from '@uiw/react-color';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
@@ -52,8 +52,8 @@ import {
   TableRowsSplit,
   Trash,
 } from "lucide-react";
-import { DropDown } from "@/components/ui/drop-downs";
-import useModal from "@/components/ui/models/use-model";
+import { DropDown } from "../../../ui/drop-downs";
+import useModal from "../../../ui/models/use-model";
 
 function computeSelectionCount(selection: TableSelection): {
   columns: number;
@@ -157,7 +157,7 @@ function TableActionMenu({
       { skipInitialization: true }
     );
   }, [editor, tableCellNode]);
-  
+
   useEffect(() => {
     editor.getEditorState().read(() => {
       const selection = $getSelection();
@@ -449,13 +449,13 @@ function TableActionMenu({
             "Select color",
             (onClose) => (
               <Compact
-              style={{background:"transparent",width:"100%" }}
-              color={backgroundColor}
-              onChange={(color) => {
-                handleCellBackgroundColor(color.hex)
-                onClose()
-              }}
-            />
+                style={{ background: "transparent", width: "100%" }}
+                color={backgroundColor}
+                onChange={(color) => {
+                  handleCellBackgroundColor(color.hex)
+                  onClose()
+                }}
+              />
             ),
             true
           );
@@ -519,7 +519,7 @@ function TableActionMenu({
       tableCellNode,
       cellMerge,
       selectionCounts,
-      
+
     ]
   );
   if (cellMerge) {

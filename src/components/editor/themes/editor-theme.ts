@@ -1,11 +1,6 @@
-
-import type {EditorThemeClasses} from 'lexical';
-
-
-
-import "./theme.css"
+import type { EditorThemeClasses } from 'lexical';
 const theme: EditorThemeClasses = {
-  code:`
+  code: `
   bg-[#e1e1e1] dark:bg-[#1a1a1a] m-0  text-sm  
   overflow-auto relative pl-[52px]  p-3 font-mono group 
   rounded-sm  w-full h-fit block  line-code
@@ -46,7 +41,7 @@ const theme: EditorThemeClasses = {
     base: 'PlaygroundEditorTheme__embedBlock',
     focus: 'PlaygroundEditorTheme__embedBlockFocus',
   },
-  list: { 
+  list: {
     checklist: 'PlaygroundEditorTheme__checklist',
     listitem: 'PlaygroundEditorTheme__listItem',
     listitemChecked: 'PlaygroundEditorTheme__listItemChecked',
@@ -61,7 +56,7 @@ const theme: EditorThemeClasses = {
       'PlaygroundEditorTheme__ol4',
       'PlaygroundEditorTheme__ol5',
     ],
-    ulDepth:[
+    ulDepth: [
       'PlaygroundEditorTheme__ul1',
       'PlaygroundEditorTheme__ul2',
       'PlaygroundEditorTheme__ul3',
@@ -69,7 +64,7 @@ const theme: EditorThemeClasses = {
       'PlaygroundEditorTheme__ul5'
     ],
     ul: 'ul',
-    ol:"ol"
+    ol: "ol"
   },
   paragraph: 'leading-7',
   link: `underline cursor-pointer text-blue-600 after:content-['_↗']`,
@@ -77,7 +72,7 @@ const theme: EditorThemeClasses = {
   table: 'PlaygroundEditorTheme__table',
   tableCell: 'PlaygroundEditorTheme__tableCell',
   tableCellActionButton: 'PlaygroundEditorTheme__tableCellActionButton',
-  tableCellActionButtonContainer:'PlaygroundEditorTheme__tableCellActionButtonContainer',
+  tableCellActionButtonContainer: 'PlaygroundEditorTheme__tableCellActionButtonContainer',
   tableCellHeader: 'PlaygroundEditorTheme__tableCellHeader',
   tableCellResizer: 'PlaygroundEditorTheme__tableCellResizer',
   tableCellSelected: 'PlaygroundEditorTheme__tableCellSelected',
@@ -95,11 +90,11 @@ const theme: EditorThemeClasses = {
     h5: "text-lg font-bold",
     h6: "text-sm font-bold",
   },
-  quote:"mt-6 border-l-[4px] pl-6 italic",
+  quote: "mt-6 border-l-[4px] pl-6 italic",
   text: {
     bold: 'font-bold',
     capitalize: 'capitalize',
-    code:  "inline-flex items-center rounded-sm border border-zinc-200 px-0.1 py-0  h-fit min-h-[20px] transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2 dark:border-zinc-800 dark:focus:ring-zinc-300 border-transparent bg-zinc-100 text-zinc-900 hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80", 
+    code: "inline-flex items-center rounded-sm border border-zinc-200 px-0.1 py-0  h-fit min-h-[20px] transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2 dark:border-zinc-800 dark:focus:ring-zinc-300 border-transparent bg-zinc-100 text-zinc-900 hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80",
     italic: 'italic ',
     lowercase: 'lowercase',
     strikethrough: 'line-through',

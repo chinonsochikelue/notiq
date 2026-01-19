@@ -1,17 +1,17 @@
 import { $getRoot } from "lexical"
 import { $generateHtmlFromNodes } from "@lexical/html"
 import type { LexicalEditor, LexicalNode } from "lexical"
-import { $isPollNode, type PollNode } from "@/components/editor/nodes/PollNode"
+import { $isPollNode, type PollNode } from "../components/editor/nodes/PollNode"
 import {
   $isStoryBuilderNode,
   type StoryBuilderNode,
   type StoryNode,
-} from "@/components/editor/nodes/StoryBuilderNode/StoryBuilderNode"
+} from "../components/editor/nodes/StoryBuilderNode/StoryBuilderNode"
 import {
   $isDynamicBlockNode,
   type DynamicBlockNode,
   type DynamicContentBlock,
-} from "@/components/editor/nodes/DynamicBlockNode/DynamicBlockNode"
+} from "../components/editor/nodes/DynamicBlockNode/DynamicBlockNode"
 
 /**
  * Converts the current editor content to HTML string
@@ -684,9 +684,8 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
           </div>
         </div>
 
-        ${
-          storyNode.choices.length > 0
-            ? `
+        ${storyNode.choices.length > 0
+        ? `
           <div class="space-y-4 mt-8">
             <h3 class="font-bold text-xl flex items-center gap-2 text-gray-900 dark:text-gray-100">
               <span class="text-blue-600">🎯</span>
@@ -697,12 +696,11 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
             </div>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
 
-        ${
-          storyNode.isEnd
-            ? `
+        ${storyNode.isEnd
+        ? `
           <div class="text-center py-8 bg-gray-50 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl mt-8">
             <div class="text-6xl mb-4">🎭</div>
             <span class="inline-flex items-center px-6 py-3 rounded-full text-lg font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
@@ -717,8 +715,8 @@ function convertStoryBuilderNodeToHTML(node: StoryBuilderNode): string {
             </button>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
       </div>
     `
   }
@@ -762,37 +760,33 @@ function convertDynamicBlockNodeToHTML(node: DynamicBlockNode): string {
   const renderContentBlock = (block: DynamicContentBlock): string => {
     switch (block.type) {
       case "text":
-        return `<div class="prose prose-sm max-w-none" ${
-          block.styles
+        return `<div class="prose prose-sm max-w-none" ${block.styles
             ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
+              .map(([k, v]) => `${k}: ${v}`)
+              .join("; ")}"`
             : ""
-        }>${block.content}</div>`
+          }>${block.content}</div>`
       case "image":
-        return `<img src="${block.content || "/placeholder.svg"}" alt="Dynamic content" class="max-w-full h-auto rounded-lg" ${
-          block.styles
+        return `<img src="${block.content || "/placeholder.svg"}" alt="Dynamic content" class="max-w-full h-auto rounded-lg" ${block.styles
             ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
+              .map(([k, v]) => `${k}: ${v}`)
+              .join("; ")}"`
             : ""
-        } />`
+          } />`
       case "video":
-        return `<video src="${block.content}" controls class="max-w-full h-auto rounded-lg" ${
-          block.styles
+        return `<video src="${block.content}" controls class="max-w-full h-auto rounded-lg" ${block.styles
             ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
+              .map(([k, v]) => `${k}: ${v}`)
+              .join("; ")}"`
             : ""
-        }></video>`
+          }></video>`
       case "html":
-        return `<div class="w-full" ${
-          block.styles
+        return `<div class="w-full" ${block.styles
             ? `style="${Object.entries(block.styles)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join("; ")}"`
+              .map(([k, v]) => `${k}: ${v}`)
+              .join("; ")}"`
             : ""
-        }>${block.content}</div>`
+          }>${block.content}</div>`
       default:
         return '<div class="text-gray-500">Unknown content type</div>'
     }
@@ -831,10 +825,9 @@ function convertDynamicBlockNodeToHTML(node: DynamicBlockNode): string {
       <div class="p-4 space-y-4">
          Content Display Area 
         <div class="min-h-[200px] p-4 rounded-lg border bg-gray-50 dark:bg-gray-700 relative overflow-hidden" id="dynamic-content-${payload.id}">
-          ${
-            currentBlock
-              ? renderContentBlock(currentBlock)
-              : `
+          ${currentBlock
+      ? renderContentBlock(currentBlock)
+      : `
             <div class="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
               <div class="text-center">
                 <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -844,7 +837,7 @@ function convertDynamicBlockNodeToHTML(node: DynamicBlockNode): string {
               </div>
             </div>
           `
-          }
+    }
         </div>
         
          Block Selection 

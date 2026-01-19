@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "../skeleton";
+import { cn } from "../../../lib/utils";
 import { CSSProperties, JSX, useEffect, useState } from "react";
 
 const imageCache = new Set();
@@ -45,8 +45,8 @@ export default function LazyImage({
     };
   }, [src, onError]);
 
- 
-  
+
+
   return (
     <>
       {isLoading && (

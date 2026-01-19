@@ -10,8 +10,6 @@
 import type { Position } from "../../nodes/InlineImageNode/InlineImageNode"
 import type { JSX } from "react"
 
-import "../../nodes/InlineImageNode/InlineImageNode.css"
-
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
 import { $wrapNodeInElement, mergeRegister } from "@lexical/utils"
 import {
@@ -43,11 +41,11 @@ import {
   InlineImageNode,
   type InlineImagePayload,
 } from "../../nodes/InlineImageNode/InlineImageNode"
-import { Button } from "@/components/ui/button"
-import FileInput from "@/components/ui/FileInput"
-import Select from "@/components/ui/Select"
-import TextInput from "@/components/ui/TextInput"
-import { DialogActions } from "@/components/ui/dialog/Dialog"
+import { Button } from "../../../ui/button"
+import FileInput from "../../../ui/FileInput"
+import Select from "../../../ui/Select"
+import TextInput from "../../../ui/TextInput"
+import { DialogActions } from "../../../ui/dialog/Dialog"
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>
 

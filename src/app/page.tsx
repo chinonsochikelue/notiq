@@ -1,8 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "../components/ui/button"
+import { Card, CardContent } from "../components/ui/card"
+import { Badge } from "../components/ui/badge"
 import {
   BarChart3,
   Clock,
@@ -36,7 +36,7 @@ import {
   GripVertical,
   Link
 } from "lucide-react"
-import { ModeToggle } from '@/components/theme/ModeToggle'
+import { ModeToggle } from '../components/theme/ModeToggle'
 import { default as Redirect } from "next/link";
 
 
@@ -265,7 +265,7 @@ export default function NotiqLanding() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <Redirect href="/editor">
+              <Redirect href="/Playground">
                 <Button size="lg" className="h-14 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group cursor-pointer">
                   {/* <Download className="mr-2 h-5 w-5" /> */}
                   Try Notiq Free
@@ -601,14 +601,14 @@ export default function NotiqLanding() {
             </a>
 
             <a
-            href="https://buymeacoffee.com/chinonsone6"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="https://buymeacoffee.com/chinonsone6"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-            <Button variant="outline" size="lg" className="border-2 border-slate-300 dark:border-slate-600 cursor-pointer">
-              <Coffee className="mr-2 h-5 w-5" />
-              Buy Me a Coffee
-            </Button>
+              <Button variant="outline" size="lg" className="border-2 border-slate-300 dark:border-slate-600 cursor-pointer">
+                <Coffee className="mr-2 h-5 w-5" />
+                Buy Me a Coffee
+              </Button>
             </a>
           </div>
         </div>

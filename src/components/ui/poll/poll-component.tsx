@@ -14,14 +14,14 @@ import {
 } from "lexical";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "../button";
+import { Input } from "../input";
+import { Checkbox } from "../checkbox";
 import { X } from "lucide-react";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { useMutation } from "@tanstack/react-query";
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../card";
 import { $isPollNode, createPollOption, Option, Options, PollNode } from "../../editor/nodes/PollNode";
 
 function getTotalVotes(options: Options): number {

@@ -54,7 +54,65 @@
 - **Keyboard Shortcuts**: Comprehensive shortcut system
 - **Real-time Collaboration**: Shared editing context
 
-## 🚀 Quick Start
+## 🚀 Library Usage
+
+Notiq can be used as a standalone editor in your React/Next.js projects.
+
+### Installation
+
+```bash
+npm install @collabchron/notiq
+```
+
+### Integration
+
+#### 1. Configure Tailwind CSS
+
+Add the Notiq plugin to your `tailwind.config.js`:
+
+```javascript
+import { notiqPlugin } from '@collabchron/notiq';
+
+export default {
+  content: [
+    // ... your content paths
+    "./node_modules/@collabchron/notiq/dist/**/*.{js,mjs}",
+  ],
+  plugins: [
+    notiqPlugin,
+    require('@tailwindcss/typography'),
+  ],
+}
+```
+
+#### 2. Usage in your component
+
+```tsx
+"use client";
+
+import { Editor } from "@collabchron/notiq";
+
+export default function MyEditorPage() {
+  return (
+    <Editor 
+      isEditable={true}
+      aiConfig={{
+        apiEndpoint: "/api/ai", // Your AI completion endpoint
+      }}
+      uploadConfig={{
+        uploadHandler: async (file) => {
+          // Your custom upload logic (e.g., S3, Cloudinary)
+          return { url: "https://your-storage.com/file.png" };
+        }
+      }}
+    />
+  );
+}
+```
+
+## 🛠️ Local Development
+
+If you want to contribute or run the development environment:
 
 ### Installation
 

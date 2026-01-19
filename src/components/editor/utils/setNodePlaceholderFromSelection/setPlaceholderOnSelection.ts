@@ -1,8 +1,6 @@
 import { LexicalEditor, PointType, RangeSelection } from 'lexical';
 import { getAllLexicalChildren } from '../getAllLexicalChildren';
 import { getNodePlaceholder } from './getNodePlaceholder';
-
-import './styles.css';
 import { $isCollapsibleContainerNode } from '../../nodes/CollapsibleNode/CollapsibleContainerNode';
 import { $isCollapsibleContentNode } from '../../nodes/CollapsibleNode/CollapsibleContentNode';
 
@@ -23,20 +21,20 @@ export const setPlaceholderOnSelection = ({
     * 1. Get all lexical nodes as HTML elements
     */
    const children = getAllLexicalChildren(editor);
-   
-   
+
+
    /**
     * 2. Remove "placeholder" class if it was added before
     */
    const removePlaceholderClass = (element: HTMLElement) => {
       if (!element) return;
-   
+
       // Remove the placeholder class from the current element
       if (element.classList.contains(PLACEHOLDER_CLASS_NAME)) {
          element.classList.remove(PLACEHOLDER_CLASS_NAME);
          element.removeAttribute('data-placeholder');
       }
-   
+
       // Recursively process child elements
       Array.from(element.children).forEach(child => {
          if (child instanceof HTMLElement) {
@@ -44,18 +42,18 @@ export const setPlaceholderOnSelection = ({
          }
       });
    };
-   
-   children.forEach(({ htmlElement,node  }:any) => {
+
+   children.forEach(({ htmlElement, node }: any) => {
       if (!htmlElement) {
          return;
       }
 
-      if (isHtmlHeadingElement(htmlElement)) {         
+      if (isHtmlHeadingElement(htmlElement)) {
          return;
       }
-    
-      
-      
+
+
+
       const classList = htmlElement.classList;
       if (node.__type === 'collapsible-container') {
          removePlaceholderClass(htmlElement);
@@ -65,10 +63,10 @@ export const setPlaceholderOnSelection = ({
          removePlaceholderClass(htmlElement);
          return;
       }
-      if(node.__type==="layout-container"){
+      if (node.__type === "layout-container") {
          removePlaceholderClass(htmlElement);
       }
-      if (classList.length && classList.contains(PLACEHOLDER_CLASS_NAME)) {         
+      if (classList.length && classList.contains(PLACEHOLDER_CLASS_NAME)) {
          classList.remove(PLACEHOLDER_CLASS_NAME);
          htmlElement.removeAttribute('data-placeholder');
 
@@ -84,7 +82,7 @@ export const setPlaceholderOnSelection = ({
    if (
       children.length === 1 &&
       children[0].htmlElement &&
-      !isHtmlHeadingElement(children[0].htmlElement) 
+      !isHtmlHeadingElement(children[0].htmlElement)
    ) {
       return;
    }
@@ -107,7 +105,7 @@ export const setPlaceholderOnSelection = ({
 
    if (placeholder) {
       const selectedHtmlElement = editor.getElementByKey(anchor.key);
-      
+
       selectedHtmlElement?.classList.add(PLACEHOLDER_CLASS_NAME);
       selectedHtmlElement?.setAttribute('data-placeholder', placeholder);
    }

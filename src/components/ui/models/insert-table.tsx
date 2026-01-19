@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "../button";
+import { Input } from "../input";
 import { INSERT_TABLE_COMMAND } from "@lexical/table";
 import { LexicalEditor } from "lexical";
 import { JSX, useEffect, useState } from "react";

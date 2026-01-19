@@ -1,10 +1,10 @@
 'use client';
 import { AnimatePresence, motion, Transition, Variants } from 'framer-motion';
 import React, { createContext, useContext, useEffect, useRef } from 'react';
-import { cn } from '@/lib/utils';
 import { useId } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { cn } from '../../../lib/utils';
 
 const DialogContext = createContext<{
   isOpen: boolean;
@@ -114,7 +114,7 @@ function Dialog({
 
     dialog.addEventListener('cancel', handleCancel);
     document.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       dialog.removeEventListener('cancel', handleCancel);
       document.removeEventListener('keydown', handleKeyDown);
@@ -166,18 +166,18 @@ type DialogTriggerProps = {
   asChild?: boolean;
 };
 
-function DialogTrigger({ 
-  children, 
-  className, 
+function DialogTrigger({
+  children,
+  className,
   variant = 'default',
   size = 'default',
-  asChild = false 
+  asChild = false
 }: DialogTriggerProps) {
   const context = useContext(DialogContext);
   if (!context) throw new Error('DialogTrigger must be used within Dialog');
 
   const baseStyles = 'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300';
-  
+
   const variants = {
     default: 'bg-slate-900 text-slate-50 hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90',
     destructive: 'bg-red-500 text-slate-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90',
@@ -196,7 +196,7 @@ function DialogTrigger({
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {
-      ...children.props,
+      ...(children.props as any),
       onClick: context.handleTrigger,
     });
   }
@@ -230,11 +230,11 @@ type DialogContentProps = {
   showClose?: boolean;
 };
 
-function DialogContent({ 
-  children, 
-  className, 
-  container, 
-  showClose = true 
+function DialogContent({
+  children,
+  className,
+  container,
+  showClose = true
 }: DialogContentProps) {
   const context = useContext(DialogContext);
   if (!context) throw new Error('DialogContent must be used within Dialog');
@@ -385,19 +385,19 @@ type DialogCloseProps = {
   asChild?: boolean;
 };
 
-function DialogClose({ 
-  className, 
-  children, 
-  disabled, 
+function DialogClose({
+  className,
+  children,
+  disabled,
   variant = 'outline',
   size = 'icon',
-  asChild = false 
+  asChild = false
 }: DialogCloseProps) {
   const context = useContext(DialogContext);
   if (!context) throw new Error('DialogClose must be used within Dialog');
 
   const baseStyles = 'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300';
-  
+
   const variants = {
     default: 'bg-slate-900 text-slate-50 hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90',
     destructive: 'bg-red-500 text-slate-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90',
@@ -415,7 +415,7 @@ function DialogClose({
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {
-      ...children.props,
+      ...(children.props as any),
       onClick: () => context.setIsOpen(false),
     });
   }

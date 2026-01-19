@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../button";
 import {
   Command,
   CommandEmpty,
@@ -11,13 +11,13 @@ import {
   CommandItem,
   CommandList,
   CommandShortcut,
-} from "@/components/ui/command";
+} from "../command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "../popover";
+import { cn } from "../../../lib/utils";
 
 interface values {
   icon?: React.ReactNode;
@@ -36,10 +36,10 @@ interface Props {
   PopoverContentClassName?: React.CSSProperties;
   values: values[];
   disabled: boolean;
-  triggerVariants?:"ghost" | "default" |"outline" |"link" | "secondary" | "destructive"
-  ShowChevronsUpDown?:boolean
+  triggerVariants?: "ghost" | "default" | "outline" | "link" | "secondary" | "destructive"
+  ShowChevronsUpDown?: boolean
   side?: "top" | "right" | "bottom" | "left" | undefined
-  sideOffset?:number
+  sideOffset?: number
 }
 
 export function DropDown({
@@ -49,16 +49,16 @@ export function DropDown({
   values,
   disabled,
   PopoverContentClassName,
-  triggerVariants="outline",
-  ShowChevronsUpDown=true,
-  side="bottom",
-  sideOffset=5
+  triggerVariants = "outline",
+  ShowChevronsUpDown = true,
+  side = "bottom",
+  sideOffset = 5
 }: Props) {
   const [value, setValue] = React.useState("");
 
   return (
-    <Popover  modal={false}>
-      <PopoverTrigger  disabled={disabled} asChild>
+    <Popover modal={false}>
+      <PopoverTrigger disabled={disabled} asChild>
         <Button
           variant={triggerVariants}
           role="combobox"

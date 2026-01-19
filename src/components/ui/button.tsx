@@ -2,14 +2,14 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "./tooltip"
 
 
 const buttonVariants = cva(
@@ -27,15 +27,15 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        transparent:"bg-transparent border border-input"
+        transparent: "bg-transparent border border-input"
       },
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
-        Toolbar:"h-7 w-7 p-3 ",
-        custom:""
+        Toolbar: "h-7 w-7 p-3 ",
+        custom: ""
       },
     },
     defaultVariants: {
@@ -47,9 +47,9 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  tip?:string
+  tip?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -62,7 +62,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             <Tooltip >
               <TooltipTrigger asChild >
                 <Comp
-                  
+
                   className={cn(buttonVariants({ variant, size, className }))}
                   ref={ref}
                   {...props}

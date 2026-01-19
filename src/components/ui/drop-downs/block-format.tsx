@@ -21,7 +21,7 @@ import {
   formatNumberedList,
   formatParagraph,
   formatQuote,
-} from "@/components/editor/utils/editorFormatting";
+} from "../../editor/utils/editorFormatting";
 import { LexicalEditor } from "lexical";
 import { DropDown } from ".";
 
@@ -45,7 +45,7 @@ export default function BlockFormatDropDown({
   blockType,
   disabled = false,
   style,
-  ShowChevronsUpDown=true,
+  ShowChevronsUpDown = true,
   side,
   sideOffset
 }: {
@@ -53,9 +53,9 @@ export default function BlockFormatDropDown({
   editor: LexicalEditor;
   disabled?: boolean;
   style?: React.CSSProperties;
-  ShowChevronsUpDown?:boolean
+  ShowChevronsUpDown?: boolean
   side?: "top" | "right" | "bottom" | "left" | undefined
-  sideOffset?:number
+  sideOffset?: number
 }) {
   const Blocks = useMemo(
     () => ({
@@ -131,17 +131,17 @@ export default function BlockFormatDropDown({
         label: "Blockquote",
         func: () => formatQuote(editor, blockType),
       },
-   
+
     }),
     [editor]
   );
-  
-  
+
+
   const currentBlock = Blocks[blockType] || Blocks.paragraph;
 
   return (
-    <DropDown 
-      TriggerClassName={{...style,width:"100%"}}
+    <DropDown
+      TriggerClassName={{ ...style, width: "100%" }}
       disabled={disabled}
       side={side}
       sideOffset={sideOffset}
@@ -151,9 +151,9 @@ export default function BlockFormatDropDown({
           {currentBlock.icon}
           <span className="max-sm:hidden">{currentBlock.label}</span>
         </>
-      } 
+      }
       ShowChevronsUpDown={ShowChevronsUpDown}
-      values={Object.values(Blocks)} 
+      values={Object.values(Blocks)}
     />
   );
 }
