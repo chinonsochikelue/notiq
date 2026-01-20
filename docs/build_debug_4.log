@@ -1,0 +1,25 @@
+
+> notiq-docs@0.0.1 build C:\Users\HP\notiq\docs
+> next build "--debug"
+
+- [36minfo[0m [nextra] You have Next.js i18n enabled, read here https://nextjs.org/docs/app/building-your-application/routing/internationalization for the docs.
+   ▲ Next.js 15.5.9
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./middleware.js:1:1
+Module not found: Can't resolve 'nextra/middleware'
+> 1 | export { middleware } from 'nextra/middleware'
+    | ^
+  2 |
+  3 | export const config = {
+  4 |     matcher: [
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+> Build failed because of webpack errors
+ ELIFECYCLE  Command failed with exit code 1.

@@ -6,7 +6,7 @@ import {
   LexicalAutoLinkPlugin,
   LinkWithMetaDataPlugin,
   nodes_default
-} from "./chunk-UNMJLVGC.mjs";
+} from "./chunk-2HRNVYE4.mjs";
 import {
   Progress,
   UploadProvider,
@@ -41,7 +41,7 @@ import {
 } from "./chunk-YUDCJRJM.mjs";
 import {
   StepperPlugin
-} from "./chunk-KLBJT6EH.mjs";
+} from "./chunk-ACER22EH.mjs";
 import "./chunk-GXYD4VZM.mjs";
 import {
   CAN_USE_DOM,
@@ -105,7 +105,7 @@ import "./chunk-YPHOEJ46.mjs";
 import {
   sanitizeUrl
 } from "./chunk-4VWFVWYP.mjs";
-import "./chunk-KJV3FAZ7.mjs";
+import "./chunk-CG4BHAVO.mjs";
 import "./chunk-3JVFG7ER.mjs";
 import "./chunk-4MEDW3T6.mjs";
 import {
@@ -1278,14 +1278,14 @@ function ContentAnalyticsPlugin() {
 }
 
 // src/components/editor/Core.tsx
-var SlashCommand = dynamic(() => import("./SlashCommand-DTHJZRRO.mjs"), { ssr: false });
-var ToolbarPlugin = dynamic(() => import("./ToolbarPlugin-YKYA4NB4.mjs"), {
+var SlashCommand = dynamic(() => import("./SlashCommand-ZSIZP5NN.mjs"), { ssr: false });
+var ToolbarPlugin = dynamic(() => import("./ToolbarPlugin-3J4KBHLU.mjs"), {
   ssr: false,
   loading: () => /* @__PURE__ */ React.createElement("div", { className: "hidden md:block fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4" }, /* @__PURE__ */ React.createElement(Skeleton, { className: "h-12 w-full max-w-6xl rounded-2xl" }))
 });
 var ExportPlugin = dynamic(() => import("./ExportPlugin-V2RLM63S.mjs"), { ssr: false });
 var TemplatePlugin = dynamic(() => import("./TemplatePlugin-ZD3QEVTI.mjs"), { ssr: false });
-var ExcalidrawPlugin = dynamic(() => import("./ExcalidrawPlugin-ZFHT62IF.mjs"), {
+var ExcalidrawPlugin = dynamic(() => import("./ExcalidrawPlugin-QLZEQFV6.mjs"), {
   ssr: false
 });
 var FloatingLinkEditorPlugin = dynamic(() => import("./FloatingLinkEditorPlugin-TRTCMSP4.mjs"), {
@@ -1299,7 +1299,7 @@ var TableHoverActionsPlugin = dynamic(() => import("./TableHoverActionsPlugin-GJ
 });
 var CodeActionMenuPlugin = dynamic(() => import("./CodeActionMenuPlugin-EINOY4U4.mjs"), { ssr: false });
 var FloatingTextFormatToolbarPlugin = dynamic(
-  () => import("./FloatingTextFormatToolbarPlugin-XGVUIG42.mjs"),
+  () => import("./FloatingTextFormatToolbarPlugin-V5QPQUKU.mjs"),
   { ssr: false }
 );
 var QUOTES = [

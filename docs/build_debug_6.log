@@ -1,0 +1,17 @@
+
+> notiq-docs@0.0.1 build C:\Users\HP\notiq\docs
+> next build "--debug"
+
+   ▲ Next.js 15.5.9
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 23.6s
+   Linting and checking validity of types ...
+   Collecting page data ...
+unhandledRejection [Error [PageNotFoundError]: Cannot find module for page: /_document] {
+  type: 'PageNotFoundError',
+  code: 'ENOENT'
+}
+ ELIFECYCLE  Command failed with exit code 1.

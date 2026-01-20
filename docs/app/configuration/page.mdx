@@ -1,0 +1,295 @@
+# Configuration
+
+Notiq offers extensive configuration options to customize the editor to your needs.
+
+## Editor Configuration
+
+### Basic Configuration
+
+```tsx
+import { NotiqEditor } from '@collabchron/notiq'
+
+export default function ConfiguredEditor() {
+  return (
+    <NotiqEditor
+      placeholder="Start typing..."
+      initialContent="# Hello World"
+      readOnly={false}
+      autoFocus={true}
+      spellCheck={true}
+    />
+  )
+}
+```
+
+### Toolbar Configuration
+
+Customize which tools appear in the toolbar:
+
+```tsx
+<NotiqEditor
+  toolbarConfig={{
+    items: [
+      'bold', 'italic', 'underline', 'strikethrough',
+      '|',
+      'h1', 'h2', 'h3',
+      '|',
+      'bulletList', 'numberedList',
+      '|',
+      'link', 'image', 'code', 'equation'
+    ],
+    containerClass: 'sticky top-0 bg-white border-b shadow-sm',
+    buttonClass: 'p-2 hover:bg-gray-100 rounded',
+    activeButtonClass: 'bg-blue-500 text-white',
+    mobile: {
+      items: ['bold', 'italic', 'link'],
+      position: 'bottom'
+    }
+  }}
+/>
+```
+
+### Available Toolbar Items
+
+| Item | Description |
+|------|-------------|
+| `bold` | Bold text formatting |
+| `italic` | Italic text formatting |
+| `underline` | Underline text |
+| `strikethrough` | Strikethrough text |
+| `code` | Inline code |
+| `h1`, `h2`, `h3` | Heading levels |
+| `bulletList` | Unordered list |
+| `numberedList` | Ordered list |
+| `quote` | Blockquote |
+| `link` | Insert/edit link |
+| `image` | Insert image |
+| `table` | Insert table |
+| `equation` | Insert math equation |
+| `codeBlock` | Code block with syntax highlighting |
+| `|` | Separator |
+
+## Plugin Configuration
+
+### Markdown Plugin
+
+```tsx
+<NotiqEditor
+  plugins={{
+    markdown: {
+      enabled: true,
+      shortcuts: true,
+      autoConvert: true
+    }
+  }}
+/>
+```
+
+### Equations Plugin
+
+```tsx
+<NotiqEditor
+  plugins={{
+    equations: {
+      enabled: true,
+      inline: true,
+      block: true,
+      macros: {
+        '\\RR': '\\mathbb{R}',
+        '\\NN': '\\mathbb{N}'
+      }
+    }
+  }}
+/>
+```
+
+### Code Highlighting Plugin
+
+```tsx
+<NotiqEditor
+  plugins={{
+    codeHighlight: {
+      enabled: true,
+      theme: 'github-dark',
+      languages: ['javascript', 'typescript', 'python', 'rust', 'go'],
+      showLineNumbers: true,
+      copyButton: true
+    }
+  }}
+/>
+```
+
+### Auto-Link Plugin
+
+```tsx
+<NotiqEditor
+  plugins={{
+    autoLink: {
+      enabled: true,
+      protocols: ['http', 'https', 'mailto'],
+      openInNewTab: true
+    }
+  }}
+/>
+```
+
+## Styling Configuration
+
+### Custom Classes
+
+```tsx
+<NotiqEditor
+  className="border-2 border-gray-300 rounded-lg shadow-lg"
+  editorClassName="prose prose-lg max-w-none p-6 min-h-[400px]"
+  toolbarClassName="bg-gray-50 border-b"
+/>
+```
+
+### Theme Configuration
+
+```tsx
+<NotiqEditor
+  theme={{
+    primary: '#3b82f6',
+    secondary: '#64748b',
+    background: '#ffffff',
+    text: '#1f2937',
+    border: '#e5e7eb'
+  }}
+/>
+```
+
+## Behavior Configuration
+
+### Auto-Save
+
+```tsx
+'use client'
+
+import { useState, useEffect } from 'react'
+import { NotiqEditor } from '@collabchron/notiq'
+
+export default function AutoSaveEditor() {
+  const [content, setContent] = useState('')
+
+  return (
+    <NotiqEditor
+      value={content}
+      onChange={setContent}
+      autoSave={{
+        enabled: true,
+        interval: 5000, // 5 seconds
+        onSave: async (content) => {
+          await fetch('/api/save', {
+            method: 'POST',
+            body: JSON.stringify({ content })
+          })
+        }
+      }}
+    />
+  )
+}
+```
+
+### Character Limit
+
+```tsx
+<NotiqEditor
+  maxLength={5000}
+  showCharacterCount={true}
+  onMaxLengthReached={() => alert('Character limit reached!')}
+/>
+```
+
+### Paste Handling
+
+```tsx
+<NotiqEditor
+  pasteConfig={{
+    stripFormatting: false,
+    allowImages: true,
+    allowLinks: true,
+    sanitize: true
+  }}
+/>
+```
+
+## Advanced Configuration
+
+### Custom Nodes
+
+```tsx
+import { NotiqEditor, createCustomNode } from '@collabchron/notiq'
+
+const CalloutNode = createCustomNode({
+  type: 'callout',
+  render: ({ children, type }) => (
+    <div className={`callout callout-${type}`}>
+      {children}
+    </div>
+  )
+})
+
+export default function CustomNodeEditor() {
+  return (
+    <NotiqEditor
+      customNodes={[CalloutNode]}
+    />
+  )
+}
+```
+
+### Event Handlers
+
+```tsx
+<NotiqEditor
+  onFocus={() => console.log('Editor focused')}
+  onBlur={() => console.log('Editor blurred')}
+  onChange={(content) => console.log('Content changed')}
+  onError={(error) => console.error('Error:', error)}
+  onReady={() => console.log('Editor ready')}
+/>
+```
+
+### Collaboration Configuration
+
+```tsx
+<NotiqEditor
+  collaboration={{
+    enabled: true,
+    roomId: 'document-123',
+    userId: 'user-456',
+    userName: 'John Doe',
+    websocketUrl: 'wss://your-server.com/collab'
+  }}
+/>
+```
+
+## Environment-Specific Configuration
+
+### Development
+
+```tsx
+<NotiqEditor
+  debug={process.env.NODE_ENV === 'development'}
+  devTools={true}
+/>
+```
+
+### Production
+
+```tsx
+<NotiqEditor
+  debug={false}
+  errorReporting={{
+    enabled: true,
+    endpoint: '/api/errors'
+  }}
+/>
+```
+
+## Next Steps
+
+- 🎨 [Theming](/theming) - Customize the editor's appearance
+- 📚 [API Reference](/api) - Complete API documentation
+- 🧩 [Plugins](/plugins) - Learn about available plugins

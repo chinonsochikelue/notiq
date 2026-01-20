@@ -1,1 +1,0 @@
-src/lib/edgestore.ts(6,28): error TS2742: The inferred type of 'useEdgeStore' cannot be named without a reference to '../../node_modules/@edgestore/react/dist/createNextProxy'. This is likely not portable. A type annotation is necessary.

@@ -1,0 +1,400 @@
+# Troubleshooting
+
+Common issues and their solutions.
+
+## Installation Issues
+
+### Module Not Found Error
+
+**Problem:** Getting "Module not found" error when importing Notiq.
+
+**Solution:**
+
+1. Clear your package manager cache:
+   ```bash
+   pnpm store prune
+   # or
+   npm cache clean --force
+   ```
+
+2. Delete `node_modules` and reinstall:
+   ```bash
+   rm -rf node_modules
+   pnpm install
+   ```
+
+3. Verify the package is installed:
+   ```bash
+   pnpm list @collabchron/notiq
+   ```
+
+### Peer Dependency Warnings
+
+**Problem:** Warnings about unmet peer dependencies.
+
+**Solution:**
+
+Install the required peer dependencies:
+
+```bash
+pnpm add react@19 react-dom@19
+```
+
+### TypeScript Errors
+
+**Problem:** TypeScript can't find type definitions.
+
+**Solution:**
+
+1. Ensure you're using TypeScript 5.0 or later
+2. Update your `tsconfig.json`:
+   ```json
+   {
+     "compilerOptions": {
+       "moduleResolution": "bundler",
+       "esModuleInterop": true
+     }
+   }
+   ```
+3. Restart your TypeScript server
+
+## Styling Issues
+
+### CSS Not Loading
+
+**Problem:** Editor appears unstyled.
+
+**Solution:**
+
+1. Import the CSS in your root layout:
+   ```tsx
+   import '@collabchron/notiq/dist/styles/notiq.css'
+   ```
+
+2. Ensure your build tool supports CSS imports
+
+3. Check for CSS module conflicts
+
+### Tailwind Classes Not Working
+
+**Problem:** Custom Tailwind classes aren't applying.
+
+**Solution:**
+
+Add Notiq to your Tailwind content paths:
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@collabchron/notiq/dist/**/*.{js,jsx}',
+  ],
+}
+```
+
+### Fonts Not Loading (Equations)
+
+**Problem:** Mathematical equation fonts showing 404 errors.
+
+**Solution:**
+
+The fonts are bundled with the CSS. If you see errors:
+
+1. Ensure you've imported the CSS file
+2. Check your Next.js configuration allows serving from `node_modules`
+3. Verify the build process copies font files correctly
+
+## Runtime Issues
+
+### Editor Not Rendering
+
+**Problem:** Editor component doesn't appear.
+
+**Solution:**
+
+1. Check browser console for errors
+2. Verify you're using React 19+
+3. Ensure you're in a Client Component:
+   ```tsx
+   'use client'
+   
+   import { NotiqEditor } from '@collabchron/notiq'
+   ```
+
+### Hydration Errors
+
+**Problem:** "Hydration failed" errors in Next.js.
+
+**Solution:**
+
+Use dynamic import with `ssr: false`:
+
+```tsx
+import dynamic from 'next/dynamic'
+
+const NotiqEditor = dynamic(
+  () => import('@collabchron/notiq').then(mod => mod.NotiqEditor),
+  { ssr: false }
+)
+```
+
+### State Not Updating
+
+**Problem:** Editor content doesn't update when using controlled mode.
+
+**Solution:**
+
+Ensure you're using both `value` and `onChange`:
+
+```tsx
+const [content, setContent] = useState('')
+
+<NotiqEditor
+  value={content}
+  onChange={setContent}
+/>
+```
+
+## Plugin Issues
+
+### Plugin Not Working
+
+**Problem:** Enabled plugin doesn't seem to work.
+
+**Solution:**
+
+1. Verify plugin configuration:
+   ```tsx
+   <NotiqEditor
+     plugins={{
+       markdown: true,  // or { enabled: true }
+       equations: true
+     }}
+   />
+   ```
+
+2. Check for conflicting plugins
+3. Review plugin-specific requirements
+
+### Code Highlighting Not Showing
+
+**Problem:** Code blocks aren't highlighted.
+
+**Solution:**
+
+1. Enable the code highlight plugin:
+   ```tsx
+   <NotiqEditor
+     plugins={{
+       codeHighlight: {
+         enabled: true,
+         theme: 'github-dark',
+         languages: ['javascript', 'typescript']
+       }
+     }}
+   />
+   ```
+
+2. Ensure the language is in the supported list
+
+### Equations Not Rendering
+
+**Problem:** Mathematical equations show as plain text.
+
+**Solution:**
+
+1. Enable the equations plugin:
+   ```tsx
+   <NotiqEditor
+     plugins={{
+       equations: true
+     }}
+   />
+   ```
+
+2. Verify KaTeX fonts are loading (check Network tab)
+3. Use correct syntax: `$inline$` or `$$block$$`
+
+## Performance Issues
+
+### Slow Rendering
+
+**Problem:** Editor feels sluggish with large documents.
+
+**Solution:**
+
+1. Use lazy loading:
+   ```tsx
+   const NotiqEditor = dynamic(
+     () => import('@collabchron/notiq').then(mod => mod.NotiqEditor),
+     { ssr: false }
+   )
+   ```
+
+2. Debounce onChange handler:
+   ```tsx
+   const debouncedChange = useMemo(
+     () => debounce(setContent, 300),
+     []
+   )
+   
+   <NotiqEditor onChange={debouncedChange} />
+   ```
+
+3. Limit toolbar items for better performance
+
+### Memory Leaks
+
+**Problem:** Memory usage increases over time.
+
+**Solution:**
+
+1. Ensure proper cleanup in useEffect:
+   ```tsx
+   useEffect(() => {
+     return () => {
+       // Cleanup
+     }
+   }, [])
+   ```
+
+2. Avoid creating new objects in render
+3. Use React DevTools Profiler to identify issues
+
+## Build Issues
+
+### Build Fails
+
+**Problem:** Production build fails.
+
+**Solution:**
+
+1. Check for dynamic imports that need `ssr: false`
+2. Verify all dependencies are installed
+3. Clear `.next` folder and rebuild:
+   ```bash
+   rm -rf .next
+   pnpm build
+   ```
+
+### Bundle Size Too Large
+
+**Problem:** Bundle size is larger than expected.
+
+**Solution:**
+
+1. Use dynamic imports for the editor
+2. Enable tree-shaking in your bundler
+3. Only import what you need:
+   ```tsx
+   import { NotiqEditor } from '@collabchron/notiq'
+   // Not: import * as Notiq from '@collabchron/notiq'
+   ```
+
+## Mobile Issues
+
+### Toolbar Not Visible on Mobile
+
+**Problem:** Toolbar is cut off or hidden on mobile devices.
+
+**Solution:**
+
+Configure mobile toolbar:
+
+```tsx
+<NotiqEditor
+  toolbarConfig={{
+    mobile: {
+      position: 'bottom',
+      items: ['bold', 'italic', 'link']
+    }
+  }}
+/>
+```
+
+### Touch Events Not Working
+
+**Problem:** Touch interactions don't work properly.
+
+**Solution:**
+
+1. Ensure you're testing on a real device, not just browser dev tools
+2. Check for CSS that might be blocking touch events
+3. Verify viewport meta tag is set correctly
+
+## Integration Issues
+
+### React Hook Form Integration
+
+**Problem:** Editor doesn't work with React Hook Form.
+
+**Solution:**
+
+Use Controller component:
+
+```tsx
+<Controller
+  name="content"
+  control={control}
+  render={({ field }) => (
+    <NotiqEditor
+      value={field.value}
+      onChange={field.onChange}
+    />
+  )}
+/>
+```
+
+### Next.js App Router Issues
+
+**Problem:** Editor doesn't work in App Router.
+
+**Solution:**
+
+1. Ensure you're using a Client Component:
+   ```tsx
+   'use client'
+   ```
+
+2. Import CSS in root layout, not in component
+3. Use proper async/await for server components
+
+## Still Having Issues?
+
+If you're still experiencing problems:
+
+1. Check the [FAQ](/faq) for more answers
+2. Search [GitHub Issues](https://github.com/chinonsochikelue/notiq/issues)
+3. Ask in [GitHub Discussions](https://github.com/chinonsochikelue/notiq/discussions)
+4. Open a new issue with:
+   - Clear description of the problem
+   - Steps to reproduce
+   - Your environment details
+   - Code samples
+
+## Debugging Tips
+
+### Enable Debug Mode
+
+```tsx
+<NotiqEditor
+  debug={process.env.NODE_ENV === 'development'}
+/>
+```
+
+### Check Browser Console
+
+Always check the browser console for error messages and warnings.
+
+### Use React DevTools
+
+Install React DevTools to inspect component state and props.
+
+### Verify Versions
+
+Check that all dependencies are at the correct versions:
+
+```bash
+pnpm list react react-dom next @collabchron/notiq
+```

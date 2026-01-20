@@ -1,7 +1,0 @@
-src/components/editor/nodes/StoryBuilderNode/StoryBuilderComponent.tsx(614,32): error TS2304: Cannot find name 'enhancedNode'.
-src/components/editor/nodes/StoryBuilderNode/StoryBuilderComponent.tsx(683,60): error TS2304: Cannot find name 'EnhancedStoryChoice'.
-src/components/editor/nodes/StoryBuilderNode/StoryBuilderComponent.tsx(797,66): error TS2304: Cannot find name 'EnhancedStoryNode'.
-src/components/editor/nodes/StoryBuilderNode/StoryBuilderComponent.tsx(803,52): error TS2304: Cannot find name 'EnhancedStoryNode'.
-src/components/editor/nodes/StoryBuilderNode/StoryBuilderComponent.tsx(809,61): error TS2304: Cannot find name 'EnhancedStoryNode'.
-src/components/editor/utils/ai.test.ts(20,136): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
-src/components/editor/utils/ai.test.ts(25,130): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.

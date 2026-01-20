@@ -1,0 +1,393 @@
+# Theming
+
+Customize Notiq's appearance to match your brand and design system.
+
+## Overview
+
+Notiq is built with Tailwind CSS and provides multiple ways to customize its appearance:
+
+1. **CSS Variables** - Override default colors and spacing
+2. **Tailwind Classes** - Apply utility classes directly
+3. **Theme Object** - Programmatic theme configuration
+4. **Custom CSS** - Full control with custom stylesheets
+
+## CSS Variables
+
+### Default Theme Variables
+
+Notiq uses CSS custom properties for theming:
+
+```css
+:root {
+  --notiq-primary: #3b82f6;
+  --notiq-secondary: #64748b;
+  --notiq-background: #ffffff;
+  --notiq-text: #1f2937;
+  --notiq-border: #e5e7eb;
+  --notiq-toolbar-bg: #f9fafb;
+  --notiq-selection: #dbeafe;
+  --notiq-focus: #3b82f6;
+}
+```
+
+### Customizing Variables
+
+Override these in your global CSS:
+
+```css
+/* app/globals.css */
+:root {
+  --notiq-primary: #8b5cf6;
+  --notiq-secondary: #a78bfa;
+  --notiq-background: #fafafa;
+  --notiq-text: #18181b;
+  --notiq-border: #e4e4e7;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --notiq-primary: #a78bfa;
+    --notiq-background: #18181b;
+    --notiq-text: #fafafa;
+    --notiq-border: #27272a;
+    --notiq-toolbar-bg: #09090b;
+  }
+}
+```
+
+## Tailwind Configuration
+
+### Extending Tailwind Theme
+
+Add Notiq-specific colors to your Tailwind config:
+
+```js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        notiq: {
+          primary: '#3b82f6',
+          secondary: '#64748b',
+          accent: '#8b5cf6',
+        }
+      }
+    }
+  }
+}
+```
+
+### Using Tailwind Classes
+
+Apply classes directly to the editor:
+
+```tsx
+<NotiqEditor
+  className="border-2 border-purple-500 rounded-xl shadow-2xl"
+  editorClassName="prose prose-purple max-w-none p-8"
+  toolbarClassName="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+/>
+```
+
+## Theme Object
+
+### Programmatic Theming
+
+Pass a theme object for complete control:
+
+```tsx
+import { NotiqEditor } from '@collabchron/notiq'
+
+const customTheme = {
+  colors: {
+    primary: '#8b5cf6',
+    secondary: '#a78bfa',
+    background: '#ffffff',
+    text: '#18181b',
+    border: '#e4e4e7',
+    toolbar: {
+      background: '#f4f4f5',
+      text: '#18181b',
+      hover: '#e4e4e7',
+      active: '#8b5cf6'
+    }
+  },
+  spacing: {
+    toolbar: '12px',
+    editor: '24px'
+  },
+  borderRadius: {
+    editor: '12px',
+    toolbar: '8px',
+    button: '6px'
+  },
+  fonts: {
+    body: 'Inter, sans-serif',
+    code: 'Fira Code, monospace'
+  }
+}
+
+export default function ThemedEditor() {
+  return <NotiqEditor theme={customTheme} />
+}
+```
+
+## Dark Mode
+
+### Automatic Dark Mode
+
+Notiq automatically adapts to system preferences:
+
+```tsx
+<NotiqEditor
+  darkMode="auto" // 'auto' | 'light' | 'dark'
+/>
+```
+
+### Manual Dark Mode Toggle
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import { NotiqEditor } from '@collabchron/notiq'
+
+export default function DarkModeEditor() {
+  const [isDark, setIsDark] = useState(false)
+
+  return (
+    <div>
+      <button onClick={() => setIsDark(!isDark)}>
+        Toggle {isDark ? 'Light' : 'Dark'} Mode
+      </button>
+      
+      <NotiqEditor
+        darkMode={isDark ? 'dark' : 'light'}
+        className={isDark ? 'dark' : ''}
+      />
+    </div>
+  )
+}
+```
+
+### Dark Mode CSS
+
+```css
+/* Dark mode styles */
+.dark .notiq-editor {
+  --notiq-background: #18181b;
+  --notiq-text: #fafafa;
+  --notiq-border: #27272a;
+  --notiq-toolbar-bg: #09090b;
+}
+
+.dark .notiq-editor .prose {
+  color: #fafafa;
+}
+
+.dark .notiq-editor code {
+  background: #27272a;
+  color: #a78bfa;
+}
+```
+
+## Custom Styling
+
+### Typography
+
+Customize fonts and text styles:
+
+```tsx
+<NotiqEditor
+  editorClassName="font-serif text-lg leading-relaxed"
+  style={{
+    fontFamily: 'Georgia, serif',
+    fontSize: '18px',
+    lineHeight: '1.8'
+  }}
+/>
+```
+
+### Toolbar Styling
+
+Create a custom toolbar appearance:
+
+```tsx
+<NotiqEditor
+  toolbarConfig={{
+    containerClass: `
+      bg-gradient-to-r from-blue-600 to-purple-600
+      text-white
+      shadow-lg
+      rounded-t-lg
+      p-3
+    `,
+    buttonClass: `
+      text-white
+      hover:bg-white/20
+      rounded-md
+      px-3 py-2
+      transition-all
+    `,
+    activeButtonClass: `
+      bg-white
+      text-blue-600
+      font-semibold
+    `
+  }}
+/>
+```
+
+### Editor Container
+
+Style the editor container:
+
+```tsx
+<NotiqEditor
+  className={`
+    border-2 border-gray-200
+    rounded-2xl
+    shadow-xl
+    overflow-hidden
+    bg-white
+    dark:bg-gray-900
+    dark:border-gray-700
+  `}
+/>
+```
+
+## Preset Themes
+
+### Minimal Theme
+
+```tsx
+const minimalTheme = {
+  colors: {
+    primary: '#000000',
+    secondary: '#666666',
+    background: '#ffffff',
+    text: '#000000',
+    border: '#e0e0e0'
+  },
+  borderRadius: {
+    editor: '0px',
+    toolbar: '0px'
+  }
+}
+
+<NotiqEditor theme={minimalTheme} />
+```
+
+### Vibrant Theme
+
+```tsx
+const vibrantTheme = {
+  colors: {
+    primary: '#ff6b6b',
+    secondary: '#4ecdc4',
+    background: '#ffe66d',
+    text: '#2d3436',
+    border: '#ff6b6b'
+  }
+}
+
+<NotiqEditor theme={vibrantTheme} />
+```
+
+### Professional Theme
+
+```tsx
+const professionalTheme = {
+  colors: {
+    primary: '#1e40af',
+    secondary: '#64748b',
+    background: '#ffffff',
+    text: '#1e293b',
+    border: '#cbd5e1',
+    toolbar: {
+      background: '#f8fafc',
+      text: '#1e293b'
+    }
+  }
+}
+
+<NotiqEditor theme={professionalTheme} />
+```
+
+## Mobile Styling
+
+### Responsive Design
+
+Notiq is mobile-responsive by default, but you can customize:
+
+```tsx
+<NotiqEditor
+  className="
+    min-h-[300px] md:min-h-[500px]
+    text-base md:text-lg
+  "
+  toolbarConfig={{
+    mobile: {
+      position: 'bottom', // 'top' | 'bottom'
+      items: ['bold', 'italic', 'link'],
+      containerClass: 'fixed bottom-0 left-0 right-0 bg-white shadow-lg'
+    }
+  }}
+/>
+```
+
+## Animation & Transitions
+
+### Smooth Transitions
+
+Add animations to editor interactions:
+
+```css
+.notiq-editor {
+  transition: all 0.3s ease;
+}
+
+.notiq-editor:focus-within {
+  transform: scale(1.01);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.notiq-toolbar button {
+  transition: all 0.2s ease;
+}
+
+.notiq-toolbar button:hover {
+  transform: translateY(-2px);
+}
+```
+
+## Accessibility
+
+### High Contrast Mode
+
+```css
+@media (prefers-contrast: high) {
+  .notiq-editor {
+    --notiq-border: #000000;
+    --notiq-text: #000000;
+    border-width: 2px;
+  }
+}
+```
+
+### Focus Indicators
+
+```css
+.notiq-editor:focus-within {
+  outline: 3px solid var(--notiq-primary);
+  outline-offset: 2px;
+}
+```
+
+## Next Steps
+
+- 🔧 [Configuration](/configuration) - Configure editor behavior
+- 📚 [API Reference](/api) - Complete API documentation
+- 🧩 [Plugins](/plugins) - Extend with plugins

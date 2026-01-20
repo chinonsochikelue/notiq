@@ -1,0 +1,36 @@
+
+> notiq-docs@0.0.1 build C:\Users\HP\notiq\docs
+> next build
+
+- [36minfo[0m [nextra] You have Next.js i18n enabled, read here https://nextjs.org/docs/app/building-your-application/routing/internationalization for the docs.
+   ▲ Next.js 15.5.9
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Linting and checking validity of types ...
+   Creating an optimized production build ...
+Failed to compile.
+
+./pages/index.es.mdx
+Error: Unable to find `app` directory
+    at file:///C:/Users/HP/notiq/node_modules/.pnpm/nextra@4.6.1_next@15.5.9_@b_9bb9bc70de73f074d133671c1705e927/node_modules/nextra/dist/server/loader.js:15:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async Object.loader (C:\Users\HP\notiq\node_modules\.pnpm\nextra@4.6.1_next@15.5.9_@b_9bb9bc70de73f074d133671c1705e927\node_modules\nextra\loader.cjs:18:24)
+
+Import trace for requested module:
+./pages/index.es.mdx
+
+./pages/index.mdx
+Error: Unable to find `app` directory
+    at file:///C:/Users/HP/notiq/node_modules/.pnpm/nextra@4.6.1_next@15.5.9_@b_9bb9bc70de73f074d133671c1705e927/node_modules/nextra/dist/server/loader.js:15:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async Object.loader (C:\Users\HP\notiq\node_modules\.pnpm\nextra@4.6.1_next@15.5.9_@b_9bb9bc70de73f074d133671c1705e927\node_modules\nextra\loader.cjs:18:24)
+
+Import trace for requested module:
+./pages/index.mdx
+
+
+> Build failed because of webpack errors
+ ELIFECYCLE  Command failed with exit code 1.

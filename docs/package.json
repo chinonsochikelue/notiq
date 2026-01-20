@@ -1,0 +1,25 @@
+{
+    "name": "notiq-docs",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "dev": "next --turbopack",
+        "build": "next build",
+        "start": "next start"
+    },
+    "dependencies": {
+        "@collabchron/notiq": "workspace:*",
+        "next": "^16.1.3",
+        "nextra": "latest",
+        "nextra-theme-docs": "latest",
+        "react": "^19.2.3",
+        "react-dom": "^19.2.3"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4.0.0",
+        "@tailwindcss/typography": "^0.5.19",
+        "autoprefixer": "^10.4.0",
+        "postcss": "^8.4.0",
+        "tailwindcss": "^4.0.0"
+    }
+}

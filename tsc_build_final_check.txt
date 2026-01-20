@@ -1,1 +1,0 @@
-src/components/ui/image/file-upload.tsx(56,30): error TS7006: Parameter 'progress' implicitly has an 'any' type.

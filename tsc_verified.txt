@@ -1,1 +1,0 @@
-src/components/editor/nodes/StoryBuilderNode/StoryBuilderComponent.tsx(614,32): error TS2304: Cannot find name 'enhancedNode'.

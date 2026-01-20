@@ -1,0 +1,22 @@
+
+> notiq-docs@0.0.1 build C:\Users\HP\notiq\docs
+> next build "--debug"
+
+   ▲ Next.js 15.5.9
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 32.3s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/6) ...
+Error occurred prerendering page "/en". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: Missing ConfigContext.Provider
+    at j (C:\Users\HP\notiq\docs\.next\server\app\[lang]\page.js:2:21422)
+    at J (C:\Users\HP\notiq\docs\.next\server\app\[lang]\page.js:2:12014) {
+  digest: '1728551407'
+}
+Export encountered an error on /[lang]/page: /en, exiting the build.
+ ⨯ Next.js build worker exited with code: 1 and signal: null
+ ELIFECYCLE  Command failed with exit code 1.
