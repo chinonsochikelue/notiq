@@ -1,0 +1,93 @@
+---
+title: Usage Examples
+description: Copy-pasteable examples for common Notiq configurations and use cases.
+---
+
+# Usage Examples
+
+Below are some common ways to configure and use the Notiq editor.
+
+## Basic Editor
+A simple implementation with default settings and read-only mode disabled.
+
+```tsx
+import { Editor } from "@collabchron/notiq";
+import "@collabchron/notiq/styles.css";
+
+export default function App() {
+  return (
+    <div className="p-8">
+      <Editor isEditable={true} />
+    </div>
+  );
+}
+```
+
+## AI-Powered Editor
+Configure the AI Writing Assistant with a custom completion endpoint.
+
+```tsx
+import { Editor } from "@collabchron/notiq";
+
+<Editor 
+  isEditable={true} 
+  aiConfig={{ 
+    apiEndpoint: "/api/my-custom-ai" 
+  }} 
+/>
+```
+
+## Custom Toolbar
+Customize which tools are available to your users.
+
+```tsx
+import { Editor } from "@collabchron/notiq";
+
+const toolbarConfig = {
+  items: ["bold", "italic", "underline", "link", "separator", "insert"]
+};
+
+<Editor 
+  isEditable={true} 
+  toolbarConfig={toolbarConfig} 
+/>
+```
+
+## Handling Image Uploads
+Provide a custom handler to upload images to your own server or cloud storage.
+
+```tsx
+import { Editor } from "@collabchron/notiq";
+
+const uploadHandler = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    body: formData,
+  });
+  
+  const data = await response.json();
+  return { url: data.url }; // Return the final URL
+};
+
+<Editor 
+  isEditable={true} 
+  uploadConfig={{ uploadHandler }} 
+/>
+```
+
+## Read-Only View
+Use Notiq to display rendered content without the editing interface.
+
+```tsx
+import { Editor } from "@collabchron/notiq";
+
+const content = '...serialized lexical state...';
+
+<Editor 
+  isEditable={false} 
+  content={content} 
+/>
+```

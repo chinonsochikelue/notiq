@@ -1,0 +1,54 @@
+---
+title: Deployment
+description: How to deploy Notiq and its documentation to production.
+---
+
+# Deployment
+
+## Deploying the Documentation
+
+The Notiq documentation is built with [Next.js](https://nextjs.org/) and [Fumadocs](https://fumadocs.vercel.app/). It is optimized for deployment on Vercel but can be hosted on any platform that supports Next.js.
+
+### Vercel (Recommended)
+The easiest way to deploy is using the Vercel integration.
+
+1. Push your code to a GitHub repository.
+2. Connect the repository to Vercel.
+3. Add the required environment variables:
+   - `OPENAI_API_KEY`: Your OpenAI key (starting with `sk-`).
+   - `NEXT_PUBLIC_BASE_URL`: The production URL of your docs.
+
+### Build Command
+If you are deploying elsewhere:
+```bash
+pnpm build
+```
+This will generate a production-ready `.next` folder.
+
+---
+
+## Deploying the Editor (Library)
+
+If you are using Notiq as a library in your own app, follow these steps for production safety:
+
+### 1. Bundle Optimization
+Notiq uses dynamic imports for heavy plugins (Excalidraw, Figma). Ensure your bundler (webpack/vite) is configured for code splitting.
+
+### 2. Style Injection
+Make sure to import the Notiq styles in your main entry point:
+```tsx
+import "@collabchron/notiq/styles.css";
+```
+
+### 3. Server-Side Rendering (SSR)
+Notiq is a **client-side library**. If you use it in a Next.js app, ensure you import the `Editor` component using `next/dynamic` with `ssr: false`:
+
+```tsx
+const Editor = dynamic(() => import("@collabchron/notiq"), { ssr: false });
+```
+
+---
+
+## CI/CD Tips
+- **Linting**: Run `pnpm lint` before every deploy.
+- **Type Checking**: Run `tsc --noEmit` to ensure type safety in production.

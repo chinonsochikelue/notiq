@@ -1,0 +1,17 @@
+{
+  "title": "Notiq Documentation",
+  "description": "Notiq Documentation",
+  "icon": "Book",
+  "root": true,
+  "pages": [
+    "index",
+    "quickstart",
+    "examples",
+    "---Features---",
+    "...features",
+    "---Technical---",
+    "/api-reference",
+    "---Community---",
+    "...community"
+  ]
+}

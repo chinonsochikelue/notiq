@@ -1,0 +1,77 @@
+---
+title: Quickstart
+description: Get started with Notiq in minutes.
+---
+
+# Quickstart
+
+Notiq can be used as a standalone editor component in your React or Next.js projects.
+
+## Installation
+
+Install the core package using your preferred package manager:
+
+```bash
+pnpm add @collabchron/notiq
+```
+
+## Setup
+
+### 1. Import Styles
+
+Add the Notiq styles to your root layout (e.g., `app/layout.tsx`):
+
+```tsx
+import "@collabchron/notiq/styles.css";
+```
+
+### 2. Basic Usage
+
+Use the `Editor` component in your application:
+
+```tsx
+"use client";
+
+import { Editor } from "@collabchron/notiq";
+
+export default function Page() {
+  return (
+    <Editor 
+      isEditable={true}
+      aiConfig={{
+        apiEndpoint: "/api/ai",
+      }}
+      uploadConfig={{
+        uploadHandler: async (file) => {
+          // Your custom upload logic
+          return { url: "https://your-storage.com/file.png" };
+        }
+      }}
+    />
+  );
+}
+```
+
+## Local Development
+
+If you want to contribute to Notiq:
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/chinonsochikelue/notiq.git
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up Environment**:
+   Create a `.env.local` with your `OPENAI_API_KEY`.
+
+4. **Run Dev Server**:
+   ```bash
+   pnpm dev
+   ```
+
+[Explore Features](/docs/features)

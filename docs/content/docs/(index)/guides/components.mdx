@@ -1,0 +1,52 @@
+---
+title: Interactive Components
+description: Deep dive into Notiq's advanced blocks like Excalidraw, Equations, and Figma.
+---
+
+# Interactive Components
+
+Notiq goes beyond simple text by providing powerful interactive blocks. Each of these is implemented as a custom Lexical node and a corresponding plugin.
+
+## Excalidraw (Whiteboard)
+
+The Excalidraw block allows you to embed full-featured whiteboards directly into your documents.
+
+### How it Works
+When you insert an Excalidraw block, Notiq opens a modal containing the [Excalidraw](https://excalidraw.com/) editor. Once you save, the drawing is serialized into a JSON string and stored within an `ExcalidrawNode`.
+
+- **Command**: `INSERT_EXCALIDRAW_COMMAND`
+- **Data Persistence**: Stores `elements`, `appState`, and `files` as a JSON blob.
+- **Rendering**: Uses a non-editable preview in the editor and can be edited by clicking the block.
+
+---
+
+## Math & Equations (KaTeX)
+
+Notiq supports complex mathematical notation using the [KaTeX](https://katex.org/) library.
+
+### Usage
+- **Inline Math**: Wraps math in a single line.
+- **Block Math**: Centers the equation on its own line.
+
+### Technical Details
+- **Command**: `INSERT_EQUATION_COMMAND`
+- **Payload**: `{ equation: string, inline: boolean }`
+- **Styling**: Uses the official KaTeX CSS, imported via `@import 'katex/dist/katex.css'`.
+
+---
+
+## Figma & Embeds
+
+Notiq provides a flexible embedding system for third-party platforms.
+
+### Figma
+Embed live Figma prototypes or files by providing the URL. The `FigmaPlugin` handles the transformation of a URL into an `<iframe>` wrapped in a custom node.
+
+### YouTube & Twitter
+Similar to Figma, these plugins listen for `PASTE_COMMAND` or use a dedicated insertion command to create responsive embeds.
+
+---
+
+## Best Practices
+- **Large Drawings**: Since Excalidraw data is stored within the document, extremely large drawings might increase document size.
+- **AI Context**: Notiq's AI Writing Assistant can "see" the text content around these blocks but currently cannot analyze the drawings or complex math equations.

@@ -1,0 +1,75 @@
+---
+title: Theming & Styling
+description: Learn how to customize the appearance of Notiq using Tailwind CSS and custom themes.
+---
+
+# Theming & Styling
+
+Notiq is designed to be highly customizable, leveraging the power of **Tailwind CSS** and **Lexical Themes**.
+
+## Notiq Tailwind Plugin
+
+Notiq provides a built-in Tailwind CSS plugin that sets up the required color variables and theme extensions. 
+
+### Installation
+
+Import and add the `notiqPlugin` to your `tailwind.config.js` (or `.ts`):
+
+```javascript
+import { notiqPlugin } from "@collabchron/notiq";
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    // ... paths to your component files
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    notiqPlugin,
+    require("@tailwindcss/typography"), // Required for proper markdown rendering
+  ],
+};
+```
+
+## Customizing Colors
+
+Notiq uses CSS variables for its color palette, defined in Oklch format for high-precision color control. You can override these variables in your global CSS file to match your brand.
+
+```css
+:root {
+  --primary: oklch(0.6 0.15 250); /* Custom primary blue */
+  --accent: oklch(0.8 0.1 150);   /* Custom accent green */
+  --radius: 0.5rem;               /* Custom corner radius */
+}
+
+.dark {
+  --primary: oklch(0.5 0.2 250);
+}
+```
+
+## Lexical Theme Classes
+
+The internal structure of the editor is styled via a **Lexical Theme**. This theme maps specific editor nodes to CSS classes.
+
+| Feature | Description | Template Class |
+| :--- | :--- | :--- |
+| **Heading** | H1-H6 styles | `scroll-m-20 text-4xl ...` |
+| **Code** | Block code container | `bg-[#e1e1e1] font-mono ...` |
+| **Quote** | Blockquote styles | `mt-6 border-l-[4px] italic` |
+| **Links** | Hyperlink appearance | `underline text-blue-600` |
+
+If you need to change how specific nodes (like paragraphs or headers) look without affecting the rest of your app, you can pass a custom `theme` to Lexical, though Notiq's default theme is highly optimized for the Notion-like experience.
+
+## Dark Mode Support
+
+Notiq has built-in dark mode support. It automatically switches themes based on the `.dark` class on the `<html>` or `<body>` element.
+
+```html
+<html class="dark">
+  ...
+</html>
+```
+
+The `notiqPlugin` and `notiq.css` provide specific color variable overrides for the `.dark` variant.

@@ -1,0 +1,69 @@
+---
+title: Editor API
+description: Detailed documentation for the Notiq Editor component and its configuration.
+---
+
+# Editor Component
+
+The `Editor` component is the main entry point for integrating Notiq into your application. It provides a highly customizable Lexical-based rich text editor with integrated AI and upload capabilities.
+
+## Usage
+
+```tsx
+import { Editor } from "@collabchron/notiq";
+
+<Editor 
+  isEditable={true}
+  content={initialContent}
+  aiConfig={{ apiEndpoint: "/api/ai" }}
+  uploadConfig={{ uploadHandler: myUploadHandler }}
+/>
+```
+
+## Props
+
+### `isEditable`
+- **Type**: `boolean`
+- **Default**: `false`
+- **Description**: Determines if the editor is in read-only mode or editing mode.
+
+### `content`
+- **Type**: `string | unknown`
+- **Description**: The initial state of the editor. Can be a serialized JSON string or an object representing the editor state.
+
+### `aiConfig`
+- **Type**: `AIConfig` (optional)
+- **Description**: Configuration for AI-powered features.
+- **Fields**:
+  - `apiEndpoint` (string): The URL for AI completions. Defaults to `"/api/ai"`.
+
+### `uploadConfig`
+- **Type**: `UploadConfig` (optional)
+- **Description**: Configuration for file and image uploads.
+- **Fields**:
+  - `uploadHandler` (UploadHandler): A custom function to handle file uploads.
+    ```ts
+    type UploadHandler = (
+      file: File,
+      onProgress?: (progress: number) => void
+    ) => Promise<{ url: string }>;
+    ```
+
+### `toolbarConfig`
+- **Type**: `ToolbarConfig` (optional)
+- **Description**: Customization for the floating and main toolbars.
+- **Fields**:
+  - `items` (`ToolbarItem[]`): List of items to display in the toolbar.
+  - `className`, `itemClassName`, `activeItemClassName`: Custom CSS classes for styling.
+  - `mobileClassName`, `mobileItemClassName`: Custom CSS classes for mobile view.
+
+## Type Definitions
+
+### `ToolbarItem`
+```ts
+type ToolbarItem =
+  | "undo" | "redo" | "block-format" | "font-family" | "font-size"
+  | "bold" | "italic" | "underline" | "code" | "link" | "color"
+  | "bg-color" | "text-format" | "insert" | "align" | "speech"
+  | "template" | "download" | "export-md" | "export-pdf" | "separator";
+```

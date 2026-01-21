@@ -1,0 +1,65 @@
+---
+title: Plugin Development
+description: Learn how to extend Notiq by creating your own custom plugins and nodes.
+---
+
+# Plugin Development
+
+Notiq's strength lies in its modular plugin system. Every feature, from simple bolding to complex Figma embeds, is a plugin.
+
+## Plugin Architecture
+
+A Notiq plugin is a React component that interacts with the Lexical editor instance via the `useLexicalComposerContext` hook.
+
+### Anatomoy of a Plugin
+```tsx
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useEffect } from "react";
+import { createCommand, COMMAND_PRIORITY_EDITOR } from "lexical";
+
+export const MY_CUSTOM_COMMAND = createCommand("MY_CUSTOM_COMMAND");
+
+export default function MyCustomPlugin() {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    // 1. Register commands
+    return editor.registerCommand(
+      MY_CUSTOM_COMMAND,
+      (payload) => {
+        console.log("Command received!", payload);
+        return true; // handled
+      },
+      COMMAND_PRIORITY_EDITOR
+    );
+  }, [editor]);
+
+  return null; // Plugins usually don't render UI directly
+}
+```
+
+## Creating a Custom Node
+
+If your plugin needs to render something unique (like a 3D model or a custom chart), you must create a custom **Lexical Node**.
+
+1. **Define the Node Class**: Extend `ElementNode` or `TextNode`.
+2. **Implement Serialization**: `exportJSON` and `importJSON` for saving/loading.
+3. **Registration**: Add the node to the `nodes` array passed to the `Editor` component.
+
+## Accessing Editor State
+
+To read or modify the editor content, use `editor.update()`:
+
+```tsx
+editor.update(() => {
+  const root = $getRoot();
+  const selection = $getSelection();
+  // ... manipulate the selection or nodes
+});
+```
+
+## Best Practices
+
+- **Cleanup**: Always return a cleanup function from `useEffect` when registering listeners or commands.
+- **Priority**: Use the appropriate `COMMAND_PRIORITY` (usually `EDITOR` or `LOW`).
+- **Performance**: Avoid heavy computations inside `registerUpdateListener` as it fires on every keystroke.
