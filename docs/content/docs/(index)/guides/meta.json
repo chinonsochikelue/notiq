@@ -1,3 +1,11 @@
 {
-  "$schema": "..\\..\\..\\..\\.source\\json-schema\\docs.meta.json"
+  "title": "Guides",
+  "icon": "Compass",
+  "pages": [
+    "theming",
+    "collaboration",
+    "components",
+    "plugin-dev",
+    "deployment"
+  ]
 }

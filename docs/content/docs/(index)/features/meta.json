@@ -1,3 +1,8 @@
 {
-  "$schema": "..\\..\\..\\..\\.source\\json-schema\\docs.meta.json"
+  "title": "Features",
+  "icon": "Zap",
+  "pages": [
+    "ai-assistant",
+    "content-blocks"
+  ]
 }
