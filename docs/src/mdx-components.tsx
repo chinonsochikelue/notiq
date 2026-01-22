@@ -8,7 +8,6 @@ import defaultMdxComponents from 'fumadocs-ui/mdx'
 import * as icons from 'lucide-react'
 import type { MDXComponents } from 'mdx/types'
 import type { ComponentProps, FC } from 'react'
-import { APIPage } from '@/components/api-page'
 import { Update, Updates } from '@/components/fumadocs/updates'
 import { Mermaid } from '@/components/mdx/mermaid'
 import { LiveDemo } from '@/components/LiveDemo'
@@ -28,7 +27,6 @@ export function getMDXComponents(components?: MDXComponents) {
     TypeTable,
     Callout,
     blockquote: Callout as unknown as FC<ComponentProps<'blockquote'>>,
-    APIPage,
     Banner,
     ...components,
   } satisfies MDXComponents

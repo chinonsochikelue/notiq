@@ -403,8 +403,8 @@ export default function ExcalidrawModal({
             className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/50"
             variants={actionsVariants}
           >
-            <div className="flex hidden md:block items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-              <div className="flex hidden md:block items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="hidden md:flex items-center space-x-1">
                 <kbd className="rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700">
                   Ctrl
                 </kbd>
@@ -415,7 +415,7 @@ export default function ExcalidrawModal({
                 <span className="ml-1">to save</span>
               </div>
               <span className="text-gray-300 dark:text-gray-600">•</span>
-              <div className="flex hidden md:block items-center space-x-1">
+              <div className="hidden md:flex items-center space-x-1">
                 <kbd className="rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700">
                   Esc
                 </kbd>

@@ -21,6 +21,16 @@ export const logo = (
 
 export const linkItems: LinkItemType[] = [
   {
+    type: 'main',
+    url: '/docs',
+    text: 'Docs',
+  },
+  {
+    type: 'main',
+    url: '/playground',
+    text: 'Playground',
+  },
+  {
     type: 'icon',
     url: '/rss.xml',
     text: 'RSS',

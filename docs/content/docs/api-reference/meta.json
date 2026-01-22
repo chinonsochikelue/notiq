@@ -6,7 +6,6 @@
   "pages": [
     "---API Reference---",
     "index",
-    "editor",
-    "...(generated)"
+    "editor"
   ]
 }

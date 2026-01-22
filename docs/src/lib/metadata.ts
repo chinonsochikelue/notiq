@@ -9,14 +9,14 @@ export function createMetadata(override: Metadata): Metadata {
     openGraph: {
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      url: 'https://fumadocsstarter.vercel.app',
+      url: 'https://notiq-editor.vercel.app',
       images: '/banner.png',
       siteName: title,
       ...override.openGraph,
     },
     twitter: {
       card: 'summary_large_image',
-      creator: '@AnirudhWith',
+      creator: '@ChinonsoChikelue',
       title: override.title ?? undefined,
       description: override.description ?? undefined,
       images: '/banner.png',

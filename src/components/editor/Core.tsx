@@ -5,7 +5,6 @@ import { useSharedHistoryContext } from "../providers/SharedHistoryContext"
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable"
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
 import dynamic from "next/dynamic.js"
-import { Skeleton } from "../ui/skeleton"
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
 import { ContentEditable } from "@lexical/react/LexicalContentEditable"
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
@@ -54,8 +53,7 @@ const SlashCommand = dynamic(() => import("./plugins/SlashCommand"), { ssr: fals
 const ToolbarPlugin = dynamic(() => import("./plugins/ToolbarPlugin"), {
   ssr: false,
   loading: () => (
-    <div className="hidden md:block fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4">
-      <Skeleton className="h-12 w-full max-w-6xl rounded-2xl" />
+    <div className="hidden md:block w-full flex justify-center p-4">
     </div>
   ),
 })
@@ -322,7 +320,6 @@ export default function Core({
           setActiveEditor={setActiveEditor}
           setIsLinkEditMode={setIsLinkEditMode}
           toolbarConfig={toolbarConfig}
-          className="fixed z-40 md:top-40"
         />
       )}
 

@@ -642,7 +642,8 @@ export default function ToolbarPlugin({
     <>
       <nav
         className={cn(
-          "z-40 left-0 w-full hidden md:block" // Hide on mobile, show on desktop
+          "left-0 w-full hidden md:block", // Hide on mobile, show on desktop
+          customClassName
         )}
       >
         <div className="flex justify-center pt-4">
@@ -651,8 +652,7 @@ export default function ToolbarPlugin({
               "group flex flex-row items-center bg-background/70 gap-x-2 dark:border dark:border-gray-500/20",
               "md:rounded-2xl rounded-md h-14 px-4 py-2 shadow-md",
               "overflow-x-auto whitespace-nowrap max-w-[90%] scrollbar-none",
-              "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-              customClassName
+              "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             )}
           >
             {toolbarState.blockType === "code" ? (

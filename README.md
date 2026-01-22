@@ -5,8 +5,8 @@
     <strong>A powerful, AI-enhanced rich text editor built with Lexical, Next.js, TypeScript, and Tailwind CSS.</strong>
   </p>
   <p>
-    <a href="https://notiq-docs.vercel.app">Documentation</a> •
-    <a href="https://notiq-docs.vercel.app/docs#live-demo">Live Demo</a> •
+    <a href="https://notiq-editor.vercel.app">Documentation</a> •
+    <a href="https://notiq-editor.vercel.app/docs">Live Demo</a> •
     <a href="https://github.com/chinonsochikelue/notiq/issues">Report Bug</a>
   </p>
 </div>
@@ -244,7 +244,7 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-- 📖 [Documentation](https://notiq-docs.vercel.app)
+- 📖 [Documentation](https://notiq-editor.vercel.app)
 - 🐛 [Report Issues](https://github.com/chinonsochikelue/notiq/issues)
 - 💬 [Discussions](https://github.com/chinonsochikelue/notiq/discussions)
 

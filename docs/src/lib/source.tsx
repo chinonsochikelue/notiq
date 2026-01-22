@@ -6,13 +6,12 @@ import {
   loader,
 } from 'fumadocs-core/source'
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
-import { openapiPlugin } from 'fumadocs-openapi/server'
 
 const CODE_TAG_NAME = /^<\w+ \/>$/
 
 export const source = loader({
   baseUrl: '/docs',
-  plugins: [pageTreeCodeTitles(), lucideIconsPlugin(), openapiPlugin()],
+  plugins: [pageTreeCodeTitles(), lucideIconsPlugin()],
   source: docs.toFumadocsSource(),
 })
 

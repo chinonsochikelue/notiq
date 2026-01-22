@@ -10,7 +10,7 @@ Below are some common ways to configure and use the Notiq editor.
 ## Basic Editor
 A simple implementation with default settings and read-only mode disabled.
 
-```tsx
+```tsx title="app/page.tsx OR pages/index.tsx"
 import { Editor } from "@collabchron/notiq";
 import "@collabchron/notiq/styles.css";
 
@@ -26,7 +26,7 @@ export default function App() {
 ## AI-Powered Editor
 Configure the AI Writing Assistant with a custom completion endpoint.
 
-```tsx
+```tsx title="customComponent.tsx"
 import { Editor } from "@collabchron/notiq";
 
 <Editor 
@@ -40,7 +40,7 @@ import { Editor } from "@collabchron/notiq";
 ## Custom Toolbar
 Customize which tools are available to your users.
 
-```tsx
+```tsx title="customComponent.tsx"
 import { Editor } from "@collabchron/notiq";
 
 const toolbarConfig = {
@@ -56,7 +56,7 @@ const toolbarConfig = {
 ## Handling Image Uploads
 Provide a custom handler to upload images to your own server or cloud storage.
 
-```tsx
+```tsx title="customComponent.tsx"
 import { Editor } from "@collabchron/notiq";
 
 const uploadHandler = async (file: File) => {
@@ -81,7 +81,7 @@ const uploadHandler = async (file: File) => {
 ## Read-Only View
 Use Notiq to display rendered content without the editing interface.
 
-```tsx
+```tsx title="customComponent.tsx"
 import { Editor } from "@collabchron/notiq";
 
 const content = '...serialized lexical state...';

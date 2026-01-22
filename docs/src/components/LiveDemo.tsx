@@ -3,9 +3,10 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 // Dynamically import the Editor with SSR disabled
-const Editor = dynamic(() => import("notiq").then((mod) => mod.Editor), {
+const Editor = dynamic(() => import("@collabchron/notiq").then((mod) => mod.Editor), {
     ssr: false,
     loading: () => <Skeleton className="h-[400px] w-full rounded-xl" />,
 });
@@ -19,12 +20,19 @@ export function LiveDemo() {
                     <div className="h-3 w-3 rounded-full bg-amber-500/50" />
                     <div className="h-3 w-3 rounded-full bg-green-500/50" />
                 </div>
-                <div className="ml-2 text-xs font-medium text-muted-foreground">
-                    Interactive Live Demo
+                <div className="flex w-full justify-between ml-2 text-xs font-medium text-muted-foreground">
+                    <span>Interactive Live Demo</span>
+                    <Link href="/playground" className="text-blue-500">Try On Playground</Link>
                 </div>
+
             </div>
-            <div className="min-h-[400px]">
-                <Editor isEditable={true} />
+            <div className="min-h-[400px] -mt-22">
+                <Editor
+                    isEditable={true}
+                    toolbarConfig={{
+                        className: "relative top-20 z-20"
+                    }}
+                />
             </div>
         </div>
     );

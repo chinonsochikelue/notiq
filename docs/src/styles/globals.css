@@ -4,6 +4,8 @@
 @import 'fumadocs-twoslash/twoslash.css';
 @import 'fumadocs-openapi/css/preset.css';
 @import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+@plugin 'tailwind-scrollbar';
 
 @custom-variant dark (&:is(.dark *));
 
