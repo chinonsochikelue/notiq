@@ -63,7 +63,8 @@
     "build:css": "tailwindcss -i src/styles/notiq.css -o dist/styles/notiq.css --minify && pwsh -Command \"Copy-Item -Path node_modules/katex/dist/fonts -Destination dist/styles -Recurse -Force\"",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest",
+    "test": "vitest --run",
+    "test:dev": "vitest",
     "prepare": "husky"
   },
   "dependencies": {
