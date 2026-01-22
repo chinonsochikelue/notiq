@@ -1,6 +1,12 @@
 <div align="center">
   <img src="public/logo.png" alt="Notiq Logo" width="120" />
   <h1>Notiq</h1>
+
+![Tests](https://github.com/adoxography/tailwind-scrollbar/workflows/Tests/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e6fe4b9f635b46ccb38e5852fac10343)](https://app.codacy.com/gh/chinonsochikelue/notiq/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+![npm](https://img.shields.io/npm/dt/@collabchron/notiq)
+
+
   <p>
     <strong>A powerful, AI-enhanced rich text editor built with Lexical, Next.js, TypeScript, and Tailwind CSS.</strong>
   </p>

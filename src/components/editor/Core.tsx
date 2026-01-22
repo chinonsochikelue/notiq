@@ -312,7 +312,7 @@ export default function Core({
   }, [editor])
 
   return (
-    <>
+    <div className="notiq-scope">
       {isEditable && (
         <ToolbarPlugin
           editor={editor}
@@ -439,6 +439,6 @@ export default function Core({
           {isEditable && <SlashCommand />}
         </motion.div>
       </div>
-    </>
+    </div>
   )
 }

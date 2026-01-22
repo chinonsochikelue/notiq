@@ -11,6 +11,7 @@ import { TreeContextProvider } from 'fumadocs-ui/contexts/tree'
 import { source } from '@/lib/source'
 import { url } from '@/lib/url'
 import "@collabchron/notiq/styles.css";
+import "@collabchron/notiq/styles.css";
 
 const geist = Geist({
   variable: '--font-sans',
