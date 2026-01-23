@@ -73,16 +73,18 @@ export default function Editor({
   console.log("Editor content:", content);
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <AIProvider config={aiConfig}>
-        <UploadProvider config={uploadConfig}>
-          <SharedHistoryContext>
-            <ToolbarContext>
-              <Core toolbarConfig={toolbarConfig} />
-            </ToolbarContext>
-          </SharedHistoryContext>
-        </UploadProvider>
-      </AIProvider>
-    </LexicalComposer>
+    <div className="notiq-root">
+      <LexicalComposer initialConfig={initialConfig}>
+        <AIProvider config={aiConfig}>
+          <UploadProvider config={uploadConfig}>
+            <SharedHistoryContext>
+              <ToolbarContext>
+                <Core toolbarConfig={toolbarConfig} />
+              </ToolbarContext>
+            </SharedHistoryContext>
+          </UploadProvider>
+        </AIProvider>
+      </LexicalComposer>
+    </div>
   );
 }

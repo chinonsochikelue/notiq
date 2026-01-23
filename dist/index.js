@@ -193,42 +193,6 @@ var init_ToolbarContext = __esm({
   }
 });
 
-// src/lib/utils.ts
-function cn(...inputs) {
-  return (0, import_tailwind_merge.twMerge)((0, import_clsx.clsx)(inputs));
-}
-var import_clsx, import_tailwind_merge;
-var init_utils = __esm({
-  "src/lib/utils.ts"() {
-    "use strict";
-    init_react_shim();
-    import_clsx = require("clsx");
-    import_tailwind_merge = require("tailwind-merge");
-  }
-});
-
-// src/components/ui/skeleton.tsx
-function Skeleton(_a2) {
-  var _b = _a2, {
-    className
-  } = _b, props = __objRest(_b, [
-    "className"
-  ]);
-  return /* @__PURE__ */ React.createElement(
-    "div",
-    __spreadValues({
-      className: cn("animate-pulse rounded-md bg-primary/10", className)
-    }, props)
-  );
-}
-var init_skeleton = __esm({
-  "src/components/ui/skeleton.tsx"() {
-    "use strict";
-    init_react_shim();
-    init_utils();
-  }
-});
-
 // src/components/ui/image/error-image.tsx
 function ErrorImage() {
   return /* @__PURE__ */ import_react3.default.createElement(
@@ -337,7 +301,7 @@ function ImageResizer({
     if (image !== null && controlWrapper !== null) {
       event.preventDefault();
       const { width, height } = image.getBoundingClientRect();
-      const zoom = (0, import_utils2.calculateZoomLevel)(image);
+      const zoom = (0, import_utils.calculateZoomLevel)(image);
       const positioning = positioningRef.current;
       positioning.startWidth = width;
       positioning.startHeight = height;
@@ -362,7 +326,7 @@ function ImageResizer({
     const isHorizontal = positioning.direction & (Direction.east | Direction.west);
     const isVertical = positioning.direction & (Direction.south | Direction.north);
     if (image !== null && positioning.isResizing) {
-      const zoom = (0, import_utils2.calculateZoomLevel)(image);
+      const zoom = (0, import_utils.calculateZoomLevel)(image);
       if (isHorizontal && isVertical) {
         let diff = Math.floor(positioning.startX - event.clientX / zoom);
         diff = positioning.direction & Direction.east ? -diff : diff;
@@ -506,20 +470,56 @@ function ImageResizer({
     )
   );
 }
-var React5, import_react4, import_utils2, Direction;
+var React5, import_react4, import_utils, Direction;
 var init_image_resizer = __esm({
   "src/components/ui/image/image-resizer.tsx"() {
     "use strict";
     init_react_shim();
     React5 = __toESM(require("react"));
     import_react4 = require("react");
-    import_utils2 = require("@lexical/utils");
+    import_utils = require("@lexical/utils");
     Direction = {
       east: 1 << 0,
       north: 1 << 3,
       south: 1 << 1,
       west: 1 << 2
     };
+  }
+});
+
+// src/lib/utils.ts
+function cn(...inputs) {
+  return (0, import_tailwind_merge.twMerge)((0, import_clsx.clsx)(inputs));
+}
+var import_clsx, import_tailwind_merge;
+var init_utils = __esm({
+  "src/lib/utils.ts"() {
+    "use strict";
+    init_react_shim();
+    import_clsx = require("clsx");
+    import_tailwind_merge = require("tailwind-merge");
+  }
+});
+
+// src/components/ui/skeleton.tsx
+function Skeleton(_a2) {
+  var _b = _a2, {
+    className
+  } = _b, props = __objRest(_b, [
+    "className"
+  ]);
+  return /* @__PURE__ */ React.createElement(
+    "div",
+    __spreadValues({
+      className: cn("animate-pulse rounded-md bg-primary/10", className)
+    }, props)
+  );
+}
+var init_skeleton = __esm({
+  "src/components/ui/skeleton.tsx"() {
+    "use strict";
+    init_react_shim();
+    init_utils();
   }
 });
 
@@ -6179,7 +6179,7 @@ function ExcalidrawModal({
             className: "flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/50",
             variants: actionsVariants
           },
-          /* @__PURE__ */ React35.createElement("div", { className: "flex hidden md:block items-center space-x-2 text-sm text-gray-500 dark:text-gray-400" }, /* @__PURE__ */ React35.createElement("div", { className: "flex hidden md:block items-center space-x-1" }, /* @__PURE__ */ React35.createElement("kbd", { className: "rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700" }, "Ctrl"), /* @__PURE__ */ React35.createElement("span", null, "+"), /* @__PURE__ */ React35.createElement("kbd", { className: "rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700" }, "S"), /* @__PURE__ */ React35.createElement("span", { className: "ml-1" }, "to save")), /* @__PURE__ */ React35.createElement("span", { className: "text-gray-300 dark:text-gray-600" }, "\u2022"), /* @__PURE__ */ React35.createElement("div", { className: "flex hidden md:block items-center space-x-1" }, /* @__PURE__ */ React35.createElement("kbd", { className: "rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700" }, "Esc"), /* @__PURE__ */ React35.createElement("span", { className: "ml-1" }, "to close"))),
+          /* @__PURE__ */ React35.createElement("div", { className: "hidden md:flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400" }, /* @__PURE__ */ React35.createElement("div", { className: "hidden md:flex items-center space-x-1" }, /* @__PURE__ */ React35.createElement("kbd", { className: "rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700" }, "Ctrl"), /* @__PURE__ */ React35.createElement("span", null, "+"), /* @__PURE__ */ React35.createElement("kbd", { className: "rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700" }, "S"), /* @__PURE__ */ React35.createElement("span", { className: "ml-1" }, "to save")), /* @__PURE__ */ React35.createElement("span", { className: "text-gray-300 dark:text-gray-600" }, "\u2022"), /* @__PURE__ */ React35.createElement("div", { className: "hidden md:flex items-center space-x-1" }, /* @__PURE__ */ React35.createElement("kbd", { className: "rounded bg-gray-200 px-2 py-1 text-xs font-mono dark:bg-gray-700" }, "Esc"), /* @__PURE__ */ React35.createElement("span", { className: "ml-1" }, "to close"))),
           /* @__PURE__ */ React35.createElement("div", { className: "flex items-center space-x-3" }, /* @__PURE__ */ React35.createElement(
             Button,
             {
@@ -55196,8 +55196,9 @@ function ToolbarPlugin({
     "nav",
     {
       className: cn(
-        "z-40 left-0 w-full hidden md:block"
+        "left-0 w-full hidden md:block",
         // Hide on mobile, show on desktop
+        customClassName
       )
     },
     /* @__PURE__ */ import_react92.default.createElement("div", { className: "flex justify-center pt-4" }, /* @__PURE__ */ import_react92.default.createElement(
@@ -55207,8 +55208,7 @@ function ToolbarPlugin({
           "group flex flex-row items-center bg-background/70 gap-x-2 dark:border dark:border-gray-500/20",
           "md:rounded-2xl rounded-md h-14 px-4 py-2 shadow-md",
           "overflow-x-auto whitespace-nowrap max-w-[90%] scrollbar-none",
-          "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-          customClassName
+          "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         )
       },
       toolbarState.blockType === "code" ? /* @__PURE__ */ import_react92.default.createElement(
@@ -56302,7 +56302,6 @@ init_SharedHistoryContext();
 var import_useLexicalEditable9 = require("@lexical/react/useLexicalEditable");
 var import_LexicalComposerContext44 = require("@lexical/react/LexicalComposerContext");
 var import_dynamic2 = __toESM(require("next/dynamic.js"));
-init_skeleton();
 var import_LexicalRichTextPlugin4 = require("@lexical/react/LexicalRichTextPlugin");
 var import_LexicalContentEditable5 = require("@lexical/react/LexicalContentEditable");
 var import_LexicalErrorBoundary5 = require("@lexical/react/LexicalErrorBoundary");
@@ -57335,7 +57334,7 @@ function ContentAnalyticsPlugin() {
 var SlashCommand2 = (0, import_dynamic2.default)(() => Promise.resolve().then(() => (init_SlashCommand(), SlashCommand_exports)), { ssr: false });
 var ToolbarPlugin2 = (0, import_dynamic2.default)(() => Promise.resolve().then(() => (init_ToolbarPlugin(), ToolbarPlugin_exports)), {
   ssr: false,
-  loading: () => /* @__PURE__ */ React.createElement("div", { className: "hidden md:block fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4" }, /* @__PURE__ */ React.createElement(Skeleton, { className: "h-12 w-full max-w-6xl rounded-2xl" }))
+  loading: () => /* @__PURE__ */ React.createElement("div", { className: "hidden md:block w-full flex justify-center p-4" })
 });
 var ExportPlugin2 = (0, import_dynamic2.default)(() => Promise.resolve().then(() => (init_ExportPlugin(), ExportPlugin_exports)), { ssr: false });
 var TemplatePlugin2 = (0, import_dynamic2.default)(() => Promise.resolve().then(() => (init_TemplatePlugin(), TemplatePlugin_exports)), { ssr: false });
@@ -57555,8 +57554,7 @@ function Core({
       activeEditor,
       setActiveEditor,
       setIsLinkEditMode,
-      toolbarConfig,
-      className: "fixed z-40 md:top-40"
+      toolbarConfig
     }
   ), isEditable && /* @__PURE__ */ React.createElement(ContentAnalyticsPlugin, null), /* @__PURE__ */ React.createElement("div", { className: cn(
     "flex justify-center w-full min-h-screen transition-all duration-300",
@@ -57681,7 +57679,7 @@ function Editor({
     editable: isEditable
   };
   console.log("Editor content:", content);
-  return /* @__PURE__ */ import_react96.default.createElement(import_LexicalComposer.LexicalComposer, { initialConfig }, /* @__PURE__ */ import_react96.default.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ import_react96.default.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ import_react96.default.createElement(SharedHistoryContext, null, /* @__PURE__ */ import_react96.default.createElement(ToolbarContext, null, /* @__PURE__ */ import_react96.default.createElement(Core, { toolbarConfig }))))));
+  return /* @__PURE__ */ import_react96.default.createElement("div", { className: "notiq-root" }, /* @__PURE__ */ import_react96.default.createElement(import_LexicalComposer.LexicalComposer, { initialConfig }, /* @__PURE__ */ import_react96.default.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ import_react96.default.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ import_react96.default.createElement(SharedHistoryContext, null, /* @__PURE__ */ import_react96.default.createElement(ToolbarContext, null, /* @__PURE__ */ import_react96.default.createElement(Core, { toolbarConfig })))))));
 }
 
 // src/index.ts

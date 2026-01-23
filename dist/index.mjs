@@ -6,7 +6,7 @@ import {
   LexicalAutoLinkPlugin,
   LinkWithMetaDataPlugin,
   nodes_default
-} from "./chunk-2HRNVYE4.mjs";
+} from "./chunk-4GFXER7R.mjs";
 import {
   Progress,
   UploadProvider,
@@ -41,7 +41,7 @@ import {
 } from "./chunk-YUDCJRJM.mjs";
 import {
   StepperPlugin
-} from "./chunk-ACER22EH.mjs";
+} from "./chunk-NZXC6FGU.mjs";
 import "./chunk-GXYD4VZM.mjs";
 import {
   CAN_USE_DOM,
@@ -94,9 +94,7 @@ import {
   useSharedHistoryContext
 } from "./chunk-4EXYCTGJ.mjs";
 import "./chunk-N3WN46VL.mjs";
-import {
-  Skeleton
-} from "./chunk-QEIFVK5M.mjs";
+import "./chunk-QEIFVK5M.mjs";
 import "./chunk-GZPNVR7L.mjs";
 import {
   HintPlugin
@@ -105,7 +103,7 @@ import "./chunk-YPHOEJ46.mjs";
 import {
   sanitizeUrl
 } from "./chunk-4VWFVWYP.mjs";
-import "./chunk-CG4BHAVO.mjs";
+import "./chunk-HJPPNHYM.mjs";
 import "./chunk-3JVFG7ER.mjs";
 import "./chunk-4MEDW3T6.mjs";
 import {
@@ -1278,14 +1276,14 @@ function ContentAnalyticsPlugin() {
 }
 
 // src/components/editor/Core.tsx
-var SlashCommand = dynamic(() => import("./SlashCommand-ZSIZP5NN.mjs"), { ssr: false });
-var ToolbarPlugin = dynamic(() => import("./ToolbarPlugin-3J4KBHLU.mjs"), {
+var SlashCommand = dynamic(() => import("./SlashCommand-FHEWHFZU.mjs"), { ssr: false });
+var ToolbarPlugin = dynamic(() => import("./ToolbarPlugin-2VP7FDWD.mjs"), {
   ssr: false,
-  loading: () => /* @__PURE__ */ React.createElement("div", { className: "hidden md:block fixed top-14 md:top-20 left-0 right-0 z-50 flex justify-center p-4" }, /* @__PURE__ */ React.createElement(Skeleton, { className: "h-12 w-full max-w-6xl rounded-2xl" }))
+  loading: () => /* @__PURE__ */ React.createElement("div", { className: "hidden md:block w-full flex justify-center p-4" })
 });
 var ExportPlugin = dynamic(() => import("./ExportPlugin-V2RLM63S.mjs"), { ssr: false });
 var TemplatePlugin = dynamic(() => import("./TemplatePlugin-ZD3QEVTI.mjs"), { ssr: false });
-var ExcalidrawPlugin = dynamic(() => import("./ExcalidrawPlugin-QLZEQFV6.mjs"), {
+var ExcalidrawPlugin = dynamic(() => import("./ExcalidrawPlugin-HC2L43YG.mjs"), {
   ssr: false
 });
 var FloatingLinkEditorPlugin = dynamic(() => import("./FloatingLinkEditorPlugin-TRTCMSP4.mjs"), {
@@ -1299,7 +1297,7 @@ var TableHoverActionsPlugin = dynamic(() => import("./TableHoverActionsPlugin-GJ
 });
 var CodeActionMenuPlugin = dynamic(() => import("./CodeActionMenuPlugin-EINOY4U4.mjs"), { ssr: false });
 var FloatingTextFormatToolbarPlugin = dynamic(
-  () => import("./FloatingTextFormatToolbarPlugin-V5QPQUKU.mjs"),
+  () => import("./FloatingTextFormatToolbarPlugin-ENECEZSX.mjs"),
   { ssr: false }
 );
 var QUOTES = [
@@ -1501,8 +1499,7 @@ function Core({
       activeEditor,
       setActiveEditor,
       setIsLinkEditMode,
-      toolbarConfig,
-      className: "fixed z-40 md:top-40"
+      toolbarConfig
     }
   ), isEditable && /* @__PURE__ */ React.createElement(ContentAnalyticsPlugin, null), /* @__PURE__ */ React.createElement("div", { className: cn(
     "flex justify-center w-full min-h-screen transition-all duration-300",
@@ -1624,7 +1621,7 @@ function Editor({
     editable: isEditable
   };
   console.log("Editor content:", content);
-  return /* @__PURE__ */ React3.createElement(LexicalComposer, { initialConfig }, /* @__PURE__ */ React3.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ React3.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ React3.createElement(SharedHistoryContext, null, /* @__PURE__ */ React3.createElement(ToolbarContext, null, /* @__PURE__ */ React3.createElement(Core, { toolbarConfig }))))));
+  return /* @__PURE__ */ React3.createElement("div", { className: "notiq-root" }, /* @__PURE__ */ React3.createElement(LexicalComposer, { initialConfig }, /* @__PURE__ */ React3.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ React3.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ React3.createElement(SharedHistoryContext, null, /* @__PURE__ */ React3.createElement(ToolbarContext, null, /* @__PURE__ */ React3.createElement(Core, { toolbarConfig })))))));
 }
 
 // src/styles/tailwind-plugin.ts

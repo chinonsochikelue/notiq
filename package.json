@@ -1,6 +1,6 @@
 {
   "name": "@collabchron/notiq",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "private": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -63,6 +63,7 @@
     "build:css": "tailwindcss -i src/styles/notiq.css -o dist/styles/notiq.css --minify && pwsh -Command \"Copy-Item -Path node_modules/katex/dist/fonts -Destination dist/styles -Recurse -Force\"",
     "start": "next start",
     "lint": "next lint",
+    "lint:css": "node scripts/check-css-layers.js",
     "test": "vitest --run",
     "test:dev": "vitest",
     "prepare": "husky"
