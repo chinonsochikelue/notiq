@@ -4,6 +4,9 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { NotiqProvider } from "./NotiqProvider";
+
+import "@collabchron/notiq/styles.css";
 
 // Dynamically import the Editor with SSR disabled
 const Editor = dynamic(() => import("@collabchron/notiq").then((mod) => mod.Editor), {
@@ -27,12 +30,14 @@ export function LiveDemo() {
 
             </div>
             <div className="min-h-[400px] -mt-22">
+                <NotiqProvider>
                 <Editor
                     isEditable={true}
                     toolbarConfig={{
                         className: "relative top-20 z-20"
                     }}
                 />
+                </NotiqProvider>
             </div>
         </div>
     );
