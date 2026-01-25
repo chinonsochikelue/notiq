@@ -10,7 +10,6 @@ import type { MDXComponents } from 'mdx/types'
 import type { ComponentProps, FC } from 'react'
 import { Update, Updates } from '@/components/fumadocs/updates'
 import { Mermaid } from '@/components/mdx/mermaid'
-import { LiveDemo } from '@/components/LiveDemo'
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
@@ -23,7 +22,6 @@ export function getMDXComponents(components?: MDXComponents) {
     Updates,
     Update,
     Mermaid,
-    LiveDemo,
     TypeTable,
     Callout,
     blockquote: Callout as unknown as FC<ComponentProps<'blockquote'>>,

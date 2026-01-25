@@ -334,11 +334,14 @@ importers:
         specifier: ^3.2.12
         version: 3.2.12(next@16.0.7(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.51.0))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@collabchron/notiq':
-        specifier: ^1.0.7
-        version: 1.0.7(99de031e7ad0ed58292beee75e811f9e)
+        specifier: ^1.1.5
+        version: 1.1.5(99de031e7ad0ed58292beee75e811f9e)
       '@fumadocs/mdx-remote':
         specifier: ^1.4.3
         version: 1.4.4(@types/react@19.2.7)(fumadocs-core@16.4.7(@types/react@19.2.7)(lucide-react@0.556.0(react@19.2.1))(next@16.0.7(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.51.0))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(zod@4.3.5))(react@19.2.1)
+      '@gsap/react':
+        specifier: ^2.1.2
+        version: 2.1.2(gsap@3.14.2)(react@19.2.1)
       '@next/bundle-analyzer':
         specifier: 16.0.7
         version: 16.0.7
@@ -417,6 +420,9 @@ importers:
       fumadocs-ui:
         specifier: ^16.2.4
         version: 16.4.7(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(fumadocs-core@16.4.7(@types/react@19.2.7)(lucide-react@0.556.0(react@19.2.1))(next@16.0.7(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.51.0))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(zod@4.3.5))(next@16.0.7(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.51.0))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(tailwindcss@4.1.18)
+      gsap:
+        specifier: ^3.14.2
+        version: 3.14.2
       hast-util-to-jsx-runtime:
         specifier: ^2.3.6
         version: 2.3.6
@@ -675,7 +681,7 @@ importers:
         version: 0.39.0
       lucide-react:
         specifier: latest
-        version: 0.562.0(react@19.2.3)
+        version: 0.563.0(react@19.2.3)
       next:
         specifier: latest
         version: 16.1.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.51.0)
@@ -703,7 +709,7 @@ importers:
         version: 4.1.18
       '@types/node':
         specifier: latest
-        version: 25.0.9
+        version: 25.0.10
       '@types/react':
         specifier: latest
         version: 19.2.9
@@ -1241,8 +1247,8 @@ packages:
   '@clack/prompts@0.11.0':
     resolution: {integrity: sha512-pMN5FcrEw9hUkZA4f+zLlzivQSeQf5dRGJjSUbvVYDLvpKCdQx5OaknvKzgbtXOizhP+SJJJjqEbOe55uKKfAw==}
 
-  '@collabchron/notiq@1.0.7':
-    resolution: {integrity: sha512-g5bX/YWZaT2SXjZAO+kd0Zb/7nW7erbih1Tud1nFCnUFaFWkKmrVQ+ILIiz3YWCvyHUeXk95nPp+nZuRDwTa5w==}
+  '@collabchron/notiq@1.1.5':
+    resolution: {integrity: sha512-F6FxT7sP1Mx5NKPcIwP8ESWGvFU/ZjJP2pMq0Jx//IOXqsq8wD4hwNDtdKnEgMF93PO0qNP2eGc8bTJeLyF3qw==}
     peerDependencies:
       '@lexical/clipboard': '>=0.14.0'
       '@lexical/code': '>=0.14.0'
@@ -1963,6 +1969,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@gsap/react@2.1.2':
+    resolution: {integrity: sha512-JqliybO1837UcgH2hVOM4VO+38APk3ECNrsuSM4MuXp+rbf+/2IG2K1YJiqfTcXQHH7XlA0m3ykniFYstfq0Iw==}
+    peerDependencies:
+      gsap: ^3.12.5
+      react: '>=17'
 
   '@hono/node-server@1.19.9':
     resolution: {integrity: sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==}
@@ -4847,8 +4859,8 @@ packages:
   '@types/node@24.4.0':
     resolution: {integrity: sha512-gUuVEAK4/u6F9wRLznPUU4WGUacSEBDPoC2TrBkw3GAnOLHBL45QdfHOXp1kJ4ypBGLxTOB+t7NJLpKoC3gznQ==}
 
-  '@types/node@25.0.9':
-    resolution: {integrity: sha512-/rpCXHlCWeqClNBwUhDcusJxXYDjZTyE8v5oTO7WbL8eij2nKhUeU89/6xgjU7N4/Vh3He0BtyhJdQbDyhiXAw==}
+  '@types/node@25.0.10':
+    resolution: {integrity: sha512-zWW5KPngR/yvakJgGOmZ5vTBemDoSqF3AcV/LrO5u5wTWyEAVVh+IT39G4gtyAkh3CtTZs8aX/yRM82OfzHJRg==}
 
   '@types/pako@2.0.4':
     resolution: {integrity: sha512-VWDCbrLeVXJM9fihYodcLiIv0ku+AlOa/TQ1SvYOaBuyrSKgEcro95LJyIsJ4vSo6BXIxOKxiJAat04CmST9Fw==}
@@ -6966,6 +6978,9 @@ packages:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
 
+  gsap@3.14.2:
+    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
+
   gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
     engines: {node: '>=10'}
@@ -7857,6 +7872,11 @@ packages:
 
   lucide-react@0.562.0:
     resolution: {integrity: sha512-82hOAu7y0dbVuFfmO4bYF1XEwYk/mEbM5E+b1jgci/udUBEE/R7LF5Ip0CCEmXe8AybRM8L+04eP+LGZeDvkiw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lucide-react@0.563.0:
+    resolution: {integrity: sha512-8dXPB2GI4dI8jV4MgUDGBeLdGk8ekfqVZ0BdLcrRzocGgG75ltNEmWS+gE7uokKF/0oSUuczNDT+g9hFJ23FkA==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -11040,7 +11060,7 @@ snapshots:
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
-  '@collabchron/notiq@1.0.7(99de031e7ad0ed58292beee75e811f9e)':
+  '@collabchron/notiq@1.1.5(99de031e7ad0ed58292beee75e811f9e)':
     dependencies:
       '@ai-sdk/google': 3.0.7(zod@4.3.5)
       '@ai-sdk/groq': 3.0.7(zod@4.3.5)
@@ -11923,6 +11943,11 @@ snapshots:
       react-dom: 19.2.1(react@19.2.1)
     optionalDependencies:
       '@types/react': 19.2.7
+
+  '@gsap/react@2.1.2(gsap@3.14.2)(react@19.2.1)':
+    dependencies:
+      gsap: 3.14.2
+      react: 19.2.1
 
   '@hono/node-server@1.19.9(hono@4.11.4)':
     dependencies:
@@ -15537,7 +15562,7 @@ snapshots:
     dependencies:
       undici-types: 7.11.0
 
-  '@types/node@25.0.9':
+  '@types/node@25.0.10':
     dependencies:
       undici-types: 7.16.0
 
@@ -18219,6 +18244,8 @@ snapshots:
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
 
+  gsap@3.14.2: {}
+
   gzip-size@6.0.0:
     dependencies:
       duplexer: 0.1.2
@@ -19105,7 +19132,7 @@ snapshots:
     dependencies:
       react: 19.2.1
 
-  lucide-react@0.562.0(react@19.2.3):
+  lucide-react@0.563.0(react@19.2.3):
     dependencies:
       react: 19.2.3
 
@@ -19852,7 +19879,7 @@ snapshots:
 
   motion-dom@12.27.1:
     dependencies:
-      motion-utils: 12.24.10
+      motion-utils: 12.27.2
 
   motion-dom@12.27.5:
     dependencies:

@@ -6,19 +6,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MoveLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
-import type { Editor as EditorType, ToolbarConfig } from "@collabchron/notiq";
+import { Editor, ToolbarConfig } from "@collabchron/notiq";
+import "@collabchron/notiq/styles.css";
 
 // Dynamically import the Editor with SSR disabled
-const Editor = dynamic(() => import("@collabchron/notiq").then((mod) => mod.Editor), {
-    ssr: false,
-    loading: () => (
-        <div className="flex flex-col gap-4 p-8">
-            <Skeleton className="h-10 w-[60%] rounded-lg" />
-            <Skeleton className="h-32 w-full rounded-lg" />
-            <Skeleton className="h-64 w-full rounded-lg" />
-        </div>
-    ),
-});
+// const Editor = dynamic(() => import("@collabchron/notiq").then((mod) => mod.Editor), {
+//     ssr: false,
+//     loading: () => (
+//         <div className="flex flex-col gap-4 p-8">
+//             <Skeleton className="h-10 w-[60%] rounded-lg" />
+//             <Skeleton className="h-32 w-full rounded-lg" />
+//             <Skeleton className="h-64 w-full rounded-lg" />
+//         </div>
+//     ),
+// });
 
 export default function PlaygroundPage() {
     const [documentTitle, setDocumentTitle] = useState("Untilted Document");
@@ -107,7 +108,7 @@ export default function PlaygroundPage() {
             {/* Main Interactive Workspace */}
             <main className="flex-1 overflow-hidden relative">
                 <div className="absolute inset-0 p-4 md:p-8">
-                    <div className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] max-w-5xl mx-auto h-full min-h-[calc(100vh-160px)] bg-white dark:bg-slate-900/50 rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-200/50 dark:border-slate-800/50 overflow-y-auto">
+                    <div className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] max-w-5xl mx-auto h-full min-h-[calc(100vh-160px)] bg-white dark:bg-slate-900/50 rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-200/50 dark:border-slate-800/50 overflow-y-auto notiq-editor">
                         <Editor
                             isEditable={true}
                             toolbarConfig={{

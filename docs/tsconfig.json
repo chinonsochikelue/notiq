@@ -24,12 +24,12 @@
       "@/*": [
         "./src/*"
       ],
-      "@collabchron/notiq/*": [
-        "../src/*"
-      ],
-      "@collabchron/notiq": [
-        "../src/index.ts"
-      ],
+      // "@collabchron/notiq/*": [
+      //   "../src/*"
+      // ],
+      // "@collabchron/notiq": [
+      //   "../src/index.ts"
+      // ],
       "fumadocs-mdx:collections/*": [
         ".source/*"
       ]

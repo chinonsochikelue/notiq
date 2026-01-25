@@ -1,8 +1,3 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Monomakh&display=swap'); */
-
-
-
-
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -10,7 +5,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
+@layer notiq {
+.notiq-root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -67,7 +63,7 @@
   --background-red: #fbe4e4;
 }
 
-.dark {
+.dark .notiq-root {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
@@ -124,7 +120,6 @@
 }
 
 @theme inline {
-  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -163,59 +158,49 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-family: Arial, Helvetica, sans-serif;
-  }
+.notiq-root * {
+  @apply border-border outline-ring/50;
 }
 
 /* Added custom utility classes for landing page */
-.grid-bg {
+.notiq-root .grid-bg {
   background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
 }
 
-.hero-gradient {
+.notiq-root .hero-gradient {
   background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--chart-1)) 100%);
 }
 
 /* Existing editor styles */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+.notiq-root input[type="number"]::-webkit-inner-spin-button,
+.notiq-root input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.select-none {
+.notiq-root .select-none {
   user-select: none;
 }
 
-#toolbar {
+.notiq-root #toolbar {
   scrollbar-width: none;
-  /* Firefox */
 }
 
-#toolbar::-webkit-scrollbar {
+.notiq-root #toolbar::-webkit-scrollbar {
   display: none;
-  /* Chrome, Safari, Edge */
 }
 
-.code {
+.notiq-root .code {
   scrollbar-width: none;
-  /* Firefox */
 }
 
-.code::-webkit-scrollbar {
+.notiq-root .code::-webkit-scrollbar {
   display: none;
-  /* Chrome, Safari, Edge */
 }
 
-.editor-shell .editor-image .image-edit-button {
+.notiq-root .editor-shell .editor-image .image-edit-button {
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   background-image: url(/src/images/icons/pencil-fill.svg);
@@ -232,11 +217,11 @@ input[type="number"]::-webkit-outer-spin-button {
   user-select: none;
 }
 
-.editor-shell .editor-image .image-edit-button:hover {
+.notiq-root .editor-shell .editor-image .image-edit-button:hover {
   background-color: rgba(60, 132, 244, 0.1);
 }
 
-.editor-shell .inline-editor-image .image-edit-button {
+.notiq-root .editor-shell .inline-editor-image .image-edit-button {
   display: block;
   position: absolute;
   top: 12px;
@@ -252,6 +237,7 @@ input[type="number"]::-webkit-outer-spin-button {
   user-select: none;
 }
 
-.editor-shell .inline-editor-image .image-edit-button:hover {
+.notiq-root .editor-shell .inline-editor-image .image-edit-button:hover {
   background-color: rgba(60, 132, 244, 0.5);
+}
 }
