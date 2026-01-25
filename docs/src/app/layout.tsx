@@ -10,6 +10,11 @@ import { NextProvider } from 'fumadocs-core/framework/next'
 import { TreeContextProvider } from 'fumadocs-ui/contexts/tree'
 import { source } from '@/lib/source'
 import { url } from '@/lib/url'
+<<<<<<< HEAD
+=======
+import "@collabchron/notiq/styles.css";
+import "@collabchron/notiq/styles.css";
+>>>>>>> parent of f479808 (latest)
 
 const geist = Geist({
   variable: '--font-sans',

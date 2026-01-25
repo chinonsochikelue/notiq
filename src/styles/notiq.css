@@ -6,11 +6,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@layer notiq {
-/* =========================
-   Theme Tokens (SCOPED)
-   ========================= */
-.notiq-root {
+:root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -54,7 +50,7 @@
   --background-red: #fbe4e4;
 }
 
-.dark .notiq-root {
+.dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
@@ -151,11 +147,10 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* =========================
-   Scoped Reset ONLY
-   ========================= */
-.notiq-root * {
-  @apply border-border outline-ring/50;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
 }
 
 /* =========================

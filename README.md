@@ -2,20 +2,10 @@
   <img src="public/logo.png" alt="Notiq Logo" width="120" />
   <h1>Notiq</h1>
 
-[![Tests](https://github.com/chinonsochikelue/notiq/workflows/Tests/badge.svg)](
-https://github.com/chinonsochikelue/notiq/actions/workflows/tests.yml
-)
+![Tests](https://github.com/adoxography/tailwind-scrollbar/workflows/Tests/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e6fe4b9f635b46ccb38e5852fac10343)](https://app.codacy.com/gh/chinonsochikelue/notiq/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![npm](https://img.shields.io/npm/dt/@collabchron/notiq)
-![npm](https://badge.fury.io/js/@collabchron%2Fnotiq.svg)
-![Repo Size](https://img.shields.io/github/repo-size/chinonsochikelue/notiq)
-![Repo Stars](https://img.shields.io/github/stars/chinonsochikelue/notiq)
-![Repo Watchers](https://img.shields.io/github/watchers/chinonsochikelue/notiq)
-![Repo Forks](https://img.shields.io/github/forks/chinonsochikelue/notiq)
-![Repo Open Issues](https://img.shields.io/github/issues/chinonsochikelue/notiq)
-![Repo Open Pull Requests](https://img.shields.io/github/issues-pr/chinonsochikelue/notiq)
-![Repo Visitors](https://api.visitorbadge.io/api/VisitorHit?user=chinonsochikelue&repo=notiq&countColor=%237B1E7A)
+
 
   <p>
     <strong>A powerful, AI-enhanced rich text editor built with Lexical, Next.js, TypeScript, and Tailwind CSS.</strong>
