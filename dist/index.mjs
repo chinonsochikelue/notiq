@@ -1621,7 +1621,7 @@ function Editor({
     editable: isEditable
   };
   console.log("Editor content:", content);
-  return /* @__PURE__ */ React3.createElement("div", { className: "notiq-root" }, /* @__PURE__ */ React3.createElement(LexicalComposer, { initialConfig }, /* @__PURE__ */ React3.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ React3.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ React3.createElement(SharedHistoryContext, null, /* @__PURE__ */ React3.createElement(ToolbarContext, null, /* @__PURE__ */ React3.createElement(Core, { toolbarConfig })))))));
+  return /* @__PURE__ */ React3.createElement(LexicalComposer, { initialConfig }, /* @__PURE__ */ React3.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ React3.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ React3.createElement(SharedHistoryContext, null, /* @__PURE__ */ React3.createElement(ToolbarContext, null, /* @__PURE__ */ React3.createElement(Core, { toolbarConfig }))))));
 }
 
 // src/styles/tailwind-plugin.ts

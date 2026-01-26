@@ -57679,7 +57679,7 @@ function Editor({
     editable: isEditable
   };
   console.log("Editor content:", content);
-  return /* @__PURE__ */ import_react96.default.createElement("div", { className: "notiq-root" }, /* @__PURE__ */ import_react96.default.createElement(import_LexicalComposer.LexicalComposer, { initialConfig }, /* @__PURE__ */ import_react96.default.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ import_react96.default.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ import_react96.default.createElement(SharedHistoryContext, null, /* @__PURE__ */ import_react96.default.createElement(ToolbarContext, null, /* @__PURE__ */ import_react96.default.createElement(Core, { toolbarConfig })))))));
+  return /* @__PURE__ */ import_react96.default.createElement(import_LexicalComposer.LexicalComposer, { initialConfig }, /* @__PURE__ */ import_react96.default.createElement(AIProvider, { config: aiConfig }, /* @__PURE__ */ import_react96.default.createElement(UploadProvider, { config: uploadConfig }, /* @__PURE__ */ import_react96.default.createElement(SharedHistoryContext, null, /* @__PURE__ */ import_react96.default.createElement(ToolbarContext, null, /* @__PURE__ */ import_react96.default.createElement(Core, { toolbarConfig }))))));
 }
 
 // src/index.ts

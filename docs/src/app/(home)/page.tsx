@@ -11,6 +11,7 @@ import {
   Terminal,
   FileText
 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LandingPage(): ReactElement {
   return (
@@ -24,7 +25,7 @@ export default function LandingPage(): ReactElement {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            v1.1.3 Now Available
+            v1.1.10 Now Available
           </div>
 
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight leading-[1.1]">
@@ -106,20 +107,22 @@ export default function LandingPage(): ReactElement {
           </div>
 
           {/* Editor Placeholder / Container */}
-          <div className="relative w-full min-h-[600px] border border-slate-800 rounded-xl bg-slate-950/80 backdrop-blur-xl shadow-2xl overflow-hidden group hover:border-slate-700 transition-colors">
+          <div className="hidden md:block relative w-full min-h-[600px] border border-slate-800 rounded-xl bg-slate-950/80 backdrop-blur-xl shadow-2xl overflow-hidden group hover:border-slate-700 transition-colors">
             {/* This replicates the structure needed for the editor to mount if we added it back, 
                  but for now it's a styled container as per user request to 'enhance' */}
             <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-transparent pointer-events-none" />
+            <Link href="https://notiq.vercel.app">
+            <Image src="/desktop.png" alt="Notiq" fill className="object-cover" />
+            </Link>
+          </div>
 
-            <div className="flex flex-col items-center justify-center h-full text-slate-500 space-y-4">
-              <div className="p-4 rounded-full bg-slate-900 border border-slate-800 group-hover:scale-110 transition-transform duration-500">
-                <Palette className="w-12 h-12 text-slate-700 group-hover:text-blue-500 transition-colors" />
-              </div>
-              <p className="text-lg">Interactive Playground Loading...</p>
-              <Link href="/playground" className="text-blue-400 hover:text-blue-300 underline underline-offset-4">
-                Or visit the full Playground
-              </Link>
-            </div>
+           <div className="md:hidden block relative w-full min-h-[600px] border border-slate-800 rounded-xl bg-slate-950/80 backdrop-blur-xl shadow-2xl overflow-hidden group hover:border-slate-700 transition-colors">
+            {/* This replicates the structure needed for the editor to mount if we added it back, 
+                 but for now it's a styled container as per user request to 'enhance' */}
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-transparent pointer-events-none" />
+            <Link href="https://notiq.vercel.app">
+            <Image src="/mobile.png" alt="Notiq" fill className="object-cover" />
+            </Link>
           </div>
         </section>
 

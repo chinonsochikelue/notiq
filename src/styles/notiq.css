@@ -92,35 +92,6 @@
   --background-red: #594141;
 }
 
-/* =========================
-   Tailwind Token Bridge
-   ========================= */
-.notiq-root {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -153,35 +124,39 @@
   }
 }
 
-/* =========================
-   Editor Custom Styles
-   ========================= */
-.notiq-root input[type="number"]::-webkit-inner-spin-button,
-.notiq-root input[type="number"]::-webkit-outer-spin-button {
+/* Editor custom styles */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.notiq-root #toolbar {
+#toolbar {
   scrollbar-width: none;
 }
 
-.notiq-root #toolbar::-webkit-scrollbar {
+#toolbar::-webkit-scrollbar {
   display: none;
 }
 
-.notiq-root .code {
+.code {
   scrollbar-width: none;
 }
 
-.notiq-root .code::-webkit-scrollbar {
+.code::-webkit-scrollbar {
   display: none;
 }
+/* File: C:\Users\HP\notiq\src\components\editor\nodes\InlineImageNode\InlineImageNode.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
 
-/* =========================
-   Component Styles
-   ========================= */
-.notiq-root .InlineImageNode__contentEditable {
+.InlineImageNode__contentEditable {
   min-height: 20px;
   border: 0px;
   resize: none;
@@ -200,7 +175,7 @@
   word-break: break-word;
 }
 
-.notiq-root .InlineImageNode__placeholder {
+.InlineImageNode__placeholder {
   font-size: 12px;
   color: #888;
   overflow: hidden;
@@ -214,14 +189,14 @@
   pointer-events: none;
 }
 
-.notiq-root .InlineImageNode_Checkbox:checked,
-.notiq-root .InlineImageNode_Checkbox:not(:checked) {
+.InlineImageNode_Checkbox:checked,
+.InlineImageNode_Checkbox:not(:checked) {
   position: absolute;
   left: -9999px;
 }
 
-.notiq-root .InlineImageNode_Checkbox:checked + label,
-.notiq-root .InlineImageNode_Checkbox:not(:checked) + label {
+.InlineImageNode_Checkbox:checked + label,
+.InlineImageNode_Checkbox:not(:checked) + label {
   position: absolute;
   padding-right: 55px;
   cursor: pointer;
@@ -230,8 +205,8 @@
   color: #666;
 }
 
-.notiq-root .InlineImageNode_Checkbox:checked + label:before,
-.notiq-root .InlineImageNode_Checkbox:not(:checked) + label:before {
+.InlineImageNode_Checkbox:checked + label:before,
+.InlineImageNode_Checkbox:not(:checked) + label:before {
   content: '';
   position: absolute;
   right: 0;
@@ -242,8 +217,8 @@
   background: #fff;
 }
 
-.notiq-root .InlineImageNode_Checkbox:checked + label:after,
-.notiq-root .InlineImageNode_Checkbox:not(:checked) + label:after {
+.InlineImageNode_Checkbox:checked + label:after,
+.InlineImageNode_Checkbox:not(:checked) + label:after {
   content: '';
   width: 8px;
   height: 8px;
@@ -255,37 +230,47 @@
   transition: all 0.2s ease;
 }
 
-.notiq-root .InlineImageNode_Checkbox:not(:checked) + label:after {
+.InlineImageNode_Checkbox:not(:checked) + label:after {
   opacity: 0;
   -webkit-transform: scale(0);
   transform: scale(0);
 }
 
-.notiq-root .InlineImageNode_Checkbox:checked + label:after {
+.InlineImageNode_Checkbox:checked + label:after {
   opacity: 1;
   -webkit-transform: scale(1);
   transform: scale(1);
 }
 
-.notiq-root .Collapsible__container {
+
+/* File: C:\Users\HP\notiq\src\components\editor\plugins\CollapsiblePlugin\Collapsible.css */
+.Collapsible__container {
   margin-bottom: 8px;
+  
 }
 
-.notiq-root .Collapsible__title {
+.Collapsible__title {
   cursor: pointer;
   padding: 5px 5px 5px 20px;
   position: relative;
   font-weight: bold;
   list-style: none;
   outline: none;
+  
 }
 
-.notiq-root .Collapsible__title::marker,
-.notiq-root .Collapsible__title::-webkit-details-marker {
+
+.Collapsible__title::marker,
+.Collapsible__title::-webkit-details-marker {
   display: none;
+  
 }
 
-.dark .notiq-root .Collapsible__title:before {
+
+
+
+
+.dark .Collapsible__title:before {
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
@@ -297,8 +282,7 @@
   top: 50%;
   transform: translateY(-50%);
 }
-
-.notiq-root .Collapsible__title:before {
+.Collapsible__title:before {
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
@@ -311,28 +295,35 @@
   transform: translateY(-50%);
 }
 
-.dark .notiq-root .Collapsible__container[open] > .Collapsible__title:before {
+.dark .Collapsible__container[open] > .Collapsible__title:before {
   border-color: transparent;
   border-width: 6px 4px 0 4px;
   border-top-color: white;
+
+  
 }
 
-.notiq-root .Collapsible__container[open] > .Collapsible__title:before {
+.Collapsible__container[open] > .Collapsible__title:before {
   border-color: transparent;
   border-width: 6px 4px 0 4px;
   border-top-color: #000;
+
+
+
 }
 
-.notiq-root .Collapsible__content {
+.Collapsible__content {
   padding: 0 5px 5px 20px;
 }
 
-.notiq-root .Collapsible__collapsed .Collapsible__content {
+.Collapsible__collapsed .Collapsible__content {
   display: none;
   user-select: none;
 }
 
-.notiq-root .PlaygroundEditorTheme__table {
+
+/* File: C:\Users\HP\notiq\src\components\editor\themes\theme.css */
+.PlaygroundEditorTheme__table {
   border-collapse: collapse;
   border-spacing: 0;
   overflow-x: auto;
@@ -343,15 +334,13 @@
   margin: 0px 25px 30px 0px;
 }
 
-.notiq-root .PlaygroundEditorTheme__tableSelection *::selection {
+.PlaygroundEditorTheme__tableSelection *::selection {
   background-color: transparent;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableSelected {
+.PlaygroundEditorTheme__tableSelected {
   outline: 2px solid rgb(60, 132, 244);
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCell {
+.PlaygroundEditorTheme__tableCell {
   border: 1px solid #979797;
   width: 75px;
   min-width: 75px;
@@ -361,19 +350,18 @@
   position: relative;
   outline: none;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellSortedIndicator {
+.PlaygroundEditorTheme__tableCellSortedIndicator {
   display: block;
   opacity: 0.5;
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
+
   height: 4px;
   background-color: #999;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellResizer {
+.PlaygroundEditorTheme__tableCellResizer {
   position: absolute;
   right: -4px;
   height: 100%;
@@ -382,16 +370,13 @@
   z-index: 10;
   top: 0;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellHeader {
+.PlaygroundEditorTheme__tableCellHeader {
   text-align: start;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellSelected {
+.PlaygroundEditorTheme__tableCellSelected {
   background-color: #c9dbf0;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellPrimarySelected {
+.PlaygroundEditorTheme__tableCellPrimarySelected {
   border: 2px solid rgb(60, 132, 244);
   display: block;
   height: calc(100% - 2px);
@@ -401,13 +386,11 @@
   top: -1px;
   z-index: 2;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellEditing {
+.PlaygroundEditorTheme__tableCellEditing {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
   border-radius: 3px;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableAddColumns {
+.PlaygroundEditorTheme__tableAddColumns {
   position: absolute;
   background-color: #eee;
   height: 100%;
@@ -415,8 +398,7 @@
   border: 0;
   cursor: pointer;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableAddColumns:after {
+.PlaygroundEditorTheme__tableAddColumns:after {
   background-image: url(/public/images/icons/plus.svg);
   background-size: contain;
   background-position: center;
@@ -430,13 +412,11 @@
   height: 100%;
   opacity: 0.4;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableAddColumns:hover,
-.notiq-root .PlaygroundEditorTheme__tableAddRows:hover {
+.PlaygroundEditorTheme__tableAddColumns:hover,
+.PlaygroundEditorTheme__tableAddRows:hover {
   background-color: #c9dbf0;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableAddRows {
+.PlaygroundEditorTheme__tableAddRows {
   position: absolute;
   width: calc(100% - 25px);
   background-color: #eee;
@@ -444,8 +424,7 @@
   border: 0;
   cursor: pointer;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableAddRows:after {
+.PlaygroundEditorTheme__tableAddRows:after {
   background-image: url(/public/images/icons/plus.svg);
   background-size: contain;
   background-position: center;
@@ -459,7 +438,6 @@
   height: 100%;
   opacity: 0.4;
 }
-
 @keyframes table-controls {
   0% {
     opacity: 0;
@@ -468,8 +446,7 @@
     opacity: 1;
   }
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellResizeRuler {
+.PlaygroundEditorTheme__tableCellResizeRuler {
   display: block;
   position: absolute;
   width: 1px;
@@ -477,8 +454,7 @@
   height: 100%;
   top: 0;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellActionButtonContainer {
+.PlaygroundEditorTheme__tableCellActionButtonContainer {
   display: block;
   right: 5px;
   top: 6px;
@@ -487,8 +463,7 @@
   width: 20px;
   height: 20px;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellActionButton {
+.PlaygroundEditorTheme__tableCellActionButton {
   background-color: #eee;
   display: block;
   border: 0;
@@ -498,59 +473,51 @@
   color: #222;
   cursor: pointer;
 }
-
-.notiq-root .PlaygroundEditorTheme__tableCellActionButton:hover {
+.PlaygroundEditorTheme__tableCellActionButton:hover {
   background-color: #ddd;
 }
 
-.notiq-root .PlaygroundEditorTheme__tokenComment {
+.PlaygroundEditorTheme__tokenComment {
   color: slategray;
 }
-
-.notiq-root .PlaygroundEditorTheme__tokenPunctuation {
+.PlaygroundEditorTheme__tokenPunctuation {
   color: #999;
 }
-
-.notiq-root .PlaygroundEditorTheme__tokenProperty {
+.PlaygroundEditorTheme__tokenProperty {
   color: rgba(226, 113, 175, 0.5);
 }
-
-.notiq-root .PlaygroundEditorTheme__tokenSelector {
+.PlaygroundEditorTheme__tokenSelector {
   color: #690;
 }
-
-.notiq-root .PlaygroundEditorTheme__tokenOperator {
+.PlaygroundEditorTheme__tokenOperator {
   color: #9a6e3a;
 }
-
-.notiq-root .PlaygroundEditorTheme__tokenAttr {
+.PlaygroundEditorTheme__tokenAttr {
   color: #07a;
 }
-
-.notiq-root .PlaygroundEditorTheme__tokenVariable {
+.PlaygroundEditorTheme__tokenVariable {
   color: #e90;
 }
-
-.notiq-root .PlaygroundEditorTheme__tokenFunction {
+.PlaygroundEditorTheme__tokenFunction {
   color: #e398a7;
 }
 
-.notiq-root .PlaygroundEditorTheme__embedBlock {
+.PlaygroundEditorTheme__embedBlock {
   user-select: none;
 }
-
-.notiq-root .PlaygroundEditorTheme__embedBlockFocus {
+.PlaygroundEditorTheme__embedBlockFocus {
   outline: 2px solid rgb(60, 132, 244);
 }
 
-.notiq-root .line-code {
+.line-code{
   tab-size: 2;
 }
 
-.notiq-root .line-code:before {
+
+.line-code:before {
   content: attr(data-gutter);
   position: absolute;
-  background-color: transparent;
+  background-color:transparent;
   left: 0;
   top: 0;
   height: 100%;
@@ -561,42 +528,42 @@
   text-align: right;
   min-width: 25px;
 }
-
-.notiq-root .line-code:before:hover {
+.line-code:before:hover{
   background: red;
 }
-
-.dark .notiq-root .line-code:before {
+.dark .line-code:before{
   border-right: 1px solid #3b3b3b65;
   color: #777;
+  
 }
 
-.notiq-root .PlaygroundEditorTheme__ul1,
-.notiq-root .PlaygroundEditorTheme__ul2,
-.notiq-root .PlaygroundEditorTheme__ul3,
-.notiq-root .PlaygroundEditorTheme__ul4,
-.notiq-root .PlaygroundEditorTheme__ul5 {
+.PlaygroundEditorTheme__ul1,
+.PlaygroundEditorTheme__ul2,
+.PlaygroundEditorTheme__ul3,
+.PlaygroundEditorTheme__ul4,
+.PlaygroundEditorTheme__ul5 {
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
+  
+}
+.PlaygroundEditorTheme__ol1,
+.PlaygroundEditorTheme__ol2,
+.PlaygroundEditorTheme__ol3,
+.PlaygroundEditorTheme__ol4,
+.PlaygroundEditorTheme__ol5 {
   padding: 0;
   margin: 0;
   list-style-position: inside;
 }
-
-.notiq-root .PlaygroundEditorTheme__ol1,
-.notiq-root .PlaygroundEditorTheme__ol2,
-.notiq-root .PlaygroundEditorTheme__ol3,
-.notiq-root .PlaygroundEditorTheme__ol4,
-.notiq-root .PlaygroundEditorTheme__ol5 {
-  padding: 0;
-  margin: 0;
-  list-style-position: inside;
-}
-
-.notiq-root .PlaygroundEditorTheme__listItem {
+.PlaygroundEditorTheme__listItem {
   margin: 2px 32px;
+  
 }
 
-.notiq-root .PlaygroundEditorTheme__listItemChecked,
-.notiq-root .PlaygroundEditorTheme__listItemUnchecked {
+
+.PlaygroundEditorTheme__listItemChecked,
+.PlaygroundEditorTheme__listItemUnchecked {
   position: relative;
   margin-left: 8px;
   margin-right: 8px;
@@ -605,21 +572,19 @@
   list-style-type: none;
   outline: none;
 }
-
-.notiq-root .ol {
+.ol {
   list-style-type: decimal;
 }
 
-.notiq-root .ul {
-  list-style-type: disc;
+.ul {
+  list-style-type:disc;
 }
 
-.notiq-root .PlaygroundEditorTheme__listItemChecked {
+.PlaygroundEditorTheme__listItemChecked {
   text-decoration: line-through;
 }
-
-.notiq-root .PlaygroundEditorTheme__listItemUnchecked:before,
-.notiq-root .PlaygroundEditorTheme__listItemChecked:before {
+.PlaygroundEditorTheme__listItemUnchecked:before,
+.PlaygroundEditorTheme__listItemChecked:before {
   content: '';
   width: 16px;
   height: 16px;
@@ -630,32 +595,27 @@
   background-size: cover;
   position: absolute;
 }
-
-.notiq-root .PlaygroundEditorTheme__listItemUnchecked[dir='rtl']:before,
-.notiq-root .PlaygroundEditorTheme__listItemChecked[dir='rtl']:before {
+.PlaygroundEditorTheme__listItemUnchecked[dir='rtl']:before,
+.PlaygroundEditorTheme__listItemChecked[dir='rtl']:before {
   left: auto;
   right: 0;
 }
-
-.notiq-root .PlaygroundEditorTheme__listItemUnchecked:focus:before,
-.notiq-root .PlaygroundEditorTheme__listItemChecked:focus:before {
+.PlaygroundEditorTheme__listItemUnchecked:focus:before,
+.PlaygroundEditorTheme__listItemChecked:focus:before {
   box-shadow: 0 0 0 2px #a6cdfe;
   border-radius: 2px;
 }
-
-.notiq-root .PlaygroundEditorTheme__listItemUnchecked:before {
+.PlaygroundEditorTheme__listItemUnchecked:before {
   border: 1px solid #999;
   border-radius: 2px;
 }
-
-.notiq-root .PlaygroundEditorTheme__listItemChecked:before {
+.PlaygroundEditorTheme__listItemChecked:before {
   border: 1px solid rgb(61, 135, 245);
   border-radius: 2px;
   background-color: #3d87f5;
   background-repeat: no-repeat;
 }
-
-.notiq-root .PlaygroundEditorTheme__listItemChecked:after {
+.PlaygroundEditorTheme__listItemChecked:after {
   content: '';
   cursor: pointer;
   border-color: #fff;
@@ -671,91 +631,96 @@
   border-width: 0 2px 2px 0;
 }
 
-.notiq-root .PlaygroundEditorTheme__ol1 {
+.PlaygroundEditorTheme__ol1 {
   padding: 0;
   margin: 0;
   list-style-position: outside;
 }
-
-.notiq-root .PlaygroundEditorTheme__ol2 {
+.PlaygroundEditorTheme__ol2 {
   padding: 0;
   margin: 0;
   list-style-type: upper-alpha;
   list-style-position: outside;
 }
-
-.notiq-root .PlaygroundEditorTheme__ol3 {
+.PlaygroundEditorTheme__ol3 {
   padding: 0;
   margin: 0;
   list-style-type: lower-alpha;
   list-style-position: outside;
 }
-
-.notiq-root .PlaygroundEditorTheme__ol4 {
+.PlaygroundEditorTheme__ol4 {
   padding: 0;
   margin: 0;
   list-style-type: upper-roman;
   list-style-position: outside;
 }
-
-.notiq-root .PlaygroundEditorTheme__ol5 {
+.PlaygroundEditorTheme__ol5 {
   padding: 0;
   margin: 0;
   list-style-type: lower-roman;
   list-style-position: outside;
 }
 
-.notiq-root .PlaygroundEditorTheme__ul1 {
+.PlaygroundEditorTheme__ul1 {
   padding: 0;
   margin: 0;
-  list-style-type: disc;
+  list-style-type:disc;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul2 {
+  padding: 0;
+  margin: 0;
+  list-style-type:circle;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul3 {
+  padding: 0;
+  margin: 0;
+  list-style-type:square;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul4 {
+  padding: 0;
+  margin: 0;
+  list-style-type:circle;
+  list-style-position: outside;
+}
+.PlaygroundEditorTheme__ul5 {
+  padding: 0;
+  margin: 0;
+  list-style-type:disc;
   list-style-position: outside;
 }
 
-.notiq-root .PlaygroundEditorTheme__ul2 {
-  padding: 0;
-  margin: 0;
-  list-style-type: circle;
-  list-style-position: outside;
-}
 
-.notiq-root .PlaygroundEditorTheme__ul3 {
-  padding: 0;
-  margin: 0;
-  list-style-type: square;
-  list-style-position: outside;
-}
-
-.notiq-root .PlaygroundEditorTheme__ul4 {
-  padding: 0;
-  margin: 0;
-  list-style-type: circle;
-  list-style-position: outside;
-}
-
-.notiq-root .PlaygroundEditorTheme__ul5 {
-  padding: 0;
-  margin: 0;
-  list-style-type: disc;
-  list-style-position: outside;
-}
-
-.notiq-root .PlaygroundEditorTheme__nestedListItem {
+.PlaygroundEditorTheme__nestedListItem {
   list-style-type: none;
 }
-
-.notiq-root .PlaygroundEditorTheme__nestedListItem:before,
-.notiq-root .PlaygroundEditorTheme__nestedListItem:after {
+.PlaygroundEditorTheme__nestedListItem:before,
+.PlaygroundEditorTheme__nestedListItem:after {
   display: none;
 }
 
-.notiq-root .node-placeholder:has(br):not(:has(span))::before {
-  position: absolute;
-  content: attr(data-placeholder);
-  color: rgba(136, 136, 136, 0.6);
+
+/* File: C:\Users\HP\notiq\src\components\editor\utils\setNodePlaceholderFromSelection\styles.css */
+.node-placeholder:has(br):not(:has(span))::before {
+    position: absolute;
+    content: attr(data-placeholder);
+    color: rgba(136, 136, 136, 0.6);
+    
 }
 
-.notiq-root .ContentEditable__root {
+
+/* File: C:\Users\HP\notiq\src\components\ui\ContentEditable.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+.ContentEditable__root {
   border: 0;
   font-size: 15px;
   display: block;
@@ -764,15 +729,14 @@
   padding: 8px 46px 40px;
   min-height: 150px;
 }
-
 @media (max-width: 1025px) {
-  .notiq-root .ContentEditable__root {
+  .ContentEditable__root {
     padding-left: 8px;
     padding-right: 8px;
   }
 }
 
-.notiq-root .ContentEditable__placeholder {
+.ContentEditable__placeholder {
   font-size: 15px;
   color: #999;
   overflow: hidden;
@@ -786,28 +750,36 @@
   display: inline-block;
   pointer-events: none;
 }
-
 @media (max-width: 1025px) {
-  .notiq-root .ContentEditable__placeholder {
+  .ContentEditable__placeholder {
     left: 8px;
     right: 8px;
   }
 }
 
-.notiq-root .Input__wrapper {
+
+/* File: C:\Users\HP\notiq\src\components\ui\Input.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.Input__wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
 }
-
-.notiq-root .Input__label {
+.Input__label {
   display: flex;
   flex: 1;
   color: #666;
 }
-
-.notiq-root .Input__input {
+.Input__input {
   display: flex;
   flex: 2;
   border: 1px solid #999;
@@ -820,7 +792,18 @@
   min-width: 0;
 }
 
-.notiq-root .Modal__overlay {
+
+/* File: C:\Users\HP\notiq\src\components\ui\Modal.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.Modal__overlay {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -835,8 +818,7 @@
   flex-shrink: 1px;
   z-index: 100;
 }
-
-.notiq-root .Modal__modal {
+.Modal__modal {
   padding: 20px;
   min-height: 100px;
   min-width: 300px;
@@ -848,15 +830,13 @@
   box-shadow: 0 0 20px 0 #444;
   border-radius: 10px;
 }
-
-.notiq-root .Modal__title {
+.Modal__title {
   color: #444;
   margin: 0px;
   padding-bottom: 10px;
   border-bottom: 1px solid #ccc;
 }
-
-.notiq-root .Modal__closeButton {
+.Modal__closeButton {
   border: 0px;
   position: absolute;
   right: 20px;
@@ -870,16 +850,24 @@
   cursor: pointer;
   background-color: #eee;
 }
-
-.notiq-root .Modal__closeButton:hover {
+.Modal__closeButton:hover {
   background-color: #ddd;
 }
-
-.notiq-root .Modal__content {
+.Modal__content {
   padding-top: 20px;
 }
 
-.notiq-root select {
+
+/* File: C:\Users\HP\notiq\src\components\ui\Select.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -891,11 +879,18 @@
   font-size: inherit;
   cursor: inherit;
   line-height: inherit;
+
   z-index: 1;
   outline: none;
 }
 
-.notiq-root .select {
+:root {
+  --select-border: #393939;
+  --select-focus: #101484;
+  --select-arrow: var(--select-border);
+}
+
+.select {
   min-width: 160px;
   max-width: 290px;
   border: 1px solid var(--select-border);
@@ -907,25 +902,46 @@
   background: linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
 }
 
-.notiq-root .DialogActions {
+
+/* File: C:\Users\HP\notiq\src\components\ui\dialog\Dialog.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+.DialogActions {
   display: flex;
   flex-direction: row;
   justify-content: right;
   margin-top: 20px;
 }
 
-.notiq-root .DialogButtonsList {
+.DialogButtonsList {
   display: flex;
   flex-direction: column;
   justify-content: right;
   margin-top: 20px;
 }
 
-.notiq-root .DialogButtonsList button {
+.DialogButtonsList button {
   margin-bottom: 20px;
 }
 
-.notiq-root .EquationEditor_inlineEditor {
+
+/* File: C:\Users\HP\notiq\src\components\ui\equation\EquationEditor.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.EquationEditor_inlineEditor {
   padding: 0;
   margin: 0;
   border: 0;
@@ -935,7 +951,7 @@
   resize: none;
 }
 
-.notiq-root .EquationEditor_blockEditor {
+.EquationEditor_blockEditor {
   padding: 0;
   margin: 0;
   border: 0;
@@ -946,16 +962,27 @@
   width: 100%;
 }
 
-.notiq-root .EquationEditor_inputBackground {
+.EquationEditor_inputBackground {
   background-color: #eee;
 }
 
-.notiq-root .EquationEditor_dollarSign {
+.EquationEditor_dollarSign {
   text-align: left;
   color: #b0b0b0;
 }
 
-.notiq-root .KatexEquationAlterer_defaultRow {
+
+/* File: C:\Users\HP\notiq\src\components\ui\equation\KatexEquationAlterer.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.KatexEquationAlterer_defaultRow {
   display: flex;
   flex-direction: row;
   margin-top: 10px;
@@ -964,7 +991,7 @@
   overflow: hidden;
 }
 
-.notiq-root .KatexEquationAlterer_dialogActions {
+.KatexEquationAlterer_dialogActions {
   display: flex;
   flex-direction: row;
   overflow: hidden;
@@ -973,7 +1000,7 @@
   justify-content: right;
 }
 
-.notiq-root .KatexEquationAlterer_centerRow {
+.KatexEquationAlterer_centerRow {
   display: flex;
   flex-direction: 'row';
   margin-top: 10px;
@@ -982,13 +1009,24 @@
   overflow: hidden;
 }
 
-.notiq-root .KatexEquationAlterer_textArea {
+.KatexEquationAlterer_textArea {
   width: 100%;
   resize: none;
   padding: 7px;
 }
 
-.notiq-root .ExcalidrawModal__overlay {
+
+/* File: C:\Users\HP\notiq\src\components\ui\excalidraw\ExcalidrawModal.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.ExcalidrawModal__overlay {
   display: flex;
   align-items: center;
   position: fixed;
@@ -1002,21 +1040,18 @@
   z-index: 100;
   background-color: rgba(40, 40, 40, 0.6);
 }
-
-.notiq-root .ExcalidrawModal__actions {
+.ExcalidrawModal__actions {
   text-align: end;
   position: absolute;
   right: 5px;
   top: 5px;
   z-index: 1;
 }
-
-.notiq-root .ExcalidrawModal__actions button {
+.ExcalidrawModal__actions button {
   background-color: #fff;
   border-radius: 5px;
 }
-
-.notiq-root .ExcalidrawModal__row {
+.ExcalidrawModal__row {
   position: relative;
   padding: 40px 5px 5px;
   width: 70vw;
@@ -1027,12 +1062,10 @@
     0 2px 4px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
 }
-
-.notiq-root .ExcalidrawModal__row > div {
+.ExcalidrawModal__row > div {
   border-radius: 5px;
 }
-
-.notiq-root .ExcalidrawModal__modal {
+.ExcalidrawModal__modal {
   position: relative;
   z-index: 10;
   top: 50px;
@@ -1044,9 +1077,74 @@
   border-radius: 8px;
   background-color: #eee;
 }
-
-.notiq-root .ExcalidrawModal__discardModal {
+.ExcalidrawModal__discardModal {
   margin-top: 60px;
   text-align: center;
 }
+
+
+/* File: C:\Users\HP\notiq\src\components\ui\excalidraw\Modal.css */
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.Modal__overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  flex-direction: column;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: rgba(40, 40, 40, 0.6);
+  flex-grow: 0px;
+  flex-shrink: 1px;
+  z-index: 100;
 }
+.Modal__modal {
+  padding: 20px;
+  min-height: 100px;
+  min-width: 300px;
+  display: flex;
+  flex-grow: 0px;
+  background-color: #fff;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 20px 0 #444;
+  border-radius: 10px;
+}
+.Modal__title {
+  color: #444;
+  margin: 0px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+.Modal__closeButton {
+  border: 0px;
+  position: absolute;
+  right: 20px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #eee;
+}
+.Modal__closeButton:hover {
+  background-color: #ddd;
+}
+.Modal__content {
+  padding-top: 20px;
+}
+
+

@@ -30,8 +30,8 @@ const fontBold = readFile('./src/app/og/[...slug]/fonts/Inter-Bold.ttf').then(
     weight: 700,
   })
 )
-const logo = readFile('./public/logo.svg').then((data) => ({
-  src: 'logo.svg',
+const logo = readFile('./public/logo.png').then((data) => ({
+  src: 'logo.png',
   data,
 }))
 
@@ -84,7 +84,7 @@ export function generate({ title, description, tag }: GenerateProps) {
           {/* biome-ignore lint/performance/noImgElement: required for OG image rendering */}
           <img
             alt={siteName}
-            src='logo.svg'
+            src='logo.png'
             style={{ width: 60, height: 60 }}
           />
           <span
