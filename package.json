@@ -73,6 +73,7 @@
     "@ai-sdk/groq": "^3.0.7",
     "@ai-sdk/openai": "^2.0.30",
     "@ai-sdk/react": "^2.0.44",
+    "@collabchron/tharos": "^0.1.0",
     "@edgestore/react": "^0.5.4",
     "@edgestore/server": "^0.5.4",
     "@excalidraw/excalidraw": "^0.18.0",
