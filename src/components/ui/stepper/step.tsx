@@ -6,7 +6,8 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import ImagesPlugin from "../../editor/plugins/ImagesPlugin";
 import { Plus, Trash2 } from "lucide-react";
 import { Reorder } from "framer-motion";
-import { StepType } from "../../editor/nodes/Stepper";
+import { StepType, initialEditorState, safelySetEditorState } from "../../editor/nodes/Stepper";
+import { createEditor } from "lexical";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { useSharedHistoryContext } from "../../providers/SharedHistoryContext";
@@ -46,12 +47,26 @@ export default function Step({
   updateTitle,
 }: Props) {
 
+  if (!item || typeof item !== "object") {
+    return null;
+  }
+
   const titleRef = React.useRef<HTMLDivElement>(null);
   const [isLinkEditMode, setIsLinkEditMode] = React.useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const { historyState } = useSharedHistoryContext();
   const activeEditorRef = useRef<LexicalEditor | null>(null);
+
+  const editorInstance = React.useMemo(() => {
+    if (item?.content && typeof (item.content as any).isEditable === "function") {
+      return item.content;
+    }
+    const newEditor = createEditor({ nodes: [...nestedNodes] });
+    const rawContent = (item?.content as any)?.editorState || item?.content;
+    safelySetEditorState(newEditor, rawContent);
+    return newEditor;
+  }, [item?.content]);
 
   const handleTitleBlur = () => {
     if (titleRef.current) {
@@ -77,7 +92,7 @@ export default function Step({
 
   useEffect(() => {
     const unregister = mergeRegister(
-      item.content.registerCommand(
+      editorInstance.registerCommand(
         SELECTION_CHANGE_COMMAND,
         (_, activeEditor) => {
           activeEditorRef.current = activeEditor;
@@ -94,7 +109,7 @@ export default function Step({
   return (
     <Reorder.Item
       value={item}
-      id={item.id.toString()}
+      id={item?.id ? item.id.toString() : String(numberd)}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0, transition: { duration: 0.15 } }}
       exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
@@ -128,7 +143,7 @@ export default function Step({
           </button>
         </div>
         <LexicalNestedComposer
-          initialEditor={item.content}
+          initialEditor={editorInstance}
           initialNodes={[...nestedNodes]}
         >
           <HistoryPlugin externalHistoryState={historyState} />
@@ -172,7 +187,7 @@ export default function Step({
               />
             </>
           )}
-          {item.content.isEditable() && <SlashCommand />}
+          {typeof editorInstance?.isEditable === "function" && editorInstance.isEditable() && <SlashCommand />}
         </LexicalNestedComposer>
       </div>
 

@@ -60,6 +60,7 @@ export default function LazyImage({
         alt={altText}
         ref={imageRef}
         style={style}
+        crossOrigin="anonymous"
         onError={onError}
         draggable="false"
       />

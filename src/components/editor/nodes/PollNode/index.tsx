@@ -87,10 +87,10 @@ export class PollNode extends DecoratorNode<React.JSX.Element> {
     ).updateFromJSON(serializedNode);
   }
 
-  constructor(question: string, options: Options, key?: NodeKey) {
+  constructor(question?: string, options?: Options, key?: NodeKey) {
     super(key);
-    this.__question = question;
-    this.__options = options;
+    this.__question = question || "";
+    this.__options = Array.isArray(options) ? options : [];
   }
 
   exportJSON(): SerializedPollNode {

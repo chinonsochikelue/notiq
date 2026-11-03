@@ -40,12 +40,12 @@ export default function StoryBuilderComponent({ nodes, currentNodeId, title, nod
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const moodColors = {
-    neutral: { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-900' },
-    happy: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-900' },
-    sad: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-900' },
-    mysterious: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-900' },
-    exciting: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-900' },
-    dark: { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-900' },
+    neutral: { bg: 'bg-muted/40 dark:bg-muted/20', border: 'border-border', text: 'text-foreground' },
+    happy: { bg: 'bg-amber-500/10 dark:bg-amber-500/15', border: 'border-amber-500/30', text: 'text-amber-950 dark:text-amber-200' },
+    sad: { bg: 'bg-blue-500/10 dark:bg-blue-500/15', border: 'border-blue-500/30', text: 'text-blue-950 dark:text-blue-200' },
+    mysterious: { bg: 'bg-purple-500/10 dark:bg-purple-500/15', border: 'border-purple-500/30', text: 'text-purple-950 dark:text-purple-200' },
+    exciting: { bg: 'bg-orange-500/10 dark:bg-orange-500/15', border: 'border-orange-500/30', text: 'text-orange-950 dark:text-orange-200' },
+    dark: { bg: 'bg-slate-500/10 dark:bg-slate-500/20', border: 'border-slate-500/30', text: 'text-foreground' },
   }
 
   const initializeStory = useCallback(() => {

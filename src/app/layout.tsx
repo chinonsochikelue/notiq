@@ -296,6 +296,30 @@ export default function RootLayout({
             }),
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined') {
+                window.addEventListener('error', function(e) {
+                  try {
+                    fetch('/api/client-error', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        message: e.message,
+                        name: e.error ? e.error.name : 'Error',
+                        filename: e.filename,
+                        lineno: e.lineno,
+                        colno: e.colno,
+                        stack: e.error ? e.error.stack : (new Error().stack)
+                      })
+                    });
+                  } catch(err) {}
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <EdgeStoreProvider>
         <body className="font-sans antialiased w-full min-h-screen dark:text-white text-slate-800 dark:bg-[#020b19] bg-white">

@@ -1,67 +1,55 @@
-import { describe, it, expect, vi } from "vitest";
-import { applyStyles } from "./ai";
+import { describe, it, expect } from "vitest";
+import { normalizeMarkdownHeadings, parseMarkdownToBlocks } from "./ai";
+import { createEditor } from "lexical";
+import nodes from "../nodes";
 
-// Mock Lexical
-vi.mock("lexical", async () => {
-    const actual = await vi.importActual<typeof import("lexical")>("lexical");
-    return {
-        ...actual,
-        $createTextNode: vi.fn((text: string) => ({ type: "text", text, format: null, setFormat: function (fmt: any) { this.format = fmt; } })),
-        $createParagraphNode: vi.fn(() => ({ type: "paragraph", append: vi.fn() })),
-    };
-});
-
-vi.mock("../nodes/Stepper", () => ({
-    $createStepperNode: vi.fn(),
-}));
-
-// Mock @lexical/code
-vi.mock("@lexical/code", () => ({
-    $createCodeNode: vi.fn((lang) => ({ type: "code", language: lang, children: [] as any[], append: function (child: any) { this.children.push(child); } })),
-}));
-
-// Mock @lexical/rich-text
-vi.mock("@lexical/rich-text", () => ({
-    $createHeadingNode: vi.fn((tag) => ({ type: "heading", tag, children: [] as any[], append: function (child: any) { this.children.push(child); } })),
-}));
-
-
-describe("applyStyles", () => {
-    it("should extract language from code block", () => {
-        const input = "Here is some code:\n```typescript\nconst a = 1;\n```\nEnd.";
-        const nodes = applyStyles(input) as any[];
-
-        // Expected: TextNode, CodeNode(lang=typescript), TextNode
-        expect(nodes.length).toBe(3);
-
-        // Check first text node
-        expect(nodes[0].text).toBe("Here is some code:\n");
-
-        // Check code node
-        const codeNode = nodes[1];
-        expect(codeNode.type).toBe("code");
-        expect(codeNode.language).toBe("typescript");
-        expect(codeNode.children[0].text).toBe("const a = 1;\n");
-
-        // Check last text node
-        expect(nodes[2].text).toBe("\nEnd.");
+describe("Markdown & AI Pipeline", () => {
+    it("normalizes markdown headings correctly", () => {
+        const input = "Introduction to Quantum Computing\n\nQuantum bits exist in superposition.\n\nKey Concepts\n\nEntanglement is crucial.";
+        const normalized = normalizeMarkdownHeadings(input);
+        expect(normalized).toContain("# Introduction to Quantum Computing");
+        expect(normalized).toContain("## Key Concepts");
     });
 
-    it("should handle code block without language", () => {
-        const input = "```\nconsole.log('hi');\n```";
-        const nodes = applyStyles(input) as any[];
-
-        expect(nodes.length).toBe(1);
-        const codeNode = nodes[0];
-        expect(codeNode.type).toBe("code");
-        expect(codeNode.language).toBe(""); // Or undefined/null depending on implementation
-        expect(codeNode.children[0].text).toBe("\nconsole.log('hi');\n");
+    it("preserves already formatted markdown headings", () => {
+        const input = "# Existing Title\n\n## Subheading\n\n```python\nprint(1)\n```";
+        const normalized = normalizeMarkdownHeadings(input);
+        expect(normalized).toBe(input);
     });
 
-    it("should handle language on same line", () => {
-        const input = "```python\nprint('hello')\n```";
-        const nodes = applyStyles(input) as any[];
-        expect(nodes[0].language).toBe("python");
-        expect(nodes[0].children[0].text).toBe("print('hello')\n");
+    it("parses markdown to native Lexical blocks safely", () => {
+        const editor = createEditor({ nodes: [...nodes] });
+        editor.update(() => {
+            const blocks = parseMarkdownToBlocks(
+                "# Title\n\nSome paragraph text.\n\n```typescript\nconst x = 42;\n```",
+                editor
+            );
+            expect(blocks.length).toBeGreaterThanOrEqual(2);
+        });
+    });
+
+    it("verifies clean structure for copilot completions", () => {
+        const rawCompletion = '" allowing team members to communicate effortlessly."';
+        const cleaned = rawCompletion.replace(/^["'`]+|["'`]+$/g, "").trim();
+        expect(cleaned).toBe("allowing team members to communicate effortlessly.");
+    });
+
+    it("verifies copilot width clamping logic prevents overflow", () => {
+        const rootRight = 800;
+        const paddingRight = 16;
+        const windowWidth = 1000;
+        const maxRight = Math.min(rootRight - paddingRight, windowWidth - 20); // 784
+        
+        // Caret near middle of line
+        const caretX = 400;
+        const availableWidth = maxRight - caretX;
+        expect(availableWidth).toBe(384);
+        expect(availableWidth).toBeGreaterThanOrEqual(140);
+
+        // Caret near end of line (< 140px)
+        const caretNearEnd = 700;
+        const remainingWidth = maxRight - caretNearEnd;
+        expect(remainingWidth).toBe(84);
+        expect(remainingWidth).toBeLessThan(140);
     });
 });

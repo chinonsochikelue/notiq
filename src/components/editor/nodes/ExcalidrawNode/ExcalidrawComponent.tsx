@@ -6,7 +6,7 @@
  *
  */
 
-import type { ExcalidrawInitialElements } from "../../../ui/excalidraw/ExcalidrawModal";
+import type { ExcalidrawInitialElements } from '../../../ui/excalidraw/ExcalidrawModal';
 import type { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
 import type { NodeKey } from 'lexical';
 import type { JSX } from 'react';
@@ -19,12 +19,16 @@ import {
   $getNodeByKey,
   CLICK_COMMAND,
   COMMAND_PRIORITY_LOW,
+  KEY_DELETE_COMMAND,
+  KEY_BACKSPACE_COMMAND,
   isDOMNode,
 } from 'lexical';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
+import { Pencil, Trash2, Palette, Maximize2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-import ExcalidrawModal from "../../../ui/excalidraw/ExcalidrawModal";
+import ExcalidrawModal from '../../../ui/excalidraw/ExcalidrawModal';
 import { $isExcalidrawNode } from '.';
 import ExcalidrawImage from './ExcalidrawImage';
 import ImageResizer from './ImageResizer';
@@ -46,7 +50,7 @@ export default function ExcalidrawComponent({
     data === '[]' && editor.isEditable(),
   );
   const imageContainerRef = useRef<HTMLDivElement | null>(null);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const captionButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] =
     useLexicalNodeSelection(nodeKey);
@@ -63,7 +67,7 @@ export default function ExcalidrawComponent({
       editor.registerCommand(
         CLICK_COMMAND,
         (event: MouseEvent) => {
-          const buttonElem = buttonRef.current;
+          const containerElem = containerRef.current;
           const eventTarget = event.target;
 
           if (isResizing) {
@@ -71,20 +75,42 @@ export default function ExcalidrawComponent({
           }
 
           if (
-            buttonElem !== null &&
+            containerElem !== null &&
             isDOMNode(eventTarget) &&
-            buttonElem.contains(eventTarget)
+            containerElem.contains(eventTarget)
           ) {
             if (!event.shiftKey) {
               clearSelection();
             }
-            setSelected(!isSelected);
+            setSelected(true);
             if (event.detail > 1) {
               setModalOpen(true);
             }
             return true;
           }
 
+          return false;
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        KEY_DELETE_COMMAND,
+        () => {
+          if (isSelected) {
+            deleteNode();
+            return true;
+          }
+          return false;
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        KEY_BACKSPACE_COMMAND,
+        () => {
+          if (isSelected) {
+            deleteNode();
+            return true;
+          }
           return false;
         },
         COMMAND_PRIORITY_LOW,
@@ -133,7 +159,6 @@ export default function ExcalidrawComponent({
     nextWidth: 'inherit' | number,
     nextHeight: 'inherit' | number,
   ) => {
-    // Delay hiding the resize bars for click case
     setTimeout(() => {
       setIsResizing(false);
     }, 200);
@@ -156,11 +181,17 @@ export default function ExcalidrawComponent({
     elements = [],
     files = {},
     appState = {},
-  } = useMemo(() => JSON.parse(data), [data]);
+  } = useMemo(() => {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return { elements: [], files: {}, appState: {} };
+    }
+  }, [data]);
 
   const closeModal = useCallback(() => {
     setModalOpen(false);
-    if (elements.length === 0) {
+    if (!elements || elements.length === 0) {
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
         if (node) {
@@ -168,7 +199,7 @@ export default function ExcalidrawComponent({
         }
       });
     }
-  }, [editor, nodeKey, elements.length]);
+  }, [editor, nodeKey, elements]);
 
   return (
     <>
@@ -187,10 +218,73 @@ export default function ExcalidrawComponent({
           closeOnClickOutside={false}
         />
       )}
-      {elements.length > 0 && (
-        <button
-          ref={buttonRef}
-          className={`excalidraw-button ${isSelected ? 'selected' : ''}`}>
+
+      {elements && elements.length > 0 && (
+        <div
+          ref={containerRef}
+          role="button"
+          tabIndex={0}
+          aria-label="Excalidraw drawing. Double-click or click Edit to modify."
+          onDoubleClick={openModal}
+          className={cn(
+            'group relative my-4 inline-block max-w-full rounded-2xl border border-border/70 bg-card/40 p-2.5 shadow-xs transition-all duration-200 select-none cursor-pointer',
+            'hover:border-border hover:shadow-md hover:bg-card/70',
+            isSelected &&
+              'ring-2 ring-primary ring-offset-2 ring-offset-background border-primary/50 shadow-md',
+          )}
+        >
+          {/* Action Toolbar on Hover & Selection */}
+          {isEditable && (
+            <div
+              className={cn(
+                'absolute top-3 right-3 z-30 flex items-center gap-1 rounded-lg border border-border/80 bg-background/95 px-1.5 py-1 shadow-md backdrop-blur-md transition-opacity duration-150',
+                isSelected
+                  ? 'opacity-100'
+                  : 'opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto',
+              )}
+            >
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openModal();
+                }}
+                className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
+                title="Edit drawing"
+              >
+                <Pencil className="h-3.5 w-3.5 text-primary" />
+                <span>Edit</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openModal();
+                }}
+                className="flex items-center rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+                title="Open fullscreen editor"
+              >
+                <Maximize2 className="h-3.5 w-3.5" />
+              </button>
+
+              <div className="h-3.5 w-[1px] bg-border my-auto" />
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteNode();
+                }}
+                className="flex items-center rounded-md p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+                title="Delete drawing"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* Drawing Preview SVG */}
           <ExcalidrawImage
             imageContainerRef={imageContainerRef}
             className="image"
@@ -200,28 +294,32 @@ export default function ExcalidrawComponent({
             width={width}
             height={height}
           />
-          {isSelected && isEditable && (
-            <div
-              className="image-edit-button"
-              role="button"
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={openModal}
-            />
-          )}
+
+          {/* Subtle Bottom Badge / Hint */}
+          <div
+            className={cn(
+              'absolute bottom-3 left-3 z-10 flex items-center gap-1.5 rounded-md border border-border/50 bg-background/85 px-2 py-0.5 text-[11px] font-medium text-muted-foreground backdrop-blur-sm transition-opacity duration-150 pointer-events-none',
+              isSelected ? 'opacity-0' : 'opacity-0 group-hover:opacity-100',
+            )}
+          >
+            <Palette className="h-3 w-3 text-primary" />
+            <span>Excalidraw · Double-click to edit</span>
+          </div>
+
+          {/* Interactive Resizer Handles */}
           {(isSelected || isResizing) && isEditable && (
             <ImageResizer
               buttonRef={captionButtonRef}
-              showCaption={true}
+              showCaption={false}
               setShowCaption={() => null}
               imageRef={imageContainerRef}
               editor={editor}
               onResizeStart={onResizeStart}
               onResizeEnd={onResizeEnd}
-              captionsEnabled={true}
+              captionsEnabled={false}
             />
           )}
-        </button>
+        </div>
       )}
     </>
   );

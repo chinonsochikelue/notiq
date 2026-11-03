@@ -17,6 +17,16 @@ import { Progress } from "../progress";
 import { Button } from "../button";
 import { useEdgeStore } from "../../../lib/edgestore";
 import { useUpload } from "../../providers/UploadContext";
+import { toast } from "sonner";
+
+const readFileAsDataURL = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
 
 const FileUploadZone = ({
   InsertMedia,
@@ -56,27 +66,46 @@ const FileUploadZone = ({
         let url = "";
 
         if (uploadConfig?.uploadHandler) {
-          const res = await uploadConfig.uploadHandler(file, (p) => {
-            setProgress(
-              Math.round((p / 100) * ((i + 1) / newFiles.length) * 100)
-            );
-          });
-          url = res.url;
-        } else {
-          const response = await edgestore.publicFiles.upload({
-            file,
-            onProgressChange: (progress: number) => {
+          try {
+            const res = await uploadConfig.uploadHandler(file, (p) => {
               setProgress(
-                Math.round((progress / 100) * ((i + 1) / newFiles.length) * 100)
+                Math.round((p / 100) * ((i + 1) / newFiles.length) * 100)
               );
-            },
-          });
-          url = response.url;
+            });
+            url = res.url;
+          } catch (handlerErr) {
+            console.warn("[Notiq] uploadHandler failed, falling back to local file:", handlerErr);
+            url = await readFileAsDataURL(file);
+          }
+        } else {
+          try {
+            const response = await edgestore.publicFiles.upload({
+              file,
+              onProgressChange: (progress: number) => {
+                setProgress(
+                  Math.round((progress / 100) * ((i + 1) / newFiles.length) * 100)
+                );
+              },
+            });
+            url = response.url;
+          } catch (edgeStoreErr) {
+            console.warn("[Notiq] EdgeStore unavailable, using offline local file storage:", edgeStoreErr);
+            url = await readFileAsDataURL(file);
+            toast.info(`Stored ${file.name} locally (offline mode)`);
+          }
         }
 
-        uploadedFiles.push({ url, alt: file.name });
+        if (url) {
+          uploadedFiles.push({ url, alt: file.name });
+        }
       } catch (error) {
         console.error(`Error uploading ${file.name}:`, error);
+        // Guaranteed local fallback
+        try {
+          const fallbackUrl = await readFileAsDataURL(file);
+          uploadedFiles.push({ url: fallbackUrl, alt: file.name });
+          toast.info(`Stored ${file.name} locally (offline mode)`);
+        } catch {}
       }
     }
 

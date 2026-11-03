@@ -28,6 +28,8 @@ import { FigmaNode } from './FigmaNode/FigmaNode';
 import { EquationNode } from './EquationNode/EquationNode';
 import { StoryBuilderNode } from '../plugins/StoryBuilderPlugin';
 import { DynamicBlockNode } from './DynamicBlockNode/DynamicBlockNode';
+import { AudioNode } from './AudioNode';
+import { FileNode } from './FileNode';
 
 
 
@@ -64,6 +66,8 @@ const nodes: Array<Klass<LexicalNode>> = [
   EquationNode,
   StoryBuilderNode,
   DynamicBlockNode,
+  AudioNode,
+  FileNode,
 ];
 
 export  const nestedNodes: Array<Klass<LexicalNode>>=[
@@ -74,7 +78,6 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   CodeHighlightNode,
   QuoteNode,
   CodeNode,
-  StepperNode,
   LinkWithMetaDataNode,
   ImageNode,
   InlineImageNode,
@@ -83,5 +86,7 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   EquationNode,
   StoryBuilderNode,
   DynamicBlockNode,
+  AudioNode,
+  FileNode,
 ]
 export default nodes

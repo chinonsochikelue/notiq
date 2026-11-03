@@ -1,6 +1,6 @@
 import { Reorder, AnimatePresence } from "framer-motion";
 import Step from "./step";
-import { $isStepperNode, initialEditorState, StepsType } from "../../editor/nodes/Stepper";
+import { $isStepperNode, initialEditorState, safelySetEditorState, StepsType } from "../../editor/nodes/Stepper";
 import { $getNodeByKey, createEditor, NodeKey } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
@@ -48,10 +48,7 @@ export default function Stepper({
       if ($isStepperNode(node)) {
         const newId = Date.now(); 
         const newEditor = createEditor();
-        const parsedEditorState = newEditor.parseEditorState(
-          JSON.stringify(initialEditorState)
-        );
-        newEditor.setEditorState(parsedEditorState);
+        safelySetEditorState(newEditor, null);
         const newStep = {
           id: newId, 
           title: `New step `,
@@ -64,20 +61,22 @@ export default function Stepper({
   };
 
 
+  const safeSteps = Array.isArray(steps) ? steps : [];
+
   return (
     <Reorder.Group
       axis="y"
-      values={steps}
+      values={safeSteps}
       onReorder={SetSteps}
       className="h-fit my-2 min-h-[90px] w-full overflow-hidden flex flex-col relative"
     >
       <AnimatePresence initial={false}>
-        {steps.map((item, index) => (
+        {safeSteps.map((item, index) => (
           <Step 
             updateTitle={updateTitle} 
             remove={remove} 
             insertAt={insertAt} 
-            key={item.id} 
+            key={item?.id ?? index} 
             numberd={index} 
             item={item} 
           />

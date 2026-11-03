@@ -85,6 +85,7 @@ function LazyImage({
       src={src || "/placeholder.svg"}
       alt={altText}
       ref={imageRef}
+      crossOrigin="anonymous"
       data-position={position}
       style={{
         height,

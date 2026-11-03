@@ -227,7 +227,7 @@ function useFloatingTextFormatToolbar(
   }
 
   return createPortal(
-    <div ref={toolbarRef}>
+    <div ref={toolbarRef} className="hidden md:block">
       <TextFormatFloatingToolbar
         editor={editor}
         anchorElem={anchorElem}
@@ -267,8 +267,4 @@ export default function FloatingTextFormatToolbarPlugin({
   const [editor] = useLexicalComposerContext();
 
   return useFloatingTextFormatToolbar(editor, anchorElem, setIsLinkEditMode);
-
-  // if (editor.isEditable())
-  //   return useFloatingTextFormatToolbar(editor, anchorElem, setIsLinkEditMode);
-  // else return useFloatingTextReadMode(editor, anchorElem);
 }

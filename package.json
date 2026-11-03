@@ -57,7 +57,8 @@
     "url": "https://github.com/chinonsochikelue/notiq/issues"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -H 0.0.0.0",
+    "collab:server": "node server/collab-server.mjs",
     "build": "pnpm install --no-frozen-lockfile && next build",
     "build:lib": "tsup && pnpm build:css",
     "build:css": "tailwindcss -i src/styles/notiq.css -o dist/styles/notiq.css --minify && pwsh -Command \"Copy-Item -Path node_modules/katex/dist/fonts -Destination dist/styles -Recurse -Force\"",
@@ -77,6 +78,7 @@
     "@edgestore/react": "^0.5.4",
     "@edgestore/server": "^0.5.4",
     "@excalidraw/excalidraw": "^0.18.0",
+    "@google/genai": "^2.32.0",
     "@mantine/hooks": "^8.3.1",
     "@pinecone-database/pinecone": "^6.1.2",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -96,6 +98,7 @@
     "@react-three/fiber": "^9.3.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@tanstack/react-query": "^5.87.4",
+    "@types/ws": "^8.18.2",
     "@uiw/react-color": "^2.8.0",
     "ai": "^5.0.44",
     "class-variance-authority": "^0.7.1",
@@ -105,6 +108,7 @@
     "html-to-image": "^1.11.13",
     "jspdf": "^4.0.0",
     "katex": "^0.16.22",
+    "lib0": "^0.2.119",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.12",
@@ -117,6 +121,11 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.180.0",
     "tw-animate-css": "^1.3.8",
+    "ws": "^8.22.1",
+    "y-indexeddb": "^9.0.12",
+    "y-protocols": "^1.0.7",
+    "y-websocket": "^3.1.0",
+    "yjs": "13.6.27",
     "zod": "^4.1.8",
     "zustand": "^5.0.8"
   },
@@ -206,5 +215,10 @@
     "tsup": "^8.5.1",
     "typescript": "^5.9.2",
     "vitest": "^4.0.17"
+  },
+  "pnpm": {
+    "overrides": {
+      "yjs": "13.6.27"
+    }
   }
 }

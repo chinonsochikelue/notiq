@@ -25,60 +25,49 @@ export function exportEditorToHTML(editor: LexicalEditor): string {
       return "<div></div>"
     }
 
-    const htmlString = $generateHtmlFromNodes(editor, null)
+    // Clone the root element to capture exact visual styling, images, and embeds
+    const clonedElement = rootElement.cloneNode(true) as HTMLElement
 
-    // Process special nodes that need custom HTML representations
-    const children = root.getChildren()
-    const specialNodesHTML: string[] = []
-
-    children.forEach((child) => {
-      const specialHTML = convertSpecialNodeToHTML(child)
-      if (specialHTML) {
-        specialNodesHTML.push(specialHTML)
-      }
-    })
-
-    // If we have special nodes, replace the basic HTML with enhanced versions
-    let finalHTML = htmlString
-    if (specialNodesHTML.length > 0) {
-      // Clone the root element to avoid modifying the original
-      const clonedElement = rootElement.cloneNode(true) as HTMLElement
-
-      const cleanElement = (element: Element) => {
-        // Only remove editor-specific interaction classes, keep visual styling
-        element.classList.remove(
-          "editor-content",
-          "relative",
-          "z-20",
-          "outline-none",
-          "focus:outline-none",
-          "focus:ring-0",
-          "selection:bg-blue-100",
-          "dark:selection:bg-blue-900/30",
-          "transition-all",
-          "duration-200",
-          "ease-in-out",
-        )
-
-        // Remove contenteditable and other editor attributes
-        element.removeAttribute("contenteditable")
-        element.removeAttribute("role")
-        element.removeAttribute("spellcheck")
-        element.removeAttribute("data-lexical-editor")
-
-        // Recursively clean child elements
-        Array.from(element.children).forEach((child) => {
-          cleanElement(child)
-        })
+    const cleanElement = (element: Element) => {
+      // Remove interactive editor toolbars, menus, or tooltips
+      if (
+        element.classList.contains("no-export") ||
+        element.classList.contains("AI-format") ||
+        element.getAttribute("role") === "tooltip" ||
+        element.classList.contains("image-resizer")
+      ) {
+        element.remove()
+        return
       }
 
-      cleanElement(clonedElement)
+      // Remove editor-specific state and attributes
+      element.classList.remove(
+        "editor-content",
+        "relative",
+        "z-20",
+        "outline-none",
+        "focus:outline-none",
+        "focus:ring-0",
+        "selection:bg-blue-100",
+        "dark:selection:bg-blue-900/30",
+        "transition-all",
+        "duration-200",
+        "ease-in-out",
+      )
 
-      const regularHTML = clonedElement.innerHTML || "<div></div>"
-      finalHTML = specialNodesHTML.length > 0 ? regularHTML + "\n\n" + specialNodesHTML.join("\n\n") : regularHTML
+      element.removeAttribute("contenteditable")
+      element.removeAttribute("role")
+      element.removeAttribute("spellcheck")
+      element.removeAttribute("data-lexical-editor")
+
+      // Recursively clean child elements
+      Array.from(element.children).forEach((child) => {
+        cleanElement(child)
+      })
     }
 
-    return finalHTML
+    cleanElement(clonedElement)
+    return clonedElement.innerHTML || "<div></div>"
   })
 }
 
@@ -92,6 +81,8 @@ export function downloadHTML(htmlContent: string, filename = "document.html") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exported Document</title>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -423,11 +414,28 @@ export function downloadHTML(htmlContent: string, filename = "document.html") {
         
         /* Print styles */
         @media print {
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
             .document-container {
-                box-shadow: none;
-                border: none;
-                margin: 0;
-                padding: 1rem;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            blockquote, pre, table, img, figure, .poll-container, .story-node, .dynamic-block-container {
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
         }
     </style>

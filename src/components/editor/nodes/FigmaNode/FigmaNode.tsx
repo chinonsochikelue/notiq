@@ -14,9 +14,9 @@ import type {
   NodeKey,
   Spread,
 } from 'lexical';
-import type {JSX} from 'react';
+import type { JSX } from 'react';
 
-import {BlockWithAlignableContents} from '@lexical/react/LexicalBlockWithAlignableContents';
+import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents';
 import {
   DecoratorBlockNode,
   SerializedDecoratorBlockNode,
@@ -33,24 +33,36 @@ type FigmaComponentProps = Readonly<{
   documentID: string;
 }>;
 
+function getFigmaEmbedUrl(documentID: string): string {
+  const cleanId = (documentID || '').trim();
+  const figmaUrl = cleanId.startsWith('http')
+    ? cleanId
+    : `https://www.figma.com/file/${cleanId}`;
+  return `https://www.figma.com/embed?embed_host=notiq&url=${encodeURIComponent(figmaUrl)}`;
+}
+
 function FigmaComponent({
   className,
   format,
   nodeKey,
   documentID,
 }: FigmaComponentProps) {
+  const embedUrl = getFigmaEmbedUrl(documentID);
+
   return (
     <BlockWithAlignableContents
       className={className}
       format={format}
       nodeKey={nodeKey}>
-      <iframe
-        width="560"
-        height="315"
-        src={`https://www.figma.com/embed?embed_host=lexical&url=\
-        https://www.figma.com/file/${documentID}`}
-        allowFullScreen={true}
-      />
+      <div className="relative my-4 aspect-video w-full max-w-3xl overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
+        <iframe
+          className="h-full w-full border-0"
+          src={embedUrl}
+          allowFullScreen={true}
+          title="Figma Document"
+          loading="lazy"
+        />
+      </div>
     </BlockWithAlignableContents>
   );
 }
@@ -99,22 +111,17 @@ export class FigmaNode extends DecoratorBlockNode {
     return this.__id;
   }
 
-  getTextContent(
-    _includeInert?: boolean | undefined,
-    _includeDirectionless?: false | undefined,
-  ): string {
+  getTextContent(): string {
     return `https://www.figma.com/file/${this.__id}`;
   }
 
-  decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
-    const embedBlockTheme = config.theme.embedBlock || {};
-    const className = {
-      base: embedBlockTheme.base || '',
-      focus: embedBlockTheme.focus || '',
-    };
+  decorate(): JSX.Element {
     return (
       <FigmaComponent
-        className={className}
+        className={{
+          base: '',
+          focus: '',
+        }}
         format={this.__format}
         nodeKey={this.getKey()}
         documentID={this.__id}
@@ -123,8 +130,8 @@ export class FigmaNode extends DecoratorBlockNode {
   }
 }
 
-export function $createFigmaNode(documentID: string): FigmaNode {
-  return new FigmaNode(documentID);
+export function $createFigmaNode(datasetID: string): FigmaNode {
+  return new FigmaNode(datasetID);
 }
 
 export function $isFigmaNode(

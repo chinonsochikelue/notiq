@@ -15,7 +15,21 @@ import {
 } from "lexical";
 import {
   $createHeadingNode,
+  $createQuoteNode,
+  HeadingNode,
+  QuoteNode,
 } from '@lexical/rich-text';
+import {
+  $createHorizontalRuleNode,
+  $isHorizontalRuleNode,
+  HorizontalRuleNode,
+} from '@lexical/react/LexicalHorizontalRuleNode';
+import {
+  $convertFromMarkdownString,
+  TRANSFORMERS,
+  ElementTransformer,
+} from '@lexical/markdown';
+import { ImageNode, $createImageNode, $isImageNode } from '../nodes/ImageNode';
 import { $createStepperNode, StepsType } from "../nodes/Stepper";
 
 function getWordsBeforeSelection(
@@ -158,143 +172,194 @@ const getSelectedText = (editor: LexicalEditor, getMore?: number) => {
 };
 
 
-function applyStyles(AIString: string) {
-  // Regex now matches:
-  // 1. Code blocks delimited by triple backticks (```...```)
-  // 2. Bold text delimited by ** (e.g., **bold**)
-  // 3. Inline code delimited by a single backtick (e.g., `some code`)
-  // 4. Headers starting with ### (e.g., ### Header)
-  const pattern = /(```[\s\S]*?```)|(\*\*[\s\S]+?\*\*)|(`[\s\S]+?`)|(###\s+[\s\S]+?(?=\n|$))/g;
-  let lastIndex = 0;
-  const nodes = [];
+/**
+ * Parses markdown text into top-level Lexical ElementNodes (HeadingNode, CodeNode, ParagraphNode).
+ * Ensures that no raw TextNode is ever inserted directly into the root node.
+ */
+/**
+ * Appends formatted inline children (bold, italic, inline code, links, bare URLs)
+ * into a parent Lexical node.
+ */
 
-  // Process all matches of code, bold, or inline code segments.
-  AIString.replace(
-    pattern,
-    (match, codeBlockMatch, boldMatch, codeMatch, headerMatch, offset) => {
-      // Append any plain text before the matched segment.
-      if (offset > lastIndex) {
-        const plainText = AIString.slice(lastIndex, offset);
-        nodes.push($createTextNode(plainText));
-      }
-      if (codeBlockMatch) {
-        const matchContent = codeBlockMatch.slice(3, -3);
-        let language = "";
-        let content = matchContent;
+import {
+  NOTIQ_TRANSFORMERS,
+  HR_TRANSFORMER,
+  IMAGE_TRANSFORMER,
+} from "./markdownTransformers";
 
-        // Try to extract language from the first line
-        // content usually looks like "typescript\nconst a = 1;"
-        const firstNewLine = matchContent.indexOf("\n");
-        if (firstNewLine !== -1) {
-          const firstLine = matchContent.slice(0, firstNewLine).trim();
-          // Check if the first line is likely a language identifier (alphanumeric)
-          // valid: "ts", "typescript", "python", "cpp"
-          // invalid: " ", "" or code immediately
-          if (firstLine.length > 0 && /^[a-zA-Z0-9_\-]+$/.test(firstLine)) {
-            language = firstLine;
-            content = matchContent.slice(firstNewLine + 1);
-          }
-        }
+/**
+ * Pre-processes text to ensure un-prefixed article titles and standalone section
+ * headers receive proper Markdown '#' or '##' tags so @lexical/markdown recognizes them.
+ */
+function normalizeMarkdownHeadings(text: string): string {
+  const lines = text.split('\n');
+  const result: string[] = [];
+  let foundFirstHeading = false;
 
-        const codeNode = $createCodeNode(language);
-        codeNode.append($createTextNode(content));
-        nodes.push(codeNode);
-      } else if (boldMatch) {
-        // Found bold text. Remove the leading and trailing "**".
-        const content = boldMatch.slice(2, -2);
-        const boldTextNode = $createTextNode(content);
-        boldTextNode.setFormat("bold");
-        nodes.push(boldTextNode);
-      } else if (codeMatch) {
-        const content = codeMatch.slice(1, -1);
-        const codeTextNode = $createTextNode(content);
-        codeTextNode.setFormat("code");
-        nodes.push(codeTextNode);
-      } else if (headerMatch) {
-        const content = headerMatch.slice(4).trim();
-        const headerNode = $createHeadingNode("h3");
-        headerNode.append($createTextNode(content));
-        nodes.push(headerNode);
-      }
-      lastIndex = offset + match.length;
-      return match;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      result.push(line);
+      continue;
     }
-  );
 
-  // Append any remaining plain text after the last match.
-  if (lastIndex < AIString.length) {
-    nodes.push($createTextNode(AIString.slice(lastIndex)));
+    // Already marked with markdown tags (headings, lists, blockquotes, code, hr, image)
+    if (/^(#{1,6}\s|[-*+]\s|\d+\.\s|>|```|---|!\[)/.test(trimmed)) {
+      result.push(line);
+      if (/^#{1,6}\s/.test(trimmed)) foundFirstHeading = true;
+      continue;
+    }
+
+    // Standalone title or section header heuristic
+    const isShort = trimmed.length >= 3 && trimmed.length <= 100;
+    const hasNoEndPunct = !/[.?!;,]$/.test(trimmed);
+    const notMeta = !/^by\s+/i.test(trimmed) && !/^\*?date[:\s]/i.test(trimmed) && !/^\*?figure/i.test(trimmed);
+    const nextLineEmpty = (i + 1 >= lines.length || !lines[i + 1].trim());
+
+    if (isShort && hasNoEndPunct && notMeta && nextLineEmpty) {
+      if (!foundFirstHeading) {
+        result.push('# ' + trimmed);
+        foundFirstHeading = true;
+      } else {
+        result.push('## ' + trimmed);
+      }
+      continue;
+    }
+
+    result.push(line);
   }
 
-  return nodes;
+  return result.join('\n');
 }
 
+/**
+ * Converts rich markdown into native Lexical nodes using the official @lexical/markdown package,
+ * preserving existing document content and inserting at selection.
+ */
+function parseMarkdownToBlocks(text: string, editor: LexicalEditor): LexicalNode[] {
+  const normalized = normalizeMarkdownHeadings(text);
+  const root = $getRoot();
+  const container = $createParagraphNode();
+  root.append(container);
+
+  try {
+    $convertFromMarkdownString(normalized, NOTIQ_TRANSFORMERS, container);
+    const converted = container.getChildren();
+    container.remove();
+    return converted;
+  } catch (err) {
+    console.warn("[Notiq AI] @lexical/markdown conversion error, fallback:", err);
+    container.remove();
+    const fallbackP = $createParagraphNode();
+    fallbackP.append($createTextNode(text));
+    return [fallbackP];
+  }
+}
+
+function applyStyles(AIString: string) {
+  return [];
+}
 
 function insertText(text: string, editor: LexicalEditor) {
   if (isJSON(text) || text.startsWith("json")) {
-    GenerateSteps(text, editor)
-    return
+    GenerateSteps(text, editor);
+    return;
   }
+
   editor.update(() => {
+    const blocks = parseMarkdownToBlocks(text, editor);
+    if (blocks.length === 0) return;
+
     const selection = $getSelection();
-    if (!$isRangeSelection(selection))
-      return console.log("No valid text selection found.");
-
-    const nodesInSelection = selection.getNodes();
-    if (nodesInSelection.length > 0) {
-      let insertionPoint = nodesInSelection[nodesInSelection.length - 1];
-      const formattedNodes = applyStyles(text);
-
-      formattedNodes.forEach((node: any) => {
-        insertionPoint.insertAfter(node);
-        insertionPoint = node;
-      });
+    if ($isRangeSelection(selection)) {
+      try {
+        const anchorNode = selection.anchor.getNode();
+        const topElement = anchorNode.getTopLevelElement();
+        if (topElement) {
+          let lastInserted: LexicalNode = topElement;
+          blocks.forEach((block) => {
+            lastInserted.insertAfter(block);
+            lastInserted = block;
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn("[Notiq AI] Selection insert fallback to root:", err);
+      }
     }
+
+    // Always fallback to appending valid Element/Decorator nodes to root
+    const root = $getRoot();
+    blocks.forEach((block) => root.append(block));
   });
 }
 
 function replaceSelectedText(text: string, editor: LexicalEditor) {
-
   if (isJSON(text) || text.startsWith("json")) {
-    GenerateSteps(text, editor)
-    return
+    GenerateSteps(text, editor);
+    return;
   }
 
-
   editor.update(() => {
+    const blocks = parseMarkdownToBlocks(text, editor);
+    if (blocks.length === 0) return;
+
     const selection = $getSelection();
-    if (!$isRangeSelection(selection)) {
-      console.warn("No valid text selection found.");
-      return;
+    if ($isRangeSelection(selection)) {
+      try {
+        selection.removeText();
+        const anchorNode = selection.anchor.getNode();
+        const topElement = anchorNode.getTopLevelElement();
+        if (topElement) {
+          let lastInserted: LexicalNode = topElement;
+          blocks.forEach((block) => {
+            lastInserted.insertAfter(block);
+            lastInserted = block;
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn("[Notiq AI] RangeSelection replace fallback to root:", err);
+      }
     }
-    selection.removeText();
-    const formattedNodes = applyStyles(text);
-    selection.insertNodes(formattedNodes);
+
+    const root = $getRoot();
+    blocks.forEach((block) => root.append(block));
   });
 }
 
-
 function insertTextUnderSelected(text: string, editor: LexicalEditor) {
   if (isJSON(text) || text.startsWith("json")) {
-    GenerateSteps(text, editor)
-    return
+    GenerateSteps(text, editor);
+    return;
   }
+
   editor.update(() => {
+    const blocks = parseMarkdownToBlocks(text, editor);
+    if (blocks.length === 0) return;
+
     const selection = $getSelection();
-    if (!$isRangeSelection(selection)) return;
-
-    const nodes = selection.getNodes();
-    if (nodes.length > 0) {
-      const lastNode = nodes[nodes.length - 1];
-
-      const newParagraph = $createParagraphNode();
-
-      const formattedNodes = applyStyles(text);
-
-      newParagraph.append(...formattedNodes);
-
-      lastNode.insertAfter(newParagraph);
+    if ($isRangeSelection(selection)) {
+      try {
+        const anchorNode = selection.anchor.getNode();
+        const topElement = anchorNode.getTopLevelElement();
+        if (topElement) {
+          let lastInserted: LexicalNode = topElement;
+          blocks.forEach((block) => {
+            lastInserted.insertAfter(block);
+            lastInserted = block;
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn("[Notiq AI] TopLevelElement insertAfter fallback to root:", err);
+      }
     }
+
+    const root = $getRoot();
+    blocks.forEach((block) => root.append(block));
   });
 }
 
@@ -305,4 +370,7 @@ export {
   insertText,
   getWordsBeforeSelection,
   applyStyles,
+  parseMarkdownToBlocks,
+  NOTIQ_TRANSFORMERS,
+  normalizeMarkdownHeadings,
 };

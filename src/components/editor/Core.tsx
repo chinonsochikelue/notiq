@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useSharedHistoryContext } from "../providers/SharedHistoryContext"
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable"
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
@@ -44,9 +44,11 @@ import SpeechToTextPlugin from "./plugins/SpeechToTextPlugin"
 import { cn } from "../../lib/utils"
 import StoryBuilderPlugin from "./plugins/StoryBuilderPlugin"
 import DynamicBlockPlugin from "./plugins/DynamicBlockPlugin"
+import AudioPlugin from "./plugins/AudioPlugin"
+import FilePlugin from "./plugins/FilePlugin"
 import { motion, AnimatePresence } from "framer-motion"
-import ContentAnalyticsPlugin from "./plugins/ContentAnalyticsPlugin"
 import { ToolbarConfig } from "./index"
+import { useCollab } from "../providers/CollabContext"
 
 const SlashCommand = dynamic(() => import("./plugins/SlashCommand"), { ssr: false })
 const ToolbarPlugin = dynamic(() => import("./plugins/ToolbarPlugin"), {
@@ -75,27 +77,53 @@ const FloatingTextFormatToolbarPlugin = dynamic(
   () => import("./plugins/FloatingTextFormatToolbarPlugin"),
   { ssr: false },
 )
+const CollaborationPlugin = dynamic(
+  () => import("./plugins/CollaborationPlugin"),
+  { ssr: false }
+)
+const CollaboratorsBar = dynamic(
+  () => import("./plugins/CollaborationPlugin/CollaboratorsBar"),
+  { ssr: false }
+)
+const CommentsPlugin = dynamic(
+  () => import("./plugins/CommentsPlugin"),
+  { ssr: false }
+)
+const VersionHistoryPlugin = dynamic(
+  () => import("./plugins/VersionHistoryPlugin"),
+  { ssr: false }
+)
+const InlineCopilotPlugin = dynamic(
+  () => import("./plugins/InlineCopilotPlugin"),
+  { ssr: false }
+)
 
 function EditorPlaceholder() {
   return (
-    <div className="pointer-events-none select-none absolute top-8 md:top-16 left-4 md:left-12 z-10 text-muted-foreground/60 text-base md:text-lg flex items-center gap-2">
+    <div className="pointer-events-none select-none absolute top-4 md:top-12 left-4 md:left-12 z-10 text-muted-foreground/60 text-sm md:text-base flex items-center gap-1.5 md:gap-2">
       <span>Type</span>
       <kbd className="px-1.5 py-0.5 text-xs font-mono rounded bg-muted border border-border text-muted-foreground">
         /
       </kbd>
-      <span>for commands, or start writing...</span>
+      <span className="truncate max-w-[220px] sm:max-w-none">for commands, or start writing...</span>
     </div>
   );
 }
 
 export default function Core({
   toolbarConfig,
+  content,
+  showCollaboratorsBar = true,
 }: {
   toolbarConfig?: ToolbarConfig;
+  content?: unknown;
+  showCollaboratorsBar?: boolean;
 }) {
   const { historyState } = useSharedHistoryContext()
   const isEditable = useLexicalEditable()
+  const { enabled: isCollabEnabled } = useCollab()
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null)
+  const collabCursorsContainerRef = useRef<HTMLDivElement | null>(null)
   const [editor] = useLexicalComposerContext()
   const [activeEditor, setActiveEditor] = useState(editor)
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false)
@@ -128,12 +156,10 @@ export default function Core({
         />
       )}
 
-      {isEditable && <ContentAnalyticsPlugin />}
-
       <div className={cn(
-        "flex justify-center w-full min-h-screen transition-all duration-300",
+        "flex justify-center w-full min-h-[calc(100dvh-5rem)] transition-all duration-300",
         "dark:md:from-gray-900/50 dark:md:to-gray-800/30",
-        "pt-20 md:pt-10"
+        "pt-2 md:pt-4"
       )}>
         <motion.div
           className={cn(
@@ -151,16 +177,33 @@ export default function Core({
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-gray-700" />
           </div>
 
+          {/* Active Collaborators Bar (standalone document strip) */}
+          {showCollaboratorsBar && (
+            <div className="flex items-center justify-between px-4 md:px-12 py-2.5 border-b border-border/40 bg-muted/10 rounded-t-2xl pointer-events-auto">
+              <span className="text-xs text-muted-foreground font-medium hidden sm:inline">Collaborative Document</span>
+              <CollaboratorsBar />
+            </div>
+          )}
+
           <RichTextPlugin
             contentEditable={
-              <div ref={onRef} className="relative">
+              <div
+                ref={(node) => {
+                  if (node) {
+                    onRef(node);
+                    collabCursorsContainerRef.current = node;
+                  }
+                }}
+                data-collab-cursor-container="true"
+                className="relative"
+              >
                 <ContentEditable
                   id="lexical-editor"
                   autoFocus
                   className={cn(
                     "editor-content relative z-20 outline-none",
-                    "px-4 md:px-12 py-8 md:py-16",
-                    "min-h-[80vh] md:min-h-[70vh]",
+                    "px-4 md:px-12 py-4 md:py-12",
+                    "min-h-[75dvh] md:min-h-[70vh]",
                     "focus:outline-none focus:ring-0",
                     "text-foreground selection:bg-blue-100 dark:selection:bg-blue-900/30",
                     "font-['Inter',_system-ui,_sans-serif] antialiased",
@@ -178,7 +221,17 @@ export default function Core({
           {/* Enhanced focus ring */}
           <div className="absolute inset-0 rounded-2xl ring-0 ring-blue-500/0 transition-all duration-300 pointer-events-none focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:ring-offset-2 focus-within:ring-offset-white dark:focus-within:ring-offset-gray-900" />
 
-          {/* All plugins remain the same */}
+          {/* Collaboration Plugin (Replaces HistoryPlugin when active) */}
+          {isCollabEnabled ? (
+            <CollaborationPlugin
+              cursorsContainerRef={collabCursorsContainerRef}
+              initialEditorState={content as any}
+            />
+          ) : (
+            <HistoryPlugin externalHistoryState={historyState} />
+          )}
+
+          {/* Core plugins */}
           <AutoFocusPlugin defaultSelection={"rootStart"} />
           <ClearEditorPlugin />
           <ShortcutsPlugin editor={activeEditor} setIsLinkEditMode={setIsLinkEditMode} />
@@ -210,7 +263,8 @@ export default function Core({
           <YouTubePlugin />
           <StoryBuilderPlugin />
           <DynamicBlockPlugin />
-          <HistoryPlugin externalHistoryState={historyState} />
+          <AudioPlugin />
+          <FilePlugin />
           <ExportPlugin />
           <TemplatePlugin />
           <MarkdownShortcutPlugin />
@@ -233,6 +287,9 @@ export default function Core({
           )}
 
           {isEditable && <SlashCommand />}
+          {isEditable && <InlineCopilotPlugin />}
+          <CommentsPlugin />
+          <VersionHistoryPlugin />
         </motion.div>
       </div>
     </>

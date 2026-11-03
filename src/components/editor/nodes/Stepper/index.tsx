@@ -72,18 +72,55 @@ export const initialEditorState = {
   },
 };
 
+export function safelySetEditorState(editor: LexicalEditor, rawContent: any) {
+  try {
+    let parsedObj = rawContent;
+    if (typeof rawContent === "string") {
+      try {
+        parsedObj = JSON.parse(rawContent);
+      } catch {
+        parsedObj = null;
+      }
+    }
+    if (
+      parsedObj &&
+      typeof parsedObj === "object" &&
+      parsedObj.root &&
+      typeof parsedObj.root === "object" &&
+      parsedObj.root.type === "root" &&
+      Array.isArray(parsedObj.root.children) &&
+      parsedObj.root.children.length > 0
+    ) {
+      editor.setEditorState(editor.parseEditorState(JSON.stringify(parsedObj)));
+      return;
+    }
+  } catch (e) {
+    // ignore parsing failure and fallback
+  }
+
+  try {
+    editor.setEditorState(editor.parseEditorState(JSON.stringify(initialEditorState)));
+  } catch (e) {
+    console.error("Failed to set initialEditorState for Stepper:", e);
+  }
+}
+
 export class StepperNode extends DecoratorNode<React.ReactElement> {
   __steps: StepsType;
 
-  constructor(steps: StepsType, key?: NodeKey) {
+  constructor(steps?: StepsType, key?: NodeKey) {
     super(key);
-    this.__steps = steps.map((step) => {
-      if (!step.content) {
+    const safeSteps = Array.isArray(steps) ? steps : [];
+    this.__steps = safeSteps.map((step) => {
+      if (!step || typeof step !== "object") {
         const newEditor = createEditor();
-        const parsedEditorState = newEditor.parseEditorState(
-          JSON.stringify(initialEditorState)
-        );
-        newEditor.setEditorState(parsedEditorState);
+        safelySetEditorState(newEditor, null);
+        return { id: 1, title: "Step 1", content: newEditor };
+      }
+      if (!step.content || typeof (step.content as any).isEditable !== "function") {
+        const newEditor = createEditor();
+        const rawContent = (step.content as any)?.editorState || step.content;
+        safelySetEditorState(newEditor, rawContent);
         return { ...step, content: newEditor };
       }
       return step;
@@ -97,10 +134,7 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
   addStep(step: Omit<StepType, "content">) {
     const self = this.getWritable();
     const newEditor = createEditor();
-    const parsedEditorState = newEditor.parseEditorState(
-      JSON.stringify(initialEditorState)
-    );
-    newEditor.setEditorState(parsedEditorState);
+    safelySetEditorState(newEditor, null);
     const newStep: StepType = {
       ...step,
       content: newEditor,
@@ -115,10 +149,7 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
     }
     const self = this.getWritable();
     const newEditor = createEditor();
-    const parsedEditorState = newEditor.parseEditorState(
-      JSON.stringify(initialEditorState)
-    );
-    newEditor.setEditorState(parsedEditorState);
+    safelySetEditorState(newEditor, null);
     const newStep: StepType = {
       ...step,
       content: newEditor,
@@ -144,15 +175,14 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
   }
 
 
-  replaceSteps(steps: StepsType) {
+  replaceSteps(steps?: StepsType) {
     const self = this.getWritable();
-    self.__steps = steps.map((step) => {
-      if (step.content) return step;
+    const safeSteps = Array.isArray(steps) ? steps : [];
+    self.__steps = safeSteps.map((step) => {
+      if (step?.content && typeof (step.content as any).isEditable === "function") return step;
       const newEditor = createEditor();
-      const parsedEditorState = newEditor.parseEditorState(
-        JSON.stringify(initialEditorState)
-      );
-      newEditor.setEditorState(parsedEditorState);
+      const rawContent = (step?.content as any)?.editorState || step?.content;
+      safelySetEditorState(newEditor, rawContent);
       return { ...step, content: newEditor };
     });
     return self;
@@ -166,19 +196,21 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
 
 
   static clone(node: StepperNode): StepperNode {
-    return new StepperNode(node.__steps, node.__key);
+    const safeSteps = Array.isArray(node.__steps) ? node.__steps : [];
+    return new StepperNode(safeSteps, node.__key);
   }
 
   static importJSON(serializedNode: SerializedStepper): StepperNode {
-    const steps: StepType[] = serializedNode.steps.map((serializedStep) => {
+    const serializedSteps = Array.isArray(serializedNode?.steps)
+      ? serializedNode.steps
+      : [];
+    const steps: StepType[] = serializedSteps.map((serializedStep, index) => {
       const newEditor = createEditor();
-      const editorState = newEditor.parseEditorState(
-        serializedStep.content.editorState
-      );
-      newEditor.setEditorState(editorState);
+      const rawContentState = serializedStep?.content?.editorState || (serializedStep as any)?.content;
+      safelySetEditorState(newEditor, rawContentState);
       return {
-        title: serializedStep.title,
-        id: parseInt(serializedStep.id, 10),
+        title: serializedStep?.title || `Step ${index + 1}`,
+        id: parseInt(serializedStep?.id || `${index + 1}`, 10) || (index + 1),
         content: newEditor,
       };
     });
@@ -186,15 +218,28 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
   }
 
   exportJSON(): SerializedStepper {
+    const safeSteps = Array.isArray(this.__steps) ? this.__steps : [];
     return {
       ...super.exportJSON(),
-      steps: this.__steps.map((step) => ({
-        title: step.title,
-        id: step.id.toString(),
-        content: {
-          editorState: step.content.getEditorState().toJSON(),
-        },
-      })),
+      steps: safeSteps.map((step) => {
+        let serializedEditorState: any = initialEditorState;
+        try {
+          if (step?.content && typeof (step.content as any).getEditorState === "function") {
+            serializedEditorState = step.content.getEditorState().toJSON();
+          } else if ((step?.content as any)?.editorState) {
+            serializedEditorState = (step.content as any).editorState;
+          }
+        } catch {
+          serializedEditorState = initialEditorState;
+        }
+        return {
+          title: step?.title || "",
+          id: (step?.id ?? "").toString(),
+          content: {
+            editorState: serializedEditorState,
+          },
+        };
+      }),
       type: "stepper",
     };
   }
@@ -210,10 +255,11 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
   }
 
   decorate(): React.ReactElement {
+    const safeSteps = Array.isArray(this.__steps) ? this.__steps : [];
     return (
       <Suspense fallback={null}>
         <div>
-          <StepperComponent steps={this.__steps} nodeKey={this.getKey()} />
+          <StepperComponent steps={safeSteps} nodeKey={this.getKey()} />
         </div>
       </Suspense>
     );
@@ -226,8 +272,8 @@ export function $isStepperNode(
   return node instanceof StepperNode;
 }
 
-export function $createStepperNode(steps: StepsType): StepperNode {
-  return new StepperNode(steps);
+export function $createStepperNode(steps?: StepsType): StepperNode {
+  return new StepperNode(steps || []);
 }
 
 export const INSERT_STEPPER_COMMAND: LexicalCommand<StepsType> =

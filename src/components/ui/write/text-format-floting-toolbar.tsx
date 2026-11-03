@@ -17,7 +17,8 @@ import BlockFormatDropDown from "../drop-downs/block-format";
 import { useIsMobile } from "../../../hooks/use-mobile";
 import { Toggle } from "../toggle";
 import { SHORTCUTS } from "../../editor/plugins/ShortcutsPlugin/shortcuts";
-import { Bold, Code, Italic, Link, UnderlineIcon } from "lucide-react";
+import { Bold, Code, Italic, Link, UnderlineIcon, MessageSquarePlus } from "lucide-react";
+import { INSERT_COMMENT_COMMAND } from "../../editor/plugins/CommentsPlugin";
 import Color from "../drop-downs/color";
 import { sanitizeUrl } from "../../editor/utils/url";
 import TextFormat from "../drop-downs/text-format";
@@ -317,6 +318,19 @@ export default function TextFormatFloatingToolbar({
           type="button"
         >
           <Link />
+        </Toggle>
+        <Toggle
+          variant={"outline"}
+          size={"floting"}
+          onPressedChange={() => {
+            editor.dispatchCommand(INSERT_COMMENT_COMMAND, undefined);
+          }}
+          pressed={false}
+          aria-label="Add comment"
+          tip="Add comment (Ctrl+Alt+M)"
+          type="button"
+        >
+          <MessageSquarePlus />
         </Toggle>
       </div>
       <Separator

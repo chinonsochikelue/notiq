@@ -1,7 +1,7 @@
 import { LexicalEditor } from "lexical";
 import React, { useMemo, lazy, Suspense } from "react";
 import useModal from "../models/use-model";
-import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, Figma, FlipHorizontal2, Image, ImagePlay, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table, Twitter, Youtube } from "lucide-react";
+import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, Figma, FileAudio, FileText, FlipHorizontal2, Image, ImagePlay, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table, Twitter, Youtube } from "lucide-react";
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import { DropDown } from ".";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../../editor/plugins/ImagesPlugin";
@@ -17,6 +17,12 @@ const InsertGif = lazy(() => import("../models/insert-gif"));
 const InsertTableBody = lazy(() => import("../models/insert-table").then(module => ({ default: module.InsertTable })));
 const InsertPoll = lazy(() =>
   import("../models/insert-poll").then(module => ({ default: module.InsertPoll }))
+);
+const InsertAudioDialog = lazy(() =>
+  import("../models/insert-audio").then(module => ({ default: module.InsertAudioDialog }))
+);
+const InsertFileDialog = lazy(() =>
+  import("../models/insert-file").then(module => ({ default: module.InsertFileDialog }))
 );
 
 interface Items {
@@ -55,6 +61,38 @@ export default function InsertNode({
             (onClose) => (
               <Suspense fallback={<Skeleton className="mx-2 w-[350px] h-[350px]" />}>
                 <InsertImageDialog activeEditor={editor} onClose={onClose} />
+              </Suspense>
+            ),
+            true
+          );
+        },
+      },
+      {
+        label: "Audio Player",
+        icon: <FileAudio className="size-4 text-emerald-500" />,
+        func: () => {
+          showModal(
+            "Insert Audio",
+            "Upload an audio file or paste an audio URL.",
+            (onClose) => (
+              <Suspense fallback={<Skeleton className="mx-2 w-[400px] h-[250px]" />}>
+                <InsertAudioDialog activeEditor={editor} onClose={onClose} />
+              </Suspense>
+            ),
+            true
+          );
+        },
+      },
+      {
+        label: "File Attachment",
+        icon: <FileText className="size-4 text-blue-500" />,
+        func: () => {
+          showModal(
+            "Attach Document",
+            "Attach a file (PDF, Doc, Spreadsheet, Archive) to the document.",
+            (onClose) => (
+              <Suspense fallback={<Skeleton className="mx-2 w-[400px] h-[250px]" />}>
+                <InsertFileDialog activeEditor={editor} onClose={onClose} />
               </Suspense>
             ),
             true

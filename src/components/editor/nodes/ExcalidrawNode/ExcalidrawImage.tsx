@@ -10,12 +10,13 @@ import type {
   ExcalidrawElement,
   NonDeleted,
 } from '@excalidraw/excalidraw/element/types';
-import type {AppState, BinaryFiles} from '@excalidraw/excalidraw/types';
-import type {JSX} from 'react';
+import type { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
+import type { JSX } from 'react';
 
-import {exportToSvg} from '@excalidraw/excalidraw';
+import { exportToSvg } from '@excalidraw/excalidraw';
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
 type ImageType = 'svg' | 'canvas';
 
@@ -80,8 +81,8 @@ const removeStyleFromSvg_HACK = (svg: SVGElement) => {
 };
 
 /**
- * @explorer-desc
- * A component for rendering Excalidraw elements as a static image
+ * Modernized ExcalidrawImage
+ * Renders SVG preview with adaptive light/dark mode and responsive scaling.
  */
 export default function ExcalidrawImage({
   elements,
@@ -93,26 +94,52 @@ export default function ExcalidrawImage({
   height = 'inherit',
 }: Props): JSX.Element {
   const [Svg, setSvg] = useState<SVGElement | null>(null);
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
 
   useEffect(() => {
+    let isCancelled = false;
+
     const setContent = async () => {
-      const svg: SVGElement = await exportToSvg({
-        appState,
-        elements,
-        files,
-      });
-      removeStyleFromSvg_HACK(svg);
+      try {
+        const svg: SVGElement = await exportToSvg({
+          appState: {
+            ...appState,
+            exportWithDarkMode: isDarkMode,
+            exportBackground: false,
+          },
+          elements,
+          files,
+        });
 
-      svg.setAttribute('width', '100%');
-      svg.setAttribute('height', '100%');
-      svg.setAttribute('display', 'block');
+        if (isCancelled) return;
 
-      setSvg(svg);
+        removeStyleFromSvg_HACK(svg);
+
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.setAttribute('display', 'block');
+        svg.style.maxWidth = '100%';
+        svg.style.maxHeight = '100%';
+
+        setSvg(svg);
+      } catch (err) {
+        console.error('Failed to export Excalidraw preview SVG', err);
+      }
     };
-    setContent();
-  }, [elements, files, appState]);
 
-  const containerStyle: React.CSSProperties = {};
+    if (elements && elements.length > 0) {
+      setContent();
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [elements, files, appState, isDarkMode]);
+
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '100%',
+  };
   if (width !== 'inherit') {
     containerStyle.width = `${width}px`;
   }
@@ -123,15 +150,16 @@ export default function ExcalidrawImage({
   return (
     <div
       ref={(node) => {
-        if (node) {
-          if (imageContainerRef) {
-            imageContainerRef.current = node;
-          }
+        if (node && imageContainerRef) {
+          imageContainerRef.current = node;
         }
       }}
-      className={rootClassName ?? ''}
+      className={
+        rootClassName ??
+        'relative flex items-center justify-center overflow-hidden min-h-[140px] min-w-[220px]'
+      }
       style={containerStyle}
-      dangerouslySetInnerHTML={{__html: Svg?.outerHTML ?? ''}}
+      dangerouslySetInnerHTML={{ __html: Svg?.outerHTML ?? '' }}
     />
   );
 }

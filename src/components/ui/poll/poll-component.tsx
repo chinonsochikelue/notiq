@@ -92,7 +92,6 @@ function PollOptionComponent({
         });
         throw error;
       }
-      }
     },
   });
 

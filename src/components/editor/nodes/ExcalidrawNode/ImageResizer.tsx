@@ -6,12 +6,12 @@
  *
  */
 
-import type {LexicalEditor} from 'lexical';
-import type {JSX} from 'react';
+import type { LexicalEditor } from 'lexical';
+import type { JSX } from 'react';
 
-import {calculateZoomLevel} from '@lexical/utils';
+import { calculateZoomLevel } from '@lexical/utils';
 import * as React from 'react';
-import {useRef} from 'react';
+import { useRef } from 'react';
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -36,8 +36,8 @@ export default function ImageResizer({
   captionsEnabled,
 }: {
   editor: LexicalEditor;
-  buttonRef: {current: null | HTMLButtonElement};
-  imageRef: {current: null | HTMLElement};
+  buttonRef: { current: null | HTMLButtonElement };
+  imageRef: { current: null | HTMLElement };
   maxWidth?: number;
   onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void;
   onResizeStart: () => void;
@@ -149,7 +149,7 @@ export default function ImageResizer({
 
     if (image !== null && controlWrapper !== null) {
       event.preventDefault();
-      const {width, height} = image.getBoundingClientRect();
+      const { width, height } = image.getBoundingClientRect();
       const zoom = calculateZoomLevel(image);
       const positioning = positioningRef.current;
       positioning.startWidth = width;
@@ -173,6 +173,7 @@ export default function ImageResizer({
       document.addEventListener('pointerup', handlePointerUp);
     }
   };
+
   const handlePointerMove = (event: PointerEvent) => {
     const image = imageRef.current;
     const positioning = positioningRef.current;
@@ -227,6 +228,7 @@ export default function ImageResizer({
       }
     }
   };
+
   const handlePointerUp = () => {
     const image = imageRef.current;
     const positioning = positioningRef.current;
@@ -252,62 +254,72 @@ export default function ImageResizer({
       document.removeEventListener('pointerup', handlePointerUp);
     }
   };
+
   return (
-    <div ref={controlWrapperRef}>
+    <div ref={controlWrapperRef} className="pointer-events-none">
       {!showCaption && captionsEnabled && (
         <button
-          className="image-caption-button"
+          className="pointer-events-auto image-caption-button"
           ref={buttonRef}
           onClick={() => {
             setShowCaption(!showCaption);
-          }}>
+          }}
+        >
           Add Caption
         </button>
       )}
+      {/* North */}
       <div
-        className="image-resizer image-resizer-n"
+        className="pointer-events-auto absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-ns-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.north);
         }}
       />
+      {/* North East */}
       <div
-        className="image-resizer image-resizer-ne"
+        className="pointer-events-auto absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-nesw-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.north | Direction.east);
         }}
       />
+      {/* East */}
       <div
-        className="image-resizer image-resizer-e"
+        className="pointer-events-auto absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-ew-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.east);
         }}
       />
+      {/* South East */}
       <div
-        className="image-resizer image-resizer-se"
+        className="pointer-events-auto absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-nwse-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.south | Direction.east);
         }}
       />
+      {/* South */}
       <div
-        className="image-resizer image-resizer-s"
+        className="pointer-events-auto absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-ns-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.south);
         }}
       />
+      {/* South West */}
       <div
-        className="image-resizer image-resizer-sw"
+        className="pointer-events-auto absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-nesw-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.south | Direction.west);
         }}
       />
+      {/* West */}
       <div
-        className="image-resizer image-resizer-w"
+        className="pointer-events-auto absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-ew-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.west);
         }}
       />
+      {/* North West */}
       <div
-        className="image-resizer image-resizer-nw"
+        className="pointer-events-auto absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary border-2 border-background ring-1 ring-primary/40 cursor-nwse-resize transition-transform hover:scale-125 z-20 shadow-xs"
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.north | Direction.west);
         }}

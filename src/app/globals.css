@@ -255,3 +255,25 @@ input[type="number"]::-webkit-outer-spin-button {
 .editor-shell .inline-editor-image .image-edit-button:hover {
   background-color: rgba(60, 132, 244, 0.5);
 }
+
+
+/* Collaborative Comments In-Text Pulse Highlight */
+@keyframes notiqPulseHighlight {
+  0% {
+    background-color: rgba(245, 158, 11, 0.45);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.6);
+  }
+  40% {
+    background-color: rgba(245, 158, 11, 0.28);
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.45);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.notiq-pulse-highlight {
+  animation: notiqPulseHighlight 2.5s ease-out forwards;
+  border-radius: 4px;
+}

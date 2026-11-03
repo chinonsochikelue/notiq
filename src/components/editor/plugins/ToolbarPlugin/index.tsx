@@ -28,8 +28,8 @@ import { cn } from "../../../../lib/utils";
 import { TemplateDialog } from "../TemplatePlugin/TemplateDialog";
 import { ToolbarConfig, ToolbarItem } from "../../index";
 
-import { Bold, Code, DownloadIcon, FileJson, FileText, Italic, Link, Mic, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
-import { EXPORT_MARKDOWN_COMMAND, EXPORT_PDF_COMMAND } from "../ExportPlugin";
+import { Bold, Code, DownloadIcon, FileJson, FileText, Italic, Link, Mic, Printer, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
+import { EXPORT_MARKDOWN_COMMAND, EXPORT_PDF_COMMAND, EXPORT_HTML_COMMAND } from "../ExportPlugin";
 
 import { Separator } from "../../../ui/separator";
 import { Button } from "../../../ui/button";
@@ -642,29 +642,29 @@ export default function ToolbarPlugin({
     <>
       <nav
         className={cn(
-          "left-0 w-full hidden md:block", // Hide on mobile, show on desktop
+          "sticky top-3 z-40 w-full hidden md:flex justify-center px-4 transition-all duration-300 pointer-events-none",
           customClassName
         )}
       >
-        <div className="flex justify-center pt-4">
-          <div
-            className={cn(
-              "group flex flex-row items-center bg-background/70 gap-x-2 dark:border dark:border-gray-500/20",
-              "md:rounded-2xl rounded-md h-14 px-4 py-2 shadow-md",
-              "overflow-x-auto whitespace-nowrap max-w-[90%] scrollbar-none",
-              "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            )}
-          >
-            {toolbarState.blockType === "code" ? (
-              <CodeList
-                onCodeLanguageSelect={onCodeLanguageSelect}
-                codeLanguage={toolbarState.codeLanguage}
-                disabled={!isEditable}
-              />
-            ) : (
-              itemsToRender.map((item, index) => renderItem(item, index))
-            )}
-          </div>
+        <div
+          className={cn(
+            "group flex flex-row items-center pointer-events-auto",
+            "bg-background/85 dark:bg-zinc-900/90 backdrop-blur-xl",
+            "border border-border/70 dark:border-zinc-800/80 shadow-lg shadow-black/5 dark:shadow-black/30",
+            "rounded-2xl h-13 px-3 py-1.5 gap-x-1.5",
+            "overflow-x-auto whitespace-nowrap max-w-full scrollbar-none",
+            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          )}
+        >
+          {toolbarState.blockType === "code" ? (
+            <CodeList
+              onCodeLanguageSelect={onCodeLanguageSelect}
+              codeLanguage={toolbarState.codeLanguage}
+              disabled={!isEditable}
+            />
+          ) : (
+            itemsToRender.map((item, index) => renderItem(item, index))
+          )}
         </div>
       </nav>
 

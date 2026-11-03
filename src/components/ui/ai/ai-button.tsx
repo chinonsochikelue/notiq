@@ -48,6 +48,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
   const { apiEndpoint } = useAI();
   const { completion, isLoading, complete, handleInputChange, input } = useCompletion({
     api: apiEndpoint,
+    streamProtocol: "text",
     onError: (err: any) => {
       toast.error(err.message);
     },
@@ -69,9 +70,14 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
     }
   ) => {
     try {
+      const savedProvider = typeof window !== "undefined" ? localStorage.getItem("notiq_ai_provider") : undefined;
+      const savedKey = typeof window !== "undefined" ? localStorage.getItem("notiq_ai_api_key") : undefined;
+
       await complete("", {
         body: {
           action,
+          modelProvider: savedProvider && savedProvider !== "auto" ? savedProvider : undefined,
+          apiKey: savedKey || undefined,
           ...payload,
         },
       });
@@ -112,27 +118,26 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
     const selectedText = getSelectedText(editor);
     await handleAction("FixSpellingGrammar", { prompt: selectedText });
   };
+  const handleSummarize = async () => {
+    const selectedText = getSelectedText(editor);
+    await handleAction("Summarize" as any, { prompt: selectedText });
+  };
+  const handleTranslate = async (lang: string = "Spanish") => {
+    const selectedText = getSelectedText(editor);
+    await handleAction("Translate" as any, { prompt: `Translate the following text into ${lang}:\n\n${selectedText}` });
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!input) {
+    if (!input || !input.trim()) {
       toast.error("Please enter a question or instruction");
       return;
     }
-    if (actionType === "Steps") {
-      await handleAction("Steps", { prompt: input });
-    } else {
-      const data = ExtractData(editor);
-      const selectedText = getSelectedText(editor, 30);
-      if (!selectedText) {
-        toast.error("Please select some text first");
-        return;
-      }
-      await handleAction("ChatWithSelectedString", {
-        prompt: input,
-        context: data,
-      });
-      setActionType(null);
-    }
+    const data = ExtractData(editor);
+    const selectedText = getSelectedText(editor, 30);
+    await handleAction(actionType === "Steps" ? "Steps" : "ChatWithSelectedString", {
+      prompt: input.trim(),
+      context: selectedText ? `Selected: ${selectedText}\n\nDoc:\n${data}` : data,
+    });
   };
 
   const renderSteps = () => {
@@ -219,6 +224,44 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
             desc: "📝 Select your messy text, and let AI transform it into perfection! 🚀",
           },
           onClick: handleFixSpellingGrammar,
+        },
+        {
+          icon: (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-5 text-purple-500"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M4 5h16v2H4zm0 6h16v2H4zm0 6h10v2H4z"
+              ></path>
+            </svg>
+          ),
+          label: "Summarize selection",
+          HoverCard: {
+            desc: "Extract key takeaways and core insights from your selected text. ⚡",
+          },
+          onClick: handleSummarize,
+        },
+        {
+          icon: (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-5 text-purple-500"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="m12.87 15.07l-2.54-2.51.03-.08c1.74-1.94 2.98-4.17 3.71-6.48H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7l1.62-4.33L19.12 17h-3.24Z"
+              ></path>
+            </svg>
+          ),
+          label: "Translate selection",
+          HoverCard: {
+            desc: "Translate highlighted passage to Spanish or other languages. 🌐",
+          },
+          onClick: () => handleTranslate("Spanish"),
         },
       ],
       Edit: [
@@ -406,14 +449,19 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
       <PopoverContent className="absolute max-h-[300px] h-fit shadow-sm  shadow-black dark:shadow-gray-500  p-0 w-[420px] max-sm:w-[200px] min-w-[200px] max-w-[420px] top-[10px] max-sm:left-6 -left-7 AI-format">
         <div className="w-full relative">
           <div className="flex flex-col items-start justify-between">
-            {(completion || actionType === "Steps") && (
+            {(completion || isLoading || actionType === "Steps") && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="cursor-text w-full p-2 z-20 break-words max-h-64 h-fit overflow-y-auto"
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="cursor-text w-full p-2.5 z-20 break-words max-h-64 h-fit overflow-y-auto border-b border-border/40 bg-muted/20"
               >
-                {streamedResponse !== "" ? (
+                {isLoading && !completion ? (
+                  <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground animate-pulse">
+                    <Loader2 className="size-3.5 animate-spin text-purple-500" />
+                    <span>Thinking and generating...</span>
+                  </div>
+                ) : streamedResponse !== "" ? (
                   renderSteps()
                 ) : (
                   <ReactMarkdown>
@@ -447,7 +495,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
               />
             </div>
           </div>
-          <div className="w-[200px] h-[180px] z-50 rounded border mt-2 fixed">
+          <div className="w-full max-h-[220px] z-50 rounded border mt-2 overflow-hidden bg-popover">
             {!completion ? (
               <Command id="toolbar" className="w-full ">
                 <CommandInput placeholder="Type a command" />
@@ -456,11 +504,12 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
                   <CommandGroup heading="Suggested">
                     {Actions.suggestion.map((sug) => (
                       <HoverCard key={sug.label}>
-                        <HoverCardTrigger
-                          onClick={sug.onClick}
-                          className="w-full p-0"
-                        >
-                          <CommandItem className="w-full">
+                        <HoverCardTrigger asChild>
+                          <CommandItem
+                            className="w-full cursor-pointer"
+                            onSelect={() => sug.onClick()}
+                            onClick={() => sug.onClick()}
+                          >
                             <div>{sug.icon}</div>
                             <span>{sug.label}</span>
                           </CommandItem>
@@ -483,11 +532,12 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
                   <CommandGroup heading="format block">
                     {Actions.format_block.map((sug) => (
                       <HoverCard key={sug.label}>
-                        <HoverCardTrigger
-                          onClick={sug.onClick}
-                          className="w-full p-0"
-                        >
-                          <CommandItem className="w-full">
+                        <HoverCardTrigger asChild>
+                          <CommandItem
+                            className="w-full cursor-pointer"
+                            onSelect={() => sug.onClick()}
+                            onClick={() => sug.onClick()}
+                          >
                             <div>{sug.icon}</div>
                             <span>{sug.label}</span>
                           </CommandItem>
@@ -510,11 +560,12 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
                   <CommandGroup heading="Edit">
                     {Actions.Edit.map((sug) => (
                       <HoverCard key={sug.label}>
-                        <HoverCardTrigger
-                          onClick={sug.onClick}
-                          className="w-full p-0"
-                        >
-                          <CommandItem className="w-full">
+                        <HoverCardTrigger asChild>
+                          <CommandItem
+                            className="w-full cursor-pointer"
+                            onSelect={() => sug.onClick()}
+                            onClick={() => sug.onClick()}
+                          >
                             <div>{sug.icon}</div>
                             <span>{sug.label}</span>
                           </CommandItem>
@@ -542,12 +593,13 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
                   <CommandGroup>
                     {response.map((sug) => (
                       <HoverCard key={sug.label}>
-                        <HoverCardTrigger
-                          onClick={sug.func}
-
-                          className="w-full p-0"
-                        >
-                          <CommandItem disabled={isLoading} className="w-full">
+                        <HoverCardTrigger asChild>
+                          <CommandItem
+                            disabled={isLoading}
+                            className="w-full cursor-pointer"
+                            onSelect={() => sug.func()}
+                            onClick={() => sug.func()}
+                          >
                             <div>{sug.icon}</div>
                             <span>{sug.label}</span>
                           </CommandItem>
