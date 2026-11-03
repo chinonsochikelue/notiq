@@ -3,6 +3,7 @@ export * from "./core";
 
 // Ready-to-use Editor & Components
 export { default as Editor } from "./components/editor";
+export { default as CanvasMode } from "./components/canvas/CanvasMode";
 export type { ToolbarConfig, ToolbarItem } from "./components/editor";
 export * from "./components/editor/plugins/CollaborationPlugin/CollaboratorsBar";
 

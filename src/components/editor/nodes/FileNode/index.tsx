@@ -82,7 +82,7 @@ export class FileNode extends DecoratorBlockNode {
     format?: ElementFormatType | null,
     key?: NodeKey
   ) {
-    super(format, key);
+    super(format ?? undefined, key);
     this.__url = url;
     this.__title = title;
     this.__size = size;

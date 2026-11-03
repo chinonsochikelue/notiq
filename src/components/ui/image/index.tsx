@@ -244,7 +244,7 @@ export default function ImageComponent({
         $onDelete,
         COMMAND_PRIORITY_LOW
       ),
-      editor.registerCommand(KEY_ENTER_COMMAND, $onEnter, COMMAND_PRIORITY_LOW),
+      editor.registerCommand(KEY_ENTER_COMMAND as any, $onEnter as any, COMMAND_PRIORITY_LOW),
       editor.registerCommand(
         KEY_ESCAPE_COMMAND,
         $onEscape,

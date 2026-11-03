@@ -76,7 +76,7 @@ export class AudioNode extends DecoratorBlockNode {
     format?: ElementFormatType | null,
     key?: NodeKey
   ) {
-    super(format, key);
+    super(format ?? undefined, key);
     this.__src = src;
     this.__title = title;
     this.__author = author;

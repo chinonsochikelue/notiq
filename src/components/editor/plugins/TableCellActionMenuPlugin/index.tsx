@@ -365,7 +365,7 @@ function TableActionMenu({
       const tableColumnIndex =
         $getTableColumnIndexFromTableCellNode(tableCellNode);
 
-      const tableRows = tableNode.getChildren<TableRowNode>();
+      const tableRows = tableNode.getChildren() as TableRowNode[];
       const maxRowsLength = Math.max(
         ...tableRows.map((row) => row.getChildren().length)
       );

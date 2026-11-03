@@ -12,6 +12,7 @@ import {
   StarterKit,
   BlocksKit,
   AICopilot,
+  CanvasMode,
 } from "../../index";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -40,6 +41,7 @@ import {
   FileCode,
   Sliders,
   ExternalLink,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -423,7 +425,7 @@ function ComparisonSection() {
 }
 
 export default function FrameworkPage() {
-  const [activeSection, setActiveSection] = useState<"headless" | "dropin" | "compare">("headless");
+  const [activeSection, setActiveSection] = useState<"headless" | "dropin" | "compare" | "canvas">("headless");
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -494,19 +496,32 @@ export default function FrameworkPage() {
               size="lg"
               variant="outline"
               onClick={() => setActiveSection("compare")}
+              className={activeSection === "compare" ? "shadow-md bg-accent" : ""}
             >
               <Flame className="w-4 h-4 mr-2" />
               Notiq vs. Tiptap
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => setActiveSection("canvas")}
+              className={activeSection === "canvas" ? "shadow-md bg-accent text-primary border-primary/40" : ""}
+            >
+              <LayoutGrid className="w-4 h-4 mr-2 text-primary" />
+              Spatial Canvas Mode
             </Button>
           </div>
         </div>
       </section>
 
       {/* Main Interactive Showcase */}
-      <main className="max-w-6xl mx-auto px-6 py-12 flex-1 w-full">
+      <main className={cn("flex-1 w-full", activeSection === "canvas" ? "p-0 max-w-none" : "max-w-6xl mx-auto px-6 py-12")}>
         {activeSection === "headless" && <HeadlessShowcase />}
         {activeSection === "dropin" && <DropinShowcase />}
         {activeSection === "compare" && <ComparisonSection />}
+        {activeSection === "canvas" && (
+          <CanvasMode onClose={() => setActiveSection("headless")} />
+        )}
       </main>
 
       {/* Footer */}

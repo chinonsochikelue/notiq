@@ -493,7 +493,7 @@ export default function CollaborationPluginWrapper({
       cursorsContainerRef={cursorsContainerRef as any}
       initialEditorState={normalizedInitialEditorState}
       awarenessData={memoizedAwarenessData}
-      excludedProperties={COLLAB_EXCLUDED_PROPERTIES}
+      excludedProperties={COLLAB_EXCLUDED_PROPERTIES as any}
     />
   );
 }

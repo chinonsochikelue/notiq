@@ -1201,3 +1201,13 @@ select {
     break-inside: avoid;
   }
 }
+
+/* Spatial Infinite Canvas Dot Grid Pattern */
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.dark .bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}

@@ -11,6 +11,9 @@ import { TweetNode, $createTweetNode } from "../../components/editor/nodes/Tweet
 import { YouTubeNode, $createYouTubeNode } from "../../components/editor/plugins/YouTubeNode";
 import { AudioNode, $createAudioNode, type AudioPayload } from "../../components/editor/nodes/AudioNode";
 import { FileNode, $createFileNode, type FilePayload } from "../../components/editor/nodes/FileNode";
+import { LayoutContainerNode } from "../../components/editor/nodes/LayoutNode/LayoutContainerNode";
+import { LayoutItemNode } from "../../components/editor/nodes/LayoutNode/LayoutItemNode";
+import { INSERT_LAYOUT_COMMAND } from "../../components/editor/plugins/LayoutPlugin";
 
 export const Excalidraw = Extension.create({
   name: "excalidraw",
@@ -228,6 +231,22 @@ export const File = Extension.create({
   }),
 });
 
+export const ColumnsLayout = Extension.create({
+  name: "columnsLayout",
+  nodes: () => [LayoutContainerNode, LayoutItemNode],
+  addCommands: () => ({
+    setColumns:
+      (columns: 2 | 3 = 2) =>
+      ({ lexical }) => {
+        lexical.dispatchCommand(
+          INSERT_LAYOUT_COMMAND,
+          columns === 2 ? "1fr 1fr" : "1fr 1fr 1fr"
+        );
+        return true;
+      },
+  }),
+});
+
 export const BlocksKit = Extension.create({
   name: "blocksKit",
   addExtensions: () => [
@@ -242,5 +261,6 @@ export const BlocksKit = Extension.create({
     YouTube,
     Audio,
     File,
+    ColumnsLayout,
   ],
 });

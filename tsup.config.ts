@@ -8,7 +8,7 @@ export default defineConfig({
     react: "src/core/react/index.ts",
   },
   format: ["cjs", "esm"],
-  dts: true,
+  dts: false,
   clean: true,
   external: [
     ...Object.keys(pkg.dependencies || {}),

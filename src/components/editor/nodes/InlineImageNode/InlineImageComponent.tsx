@@ -205,7 +205,8 @@ export default function InlineImageComponent({
   const isEditable = useLexicalEditable()
 
   const $onEnter = useCallback(
-    (event: KeyboardEvent) => {
+    (event: KeyboardEvent | null) => {
+      if (!event) return false
       const latestSelection = $getSelection()
       const buttonElem = buttonRef.current
       if (isSelected && $isNodeSelection(latestSelection) && latestSelection.getNodes().length === 1) {
@@ -227,7 +228,8 @@ export default function InlineImageComponent({
   )
 
   const $onEscape = useCallback(
-    (event: KeyboardEvent) => {
+    (event: KeyboardEvent | null) => {
+      if (!event) return false
       if (activeEditorRef.current === caption || buttonRef.current === event.target) {
         $setSelection(null)
         editor.update(() => {
