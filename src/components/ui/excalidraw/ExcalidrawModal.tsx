@@ -368,13 +368,7 @@ export default function ExcalidrawModal({
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {
-                if (hasUnsavedChanges) {
-                  setDiscardModalOpen(true);
-                } else {
-                  onDelete();
-                }
-              }}
+              onClick={discard}
               className="h-8 w-8"
               aria-label="Close drawing editor"
             >

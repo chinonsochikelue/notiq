@@ -76,7 +76,7 @@ import { initialEditorState, INSERT_STEPPER_COMMAND } from "../../nodes/Stepper"
 import { InsertInlineImageDialog } from "../InlineImagePlugin";
 import { InsertEquationDialog } from "../EquationsPlugin";
 import { INSERT_STORY_BUILDER_COMMAND } from "../StoryBuilderPlugin";
-import { createDefaultDynamicBlock, INSERT_DYNAMIC_BLOCK_COMMAND } from "../DynamicBlockPluggin";
+import { createDefaultDynamicBlock, INSERT_DYNAMIC_BLOCK_COMMAND } from "../DynamicBlockPlugin";
 const InsertGif = React.lazy(() => import("../../../ui/models/insert-gif"));
 const InsertImageDialog = React.lazy(() =>
   import("../../../ui/models/insert-image").then((module) => ({
@@ -435,19 +435,19 @@ function getBaseOptions(
     new ComponentPickerOption("2 columns", {
       icon: <Columns2 className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["columns", "flex", "row", "layout", "grid"],
-      desc: "Dvide your content into 2 container.",
+      desc: "Divide your content into 2 columns.",
       onSelect: () => editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 1fr"),
     }),
     new ComponentPickerOption("3 columns", {
       icon: <Columns3 className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["3columns", "3", "flex", "row", "layout", "grid"],
-      desc: "Dvide your content into 3 container.",
+      desc: "Divide your content into 3 columns.",
       onSelect: () =>
         editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 1fr 1fr"),
     }),
     new ComponentPickerOption("Stepper", {
       icon: <svg className="w-9 h-9 max-sm:h-5 max-sm:w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fillRule="evenodd"><path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"></path><path fill="currentColor" d="M5 6a3 3 0 0 1 6 0v2a3 3 0 0 1-6 0zm3-1a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0V6a1 1 0 0 0-1-1m9.707-.707a1 1 0 0 0-1.414 0L13.465 7.12a1 1 0 0 0 1.414 1.415L16 7.414V20a1 1 0 1 0 2 0V7.414l1.121 1.122a1 1 0 1 0 1.415-1.415zM5 15a3 3 0 0 1 5.995-.176l.005.186c0 .408-.039.799-.107 1.171c-.264 1.433-.964 2.58-1.57 3.352c-.307.39-.598.694-.815.904c-.124.12-.25.238-.385.345a1 1 0 0 1-1.34-1.479L7.118 19l.224-.228A7 7 0 0 0 7.971 18A3 3 0 0 1 5 15m3-1a1 1 0 1 0 0 2a1 1 0 0 0 0-2"></path></g></svg>,
-      keywords: ["stpper", "step", "lines", "routes", "docs", "number"],
+      keywords: ["stepper", "step", "lines", "routes", "docs", "number"],
       desc: "Stepper with descriptions for each step.",
       onSelect: () => {
 
@@ -513,7 +513,7 @@ function getBaseOptions(
     new ComponentPickerOption("4 columns", {
       icon: <Columns4 className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["4columns", "4", "flex", "row", "layout", "grid"],
-      desc: "Dvide your content into 4 container.",
+      desc: "Divide your content into 4 columns.",
       onSelect: () =>
         editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 1fr 1fr 1fr"),
     }),

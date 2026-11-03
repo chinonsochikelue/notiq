@@ -342,7 +342,7 @@ export default function TextFormatFloatingToolbar({
         ShowChevronsUpDown={false}
         side={isSmall ? "right" : "bottom"}
         sideOffset={isSmall ? 10 : 5}
-        style={{ height: "2px" }}
+        style={{ height: "25px" }}
         toolbarState={{
           isLowercase,
           isUppercase,

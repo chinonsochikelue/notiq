@@ -24,8 +24,9 @@ const toggleVariants = cva(
         default: "h-9 px-2 min-w-9",
         sm: "h-7 rounded-md px-[6px] ",
         lg: "h-10 px-2.5 min-w-10",
-        Toolbar: "h-7 w-7 p-3",
-        floting: " h-5 w-5 p-3"
+        Toolbar: "h-7 w-7 p-1.5",
+        floting: "h-7 w-7 p-1.5",
+        floating: "h-7 w-7 p-1.5",
       },
     },
     defaultVariants: {
@@ -39,32 +40,30 @@ const Toggle = React.forwardRef<
   React.ElementRef<typeof TogglePrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
   VariantProps<typeof toggleVariants> & { tip?: string }
->(({ className, variant, tip, size, ...props }, ref) =>
-  tip ? (
-    <TooltipProvider>
-      <Tooltip delayDuration={0.2}>
-        <TooltipTrigger asChild>
-          <div>
-            <TogglePrimitive.Root
-              ref={ref}
-              className={cn(toggleVariants({ variant, size, className }))}
-              {...props}
-            />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side={"top"}>
-          <span>{tip}</span>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  ) : (
+>(({ className, variant, tip, size, ...props }, ref) => {
+  const toggleButton = (
     <TogglePrimitive.Root
       ref={ref}
       className={cn(toggleVariants({ variant, size, className }))}
       {...props}
     />
-  )
-);
+  );
+
+  if (!tip) return toggleButton;
+
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={200}>
+        <TooltipTrigger asChild>
+          {toggleButton}
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <span>{tip}</span>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+});
 
 Toggle.displayName = TogglePrimitive.Root.displayName;
 

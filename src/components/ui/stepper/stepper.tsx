@@ -24,11 +24,11 @@ export default function Stepper({
     });
   }
 
-  const remove = (index: number) => {    
+  const remove = (id: number) => {    
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if ($isStepperNode(node)) {
-        node.deleteStep(index);
+        node.deleteStep(id);
       }
     });
   };

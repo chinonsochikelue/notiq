@@ -16,7 +16,7 @@ export default function useModal(): [
     title?: string | null, 
     description?: string | null, 
     getContent?: (onClose: () => void) => JSX.Element,
-    isDilog?:boolean
+    isDialog?: boolean
 
   ) => void,
   boolean
@@ -26,7 +26,7 @@ export default function useModal(): [
     title?: string | null;
     description?: string | null;
     content?: JSX.Element;
-    isDilog?:boolean
+    isDialog?: boolean
   } | null>(null);
 
   const onClose = useCallback(() => {
@@ -39,7 +39,7 @@ export default function useModal(): [
       title?: string | null,
       description?: string | null,
       getContent?: (onClose: () => void) => JSX.Element,
-      isDilog?:boolean
+      isDialog?: boolean
 
     ) => {
       setIsOpen(true);
@@ -47,7 +47,7 @@ export default function useModal(): [
         title,
         description,
         content: getContent ? getContent(onClose) : undefined,
-        isDilog:isDilog
+        isDialog: isDialog !== false
       });
     },
     [onClose]
@@ -59,8 +59,8 @@ export default function useModal(): [
     }
 
 
-    const { title, description, content,isDilog } = modalContent;
-    if(!isDilog){
+    const { title, description, content, isDialog } = modalContent;
+    if (isDialog === false) {
       return <>{content}</>
     }
     return (

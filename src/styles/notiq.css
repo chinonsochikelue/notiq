@@ -4,6 +4,8 @@
 @plugin 'tailwind-scrollbar';
 @import 'katex/dist/katex.css';
 
+@layer notiq;
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -243,10 +245,9 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 
-/* File: C:\Users\HP\notiq\src\components\editor\plugins\CollapsiblePlugin\Collapsible.css */
+/* Collapsible */
 .Collapsible__container {
   margin-bottom: 8px;
-  
 }
 
 .Collapsible__title {
@@ -256,32 +257,13 @@ input[type="number"]::-webkit-outer-spin-button {
   font-weight: bold;
   list-style: none;
   outline: none;
-  
 }
-
 
 .Collapsible__title::marker,
 .Collapsible__title::-webkit-details-marker {
   display: none;
-  
 }
 
-
-
-
-
-.dark .Collapsible__title:before {
-  border-style: solid;
-  border-color: transparent;
-  border-width: 5px;
-  border-left-color: white;
-  display: block;
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 50%;
-  transform: translateY(-50%);
-}
 .Collapsible__title:before {
   border-style: solid;
   border-color: transparent;
@@ -293,6 +275,10 @@ input[type="number"]::-webkit-outer-spin-button {
   left: 7px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.dark .Collapsible__title:before {
+  border-left-color: white;
 }
 
 .dark .Collapsible__container[open] > .Collapsible__title:before {
@@ -1002,7 +988,7 @@ select {
 
 .KatexEquationAlterer_centerRow {
   display: flex;
-  flex-direction: 'row';
+  flex-direction: row;
   margin-top: 10px;
   margin-bottom: 10px;
   justify-content: center;
@@ -1016,7 +1002,7 @@ select {
 }
 
 
-/* File: C:\Users\HP\notiq\src\components\ui\excalidraw\ExcalidrawModal.css */
+/* Excalidraw Modal */
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *

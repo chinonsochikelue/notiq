@@ -30,6 +30,20 @@ function getTotalVotes(options: Options): number {
   }, 0);
 }
 
+function getClientUserId(): string {
+  if (typeof window === "undefined") return "anon-user";
+  try {
+    let id = localStorage.getItem("notiq_poll_user_id");
+    if (!id) {
+      id = "user_" + Math.random().toString(36).substring(2, 9);
+      localStorage.setItem("notiq_poll_user_id", id);
+    }
+    return id;
+  } catch {
+    return "anon-user";
+  }
+}
+
 function PollOptionComponent({
   option,
   index,
@@ -48,10 +62,13 @@ function PollOptionComponent({
   ) => void;
   isEditable: boolean;
 }): React.JSX.Element {
-  const userId = "1212312" // change it with user ID
+  const [userId, setUserId] = useState<string>("anon-user");
+  useEffect(() => {
+    setUserId(getClientUserId());
+  }, []);
   const checkboxRef = useRef(null);
   const votesArray = option.votes;
-  const checkedIndex = votesArray.indexOf(userId!);
+  const checkedIndex = votesArray.indexOf(userId);
   const checked = checkedIndex !== -1;
   const votes = votesArray.length;
   const text = option.text;
@@ -60,24 +77,21 @@ function PollOptionComponent({
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-
       try {
-
         await new Promise<void>((resolve) => {
           withPollNode((node) => {
-            node.toggleVote(option, userId!);
+            node.toggleVote(option, userId);
           }, resolve);
         });
-        return
-        // const currentState = editor.getEditorState();
-        // await updateContent(id, currentState.toJSON(), true);
+        return;
       } catch (error) {
         await new Promise<void>((resolve) => {
           withPollNode((node) => {
-            node.toggleVote(option, userId!);
+            node.toggleVote(option, userId);
           }, resolve);
         });
         throw error;
+      }
       }
     },
   });

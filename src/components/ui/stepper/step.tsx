@@ -4,7 +4,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import ImagesPlugin from "../../editor/plugins/ImagesPlugin";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Reorder } from "framer-motion";
 import { StepType } from "../../editor/nodes/Stepper";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
@@ -107,15 +107,25 @@ export default function Step({
       </div>
 
       <div className="flex flex-col ml-10 w-full">
-        <div
-          contentEditable
-          suppressContentEditableWarning
-          ref={titleRef}
-          onBlur={handleTitleBlur}
-          onKeyDown={handleTitleKeyDown}
-          className="scroll-m-20 border-none outline-none cursor-text break-words max-sm:text-lg text-2xl font-semibold tracking-tight"
-        >
-          {item.title}
+        <div className="flex items-center justify-between w-full group/header">
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            ref={titleRef}
+            onBlur={handleTitleBlur}
+            onKeyDown={handleTitleKeyDown}
+            className="flex-1 scroll-m-20 border-none outline-none cursor-text break-words max-sm:text-lg text-2xl font-semibold tracking-tight"
+          >
+            {item.title}
+          </div>
+          <button
+            type="button"
+            onClick={() => remove(item.id)}
+            title="Delete step"
+            className="opacity-0 group-hover/header:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-destructive rounded hover:bg-muted"
+          >
+            <Trash2 className="size-4" />
+          </button>
         </div>
         <LexicalNestedComposer
           initialEditor={item.content}
@@ -130,10 +140,8 @@ export default function Step({
           <LinkWithMetaDataPlugin />
           <ListPlugin />
           <CheckListPlugin />
-          <LinkWithMetaDataPlugin />
           <TabIndentationPlugin maxIndent={7} />
           <CodeHighlightPlugin />
-          <LinkPlugin />
           <RichTextPlugin
             contentEditable={
               <div ref={onRef} className="relative">

@@ -327,7 +327,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
             ></path>
           </svg>
         ),
-        label: "rplace text",
+        label: "Replace text",
         HoverCard: {
           desc: "Select your text and let our AI replace it with a polished, enhanced version! 🚀✨",
         },
@@ -346,9 +346,9 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
             ></path>
           </svg>
         ),
-        label: "insert text",
+        label: "Insert text",
         HoverCard: {
-          desc: "text will inserted immediately following your selection.",
+          desc: "Text will be inserted immediately following your selection.",
         },
         func: () => insertText(completion, editor),
       },
@@ -377,18 +377,18 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
             </g>
           </svg>
         ),
-        label: "insert below",
+        label: "Insert below",
         HoverCard: {
-          desc: "text will inserted under your selection.",
+          desc: "Text will be inserted below your selection.",
         },
         func: () => insertTextUnderSelected(completion, editor),
       },
 
       {
         icon: <RotateCcw className="text-[#8d5bc1] size-4" />,
-        label: "try again",
+        label: "Try again",
         HoverCard: {
-          desc: "you did not like the ai response? try it again with what do you want",
+          desc: "Didn't like the AI response? Try generating again.",
         },
         func: handleRegeneration,
       },

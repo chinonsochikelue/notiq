@@ -126,9 +126,14 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
     self.__steps.splice(index, 0, newStep);
     return self;
   }
-  deleteStep(id: number) {
+  deleteStep(idOrIndex: number) {
     const self = this.getWritable();
-    self.__steps = self.__steps.filter(step => step.id !== id);
+    const hasId = self.__steps.some(step => step.id === idOrIndex);
+    if (hasId) {
+      self.__steps = self.__steps.filter(step => step.id !== idOrIndex);
+    } else if (idOrIndex >= 0 && idOrIndex < self.__steps.length) {
+      self.__steps.splice(idOrIndex, 1);
+    }
     return self;
   }
   updateTitle(id: number, title: string) {
