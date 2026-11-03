@@ -27,7 +27,6 @@ import {
   Code,
   GitBranch,
   // Download,
-  Github,
   Coffee,
   Rocket,
   Layers,
@@ -36,6 +35,7 @@ import {
   GripVertical,
   Link
 } from "lucide-react"
+import { Github } from '../components/ui/icons/brand-icons'
 import { ModeToggle } from '../components/theme/ModeToggle'
 import { default as Redirect } from "next/link";
 
