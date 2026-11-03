@@ -54,9 +54,9 @@ function transformerEscape(): ShikiTransformer {
 
 export default defineConfig({
   plugins: [
-    jsonSchema({
-      insert: true,
-    }),
+    // jsonSchema({
+    //   insert: true,
+    // }),
     lastModified(),
   ],
   mdxOptions: async () => {

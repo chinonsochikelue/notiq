@@ -1,4 +1,4 @@
-import { docs } from 'fumadocs-mdx:collections/server'
+import { docs } from '../../.source/server'
 import {
   type InferMetaType,
   type InferPageType,

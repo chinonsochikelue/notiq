@@ -13,7 +13,7 @@ export const env = createEnv({
       (val) =>
         val ??
         (process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : val),
-      z.url()
+      z.string().url()
     ),
   },
   experimental__runtimeEnv: {

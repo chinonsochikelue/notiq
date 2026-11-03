@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'node:url'
-import bundleAnalyzer from '@next/bundle-analyzer'
 import { createMDX } from 'fumadocs-mdx/next'
 import type { NextConfig } from 'next'
 
@@ -60,9 +59,7 @@ async function createNextConfig(): Promise<NextConfig> {
     return nextConfig
 }
 
-const bundleAnalyzerPlugin = bundleAnalyzer({
-    enabled: process.env.ANALYZE === 'true',
-})
+const bundleAnalyzerPlugin = (config: any) => config
 
 const mdxPlugin = createMDX()
 
