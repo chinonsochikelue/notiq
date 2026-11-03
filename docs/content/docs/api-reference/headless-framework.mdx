@@ -1,0 +1,124 @@
+---
+title: Headless Framework API
+description: Complete API reference for Editor, useEditor, EditorContent, BubbleMenu, and CommandChain.
+---
+
+# Headless Framework API
+
+Notiq's headless core (`@collabchron/notiq/core` and `@collabchron/notiq/react`) provides a modern, Tiptap-style developer experience powered under the hood by Meta's Lexical engine.
+
+## Subpath Imports
+
+```tsx
+// React bindings and components
+import { useEditor, EditorContent, BubbleMenu, FloatingMenu } from "@collabchron/notiq/react";
+
+// Headless core and extensions
+import { Editor, Extension, NodeExtension, MarkExtension, StarterKit } from "@collabchron/notiq/core";
+
+// Or import all from the root package:
+import { useEditor, EditorContent, StarterKit } from "@collabchron/notiq";
+```
+
+---
+
+## `useEditor(options)`
+
+A React hook that instantiates and synchronizes a reactive `Editor` instance.
+
+```tsx
+const editor = useEditor({
+  extensions: [StarterKit],
+  content: "<p>Hello</p>",
+  editable: true,
+  autofocus: true,
+  onUpdate: ({ editor }) => {
+    console.log("HTML:", editor.getHTML());
+    console.log("JSON:", editor.getJSON());
+  },
+  onSelectionUpdate: ({ editor }) => {
+    // Fired whenever the cursor or selection changes
+  },
+});
+```
+
+### Options
+
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `extensions` | `AnyExtension[]` | `[]` | List of extensions or extension kits to register. |
+| `content` | `string \| Content` | `""` | Initial editor content (HTML string or serialized Lexical JSON). |
+| `editable` | `boolean` | `true` | Whether the editor is interactive or read-only. |
+| `autofocus` | `boolean \| "start" \| "end"` | `false` | Focuses the editor on mount. |
+| `onUpdate` | `(props: { editor: Editor }) => void` | `undefined` | Callback fired on editor content mutation. |
+| `onSelectionUpdate` | `(props: { editor: Editor }) => void` | `undefined` | Callback fired on cursor/selection mutation. |
+
+---
+
+## `Editor` Class
+
+The primary headless engine wrapping the Lexical state.
+
+### Methods
+
+- **`editor.chain()`**: Starts a fluent, chained command execution sequence. Must end with `.run()`.
+  ```ts
+  editor.chain().focus().toggleBold().run();
+  ```
+- **`editor.commands`**: Directly executes registered extension commands.
+  ```ts
+  editor.commands.toggleBold();
+  editor.commands.setHeading({ level: 2 });
+  editor.commands.setColumns(2);
+  editor.commands.openAICommandBar();
+  ```
+- **`editor.isActive(name, attributes?)`**: Returns `true` if the current selection has the specified mark or node type active.
+  ```ts
+  editor.isActive("bold"); // boolean
+  editor.isActive("heading", { level: 2 }); // boolean
+  ```
+- **`editor.getHTML()`**: Returns clean, semantic HTML representation of the current state.
+- **`editor.getJSON()`**: Returns serialized Lexical AST state.
+- **`editor.getText()`**: Returns plain text content.
+- **`editor.setEditable(boolean)`**: Toggles editor read-only mode dynamically.
+- **`editor.destroy()`**: Cleans up all listeners and node transforms.
+
+---
+
+## `EditorContent` Component
+
+Renders the editable DOM element wired to the headless `Editor`.
+
+```tsx
+<EditorContent 
+  editor={editor} 
+  className="prose dark:prose-invert max-w-none focus:outline-none" 
+/>
+```
+
+---
+
+## `BubbleMenu` Component
+
+A floating context menu positioned dynamically over the user's active text selection.
+
+```tsx
+<BubbleMenu 
+  editor={editor}
+  showAskAI={true} // Shows ⌘K Ask AI pill button
+  className="flex items-center gap-1 bg-popover shadow-lg border rounded-lg p-1"
+/>
+```
+
+---
+
+## `FloatingMenu` Component
+
+A floating toolbar that appears beside empty paragraphs for quick block insertion.
+
+```tsx
+<FloatingMenu 
+  editor={editor}
+  className="flex items-center gap-1 bg-popover shadow-md border rounded-md p-1"
+/>
+```

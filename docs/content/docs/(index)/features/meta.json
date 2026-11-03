@@ -3,6 +3,8 @@
   "icon": "Zap",
   "pages": [
     "ai-assistant",
-    "content-blocks"
+    "content-blocks",
+    "block-handles",
+    "canvas-mode"
   ]
 }

@@ -1,0 +1,116 @@
+---
+title: Extensions & Kits
+description: Pre-configured extension bundles and modular extensions for Notiq.
+---
+
+# Extensions & Kits
+
+Notiq structures functionality into modular extensions and ready-to-use kits.
+
+## Extension Kits
+
+### `StarterKit`
+Includes essential document structuring nodes, inline marks, and history management:
+- **Nodes**: `Document`, `Paragraph`, `Text`, `Heading` (H1-H6), `BulletList`, `NumberedList`, `ListItem`, `Blockquote`, `CodeBlock`, `HorizontalRule`.
+- **Marks**: `Bold`, `Italic`, `Strike`, `Underline`, `Code`.
+- **Features**: `History` (Undo / Redo), `Dropcursor`, `Gapcursor`.
+
+```tsx
+import { StarterKit } from "@collabchron/notiq";
+
+const kit = StarterKit.configure({
+  heading: {
+    levels: [1, 2, 3],
+  },
+  bold: false, // Disable specific extensions if needed
+});
+```
+
+---
+
+### `AIKit`
+Equips the editor with the inline AI command bar (`⌘K`), diff engine, and streaming actions.
+
+```tsx
+import { AIKit } from "@collabchron/notiq";
+
+const ai = AIKit.configure({
+  apiEndpoint: "/api/ai", // POST endpoint for completions
+});
+```
+
+#### Commands
+- `editor.commands.openAICommandBar()`: Focuses and opens the floating AI prompt bar over the current selection or block.
+
+---
+
+### `BlocksKit`
+Provides advanced block structures:
+- `ColumnsLayout`: 2-column and 3-column responsive flex layouts.
+- `Table`: Interactive data tables with column/row resizing.
+- `Poll`: Voting and survey widgets.
+- `Stepper`: Interactive multi-step guide cards.
+- `Hint`: Callout banners (Info, Warning, Tip, Danger).
+- `Excalidraw`: Freehand whiteboard drawing embed.
+
+```tsx
+import { BlocksKit } from "@collabchron/notiq";
+
+const blocks = BlocksKit.configure({
+  columns: true,
+  tables: true,
+});
+```
+
+#### Commands
+- `editor.commands.setColumns(2 | 3)`: Wraps the active block into a multi-column container.
+
+---
+
+### `CollaborationKit`
+Enables real-time multi-user editing powered by Yjs, WebSocket provider, and IndexedDB offline persistence.
+
+```tsx
+import { CollaborationKit } from "@collabchron/notiq";
+
+const collab = CollaborationKit.configure({
+  documentId: "my-shared-room",
+  websocketUrl: "wss://my-collab-server.com",
+  user: {
+    name: "Alex",
+    color: "#3b82f6",
+  },
+  offlinePersistence: true,
+});
+```
+
+---
+
+## Authoring Custom Extensions
+
+Extend the framework by subclassing `Extension`, `NodeExtension`, or `MarkExtension`:
+
+```ts
+import { Extension } from "@collabchron/notiq";
+
+export const CustomAnalyticsExtension = Extension.create({
+  name: "analytics",
+
+  addCommands() {
+    return {
+      trackEvent: (eventName: string) => ({ editor }) => {
+        window.analytics?.track(eventName, {
+          wordCount: editor.getText().split(/\s+/).length,
+        });
+        return true;
+      },
+    };
+  },
+
+  addKeyboardShortcuts() {
+    return {
+      "Mod-Alt-t": () => this.editor.commands.trackEvent("hotkey_triggered"),
+    };
+  },
+});
+```

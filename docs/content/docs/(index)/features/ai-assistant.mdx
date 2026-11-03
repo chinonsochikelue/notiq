@@ -1,40 +1,87 @@
 ---
 title: AI Writing Assistant
-description: Supercharge your writing with integrated AI power.
+description: Supercharge your writing with inline AI command bar, live streaming diffs, and context-aware actions.
 ---
 
 # AI Writing Assistant
 
-Notiq integrates seamlessly with advanced LLMs (like GPT-4) to help you write faster, better, and more creatively.
+Notiq features a Cursor/Novel-grade inline AI command bar (`Cmd+K` / `Ctrl+K`) that allows users to prompt an LLM directly within the editor flow, preview modifications as side-by-side or inline diffs, and accept or reject changes with a single keystroke.
 
-## Features
+## ⌘K Inline AI Command Bar
 
-### Smart Writing
-Select any text and use the AI menu to:
-- **Improve Writing**: Enhances clarity and flow.
-- **Fix Grammar**: Polishes your text for professional quality.
-- **Change Tone**: Switch between formal, casual, or persuasive.
-- **Shorten/Lengthen**: Quickly adjust content length.
+Pressing `Cmd+K` (Mac) or `Ctrl+K` (Windows/Linux) opens a floating AI command bar docked directly to the user's cursor or selection:
 
-### Contextual AI Chat
-Ask questions about your document directly. The AI understands the context of your current writing, allowing you to:
-- Summarize long sections.
-- Brainstorm new ideas based on existing content.
-- Translate text to different languages.
+### Key Features
 
-### Intelligent Auto-completion
-Notiq provides smart suggestions as you type, helping you complete sentences and stay in the flow.
+1. **Streaming Diff Visualization**:
+   - Computes real-time word-level longest common subsequence (LCS) diffs between original text and streaming AI output.
+   - Deleted words are styled with red strikethrough.
+   - Added or rewritten words are highlighted in green.
 
-## Configuration
+2. **Quick Actions**:
+   - **Fix Grammar**: Polishes punctuation, syntax, and spelling.
+   - **Improve Writing**: Enhances tone, sentence rhythm, and clarity.
+   - **Make Longer**: Expands paragraphs with descriptive depth.
+   - **Make Shorter**: Condenses text into crisp, concise prose.
+   - **Change Tone**: Adapts voice into Professional, Casual, Academic, or Direct.
+   - **Translate**: Converts selected content into Spanish, French, German, Japanese, and more.
 
-To enable AI features, you need to provide an API endpoint in your `Editor` configuration:
+3. **Resolution Controls**:
+   - **Replace Selection**: Swaps original text with accepted AI suggestion.
+   - **Insert Below**: Keeps original block and appends AI response underneath.
+   - **Retry**: Re-submits prompt to generate alternative responses.
+   - **Discard (`Escape`)**: Reverts editor state cleanly.
+
+---
+
+## API Configuration
+
+In `<Editor />`, configure `aiConfig`:
 
 ```tsx
 <Editor 
   aiConfig={{
-    apiEndpoint: "/api/ai",
+    apiEndpoint: "/api/ai", // Your AI completion route
   }}
 />
 ```
 
-The endpoint should handle requests for completion and chat, typically using the `ai` SDK.
+Or when using the headless framework with `AIKit`:
+
+```tsx
+import { useEditor, AIKit } from "@collabchron/notiq";
+
+const editor = useEditor({
+  extensions: [
+    AIKit.configure({
+      apiEndpoint: "/api/ai",
+    }),
+  ],
+});
+
+// Open AI Command Bar programmatically:
+editor.commands.openAICommandBar();
+```
+
+---
+
+## Backend Handler Example (Next.js App Router)
+
+Implement `/api/ai/route.ts` using the AI SDK or OpenAI:
+
+```ts title="app/api/ai/route.ts"
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+export async function POST(req: Request) {
+  const { prompt, context } = await req.json();
+
+  const result = streamText({
+    model: openai("gpt-4o-mini"),
+    system: "You are a professional editor assistant. Output only the modified text.",
+    prompt: `Context:\n${context}\n\nTask: ${prompt}`,
+  });
+
+  return result.toDataStreamResponse();
+}
+```

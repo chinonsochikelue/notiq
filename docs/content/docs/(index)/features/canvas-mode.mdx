@@ -1,0 +1,58 @@
+---
+title: Spatial Canvas Mode
+description: Transform linear documents into an infinite whiteboard with sticky notes, spatial cards, and Excalidraw.
+---
+
+# Document-to-Canvas Spatial Mode
+
+Notiq bridges linear prose documents and non-linear spatial thought via `<CanvasMode />`. With a single toggle, documents can be panned, zoomed, and arranged on an infinite canvas alongside sticky notes and diagrams.
+
+## Key Capabilities
+
+1. **Infinite Pan & Zoom**:
+   - Drag to pan across an infinite dot-grid coordinate space.
+   - Zoom in and out smoothly from **40% to 250%**, with quick zoom-to-fit and reset controls.
+
+2. **Movable Spatial Cards**:
+   - **Primary Document Card**: Houses your full Lexical rich text editor.
+   - **Sticky Notes**: Color-coded note cards (Yellow, Blue, Emerald, Purple, Rose) for quick ideation and brainstorm tags.
+   - **Excalidraw Whiteboards**: Embedded vector drawing canvas for sketches and architectural diagrams.
+
+3. **Theme Awareness**:
+   - Background dot grid automatically matches Tailwind light and dark themes.
+
+---
+
+## Usage
+
+Import `<CanvasMode />` directly from `@collabchron/notiq`:
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { Editor, CanvasMode } from "@collabchron/notiq";
+
+export default function DocumentWithCanvas() {
+  const [isCanvas, setIsCanvas] = useState(false);
+
+  return (
+    <div className="relative w-full h-screen">
+      <div className="absolute top-4 right-4 z-50">
+        <button
+          onClick={() => setIsCanvas(!isCanvas)}
+          className="px-4 py-2 bg-primary text-white rounded-lg shadow-md font-medium text-sm"
+        >
+          {isCanvas ? "Document View" : "Canvas Mode"}
+        </button>
+      </div>
+
+      {isCanvas ? (
+        <CanvasMode onExit={() => setIsCanvas(false)} />
+      ) : (
+        <Editor isEditable={true} />
+      )}
+    </div>
+  );
+}
+```

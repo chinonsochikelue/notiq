@@ -1,11 +1,13 @@
 {
   "title": "API Reference",
-  "description": "A demo for Fumadocs OpenAPI",
+  "description": "API Reference for Notiq editor and headless framework",
   "root": true,
   "icon": "Webhook",
   "pages": [
     "---API Reference---",
     "index",
-    "editor"
+    "editor",
+    "headless-framework",
+    "extensions-and-kits"
   ]
 }

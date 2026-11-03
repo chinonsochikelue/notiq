@@ -6,9 +6,9 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e6fe4b9f635b46ccb38e5852fac10343)](https://app.codacy.com/gh/chinonsochikelue/notiq/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 ![npm](https://img.shields.io/npm/dt/@collabchron/notiq)
 
-
   <p>
-    <strong>A powerful, AI-enhanced rich text editor built with Lexical, Next.js, TypeScript, and Tailwind CSS.</strong>
+    <strong>The Next-Generation Rich Text & Spatial Content Framework for React and Next.js.</strong><br/>
+    <em>Built on Meta's modern Lexical engine, styled with Tailwind CSS, and designed to exceed Tiptap with native AI diffing, Notion-style block drag handles, multi-column snapping, and infinite whiteboard canvas.</em>
   </p>
   <p>
     <a href="https://notiq-editor.vercel.app">Documentation</a> •
@@ -18,6 +18,22 @@
 </div>
 
 ![Notiq Banner](public/og-image.png)
+
+## ⚔️ Why Notiq over Tiptap & Other Editors?
+
+| Capability | Notiq | Tiptap | Raw Lexical | Novel / BlockNote |
+| :--- | :---: | :---: | :---: | :---: |
+| **Underlying Engine** | Modern Lexical (Meta) | ProseMirror (2015) | Lexical (Meta) | ProseMirror |
+| **Headless Extension API** | ✅ `editor.chain()...` | ✅ `editor.chain()...` | ❌ Complex boilerplate | ⚠️ Limited |
+| **Drop-in Battery-Included UI** | ✅ `<Editor />` | ❌ DIY | ❌ DIY | ⚠️ Rigid Opinionated |
+| **Inline AI Command Bar (`⌘K`)** | ✅ Built-in with Live Streaming Diff | ❌ Paid / DIY | ❌ DIY | ⚠️ Basic Streaming |
+| **Notion Block Drag Handles** | ✅ Gutter Handle (`⠿`) + Quick Add (`+`) + Turn Into | ⚠️ Extension required | ❌ DIY | ⚠️ Basic |
+| **Multi-Column Snapping** | ✅ 2 & 3 Column Layouts Built-in | ⚠️ Complex setup | ❌ DIY | ❌ |
+| **Document-to-Canvas Hybrid** | ✅ Infinite Spatial Whiteboard Mode | ❌ | ❌ | ❌ |
+| **Subpath Exports** | ✅ `@notiq`, `/core`, `/react`, `/styles.css` | ✅ | ❌ | ⚠️ |
+| **Real-time Collaboration** | ✅ Yjs + IndexedDB Offline Persistence | ⚠️ Pro Extension | ⚠️ Complex | ⚠️ |
+
+---
 
 ## 📸 Screenshots
 
@@ -31,58 +47,77 @@
   <img src="public/screenshots/mobile.png" alt="Mobile Screenshot" width="300" />
 </div>
 
-## ✨ Features
+---
 
-### 🤖 AI-Powered Writing Assistant
-- **Smart Writing**: GPT-4 integration for content improvement, grammar fixes, and style adjustments
-- **AI Chat**: Ask questions about your document content and get contextual responses
-- **Auto-completion**: Intelligent text suggestions and completions
-- **Content Enhancement**: Make text longer/shorter, create step-by-step guides, simplify language
+## ✨ Core Highlights
 
-### ✏️ Rich Text Editor
-- **Lexical Framework**: Built on Facebook's modern Lexical editor framework
-- **WYSIWYG Editing**: What-you-see-is-what-you-get editing experience
-- **Markdown Support**: Full markdown shortcuts and live transformers
-- **Slash Commands**: Type "/" for quick content insertion and formatting
-- **Floating Toolbars**: Context-sensitive formatting tools
+### ⚡ 1. Headless Framework Architecture (Tiptap-Compatible API)
+Use Notiq completely headless with an extensible plugin architecture, chained commands, and full control over markup:
+```tsx
+import { useEditor, EditorContent, StarterKit, AIKit, BubbleMenu } from "@collabchron/notiq";
 
-### 🧩 Advanced Content Blocks
-- **Media**: Images, inline images, YouTube videos, Twitter embeds
-- **Interactive**: Polls, step-by-step guides, collapsible sections
-- **Technical**: Code blocks with syntax highlighting, mathematical equations (KaTeX)
-- **Design**: Excalidraw drawings, Figma embeds
-- **Layout**: Multi-column layouts, resizable panels, tables
-- **Callouts**: Hint blocks and special callout sections
+export default function CustomEditor() {
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
+      AIKit.configure({ apiEndpoint: "/api/ai" }),
+    ],
+    content: "<p>Hello world from Notiq!</p>",
+  });
 
-### 🎨 User Experience
-- **Drag & Drop**: Draggable blocks and content reordering
-- **Speech-to-Text**: Voice input capabilities
-- **Link Previews**: Rich link previews with metadata
-- **Theme Support**: Dark/light mode with seamless switching
-- **Keyboard Shortcuts**: Comprehensive shortcut system
-- **Real-time Collaboration**: Shared editing context
+  return (
+    <div>
+      <BubbleMenu editor={editor} showAskAI={true} />
+      <EditorContent editor={editor} />
+    </div>
+  );
+}
+```
 
-## 🚀 Library Usage
+### 🤖 2. Inline AI Command Bar (`Cmd+K` / `Ctrl+K`)
+Select text or hover over any block and trigger `⌘K` to open the Cursor/Novel-style AI Command Bar:
+- **Streaming Diff Engine**: Live tokenized LCS diff algorithm showing red strikethrough for removals and green highlight for additions.
+- **Quick Action Pills**: Fix Grammar, Improve Writing, Make Longer/Shorter, Change Tone, Translate.
+- **Resolution Options**: *Replace Selection*, *Insert Below*, *Retry*, or *Discard*.
 
-Notiq can be used as a standalone editor in your React/Next.js projects.
+### ⠿ 3. Notion-Style Block Drag Handles & Multi-Columns
+- **Gutter Handle (`⠿`)**: Hover over any block to drag-and-drop reorder.
+- **Quick Add (`+`)**: Click the plus icon to instantly spawn an empty paragraph below.
+- **Block Action Menu**: Transform any block via *Turn Into* (H1-H3, bullet/numbered lists, quotes, code block), duplicate, delete, or invoke AI directly on that block.
+- **Multi-Column Snapping**: Split blocks into responsive 2-column (`1fr 1fr`) or 3-column (`1fr 1fr 1fr`) layouts with `editor.commands.setColumns(2 | 3)`.
 
-### Installation
+### 🎨 4. Document-to-Canvas Hybrid Mode
+Switch any document into an infinite spatial whiteboard view with `<CanvasMode />`:
+- Smooth Pan & Zoom canvas (40% to 250% zoom).
+- Movable, resizable cards: Primary Editor, Color-coded Sticky Notes (Yellow, Blue, Emerald, Purple, Rose), and Excalidraw whiteboards.
+- Dot-grid spatial layout with dark/light theme awareness.
+
+---
+
+## 🚀 Installation & Usage
+
+### 1. Installation
 
 ```bash
 npm install @collabchron/notiq
+# or
+pnpm add @collabchron/notiq
+# or
+yarn add @collabchron/notiq
 ```
 
-### Integration
+### 2. Import Styles
 
-#### 1. Import Styles
-
-Import the CSS file in your root layout file (e.g., `app/layout.tsx` or `pages/_app.tsx`):
+Import the CSS file in your root layout file (e.g. `app/layout.tsx` or `pages/_app.tsx`):
 
 ```tsx
 import "@collabchron/notiq/styles.css";
 ```
 
-#### 2. Usage in your component
+### 3. Usage Approaches
+
+#### Option A: Batteries-Included Drop-In Component
+If you want a full-featured Notion-like editor with toolbars, slash commands, drag handles, and AI out of the box:
 
 ```tsx
 "use client";
@@ -98,7 +133,6 @@ export default function MyEditorPage() {
       }}
       uploadConfig={{
         uploadHandler: async (file) => {
-          // Your custom upload logic (e.g., S3, Cloudinary)
           return { url: "https://your-storage.com/file.png" };
         }
       }}
@@ -107,153 +141,141 @@ export default function MyEditorPage() {
 }
 ```
 
-## 🛠️ Local Development
+#### Option B: Headless Framework (Tiptap Alternative)
+If you want complete control over your UI and state using chained commands:
 
-If you want to contribute or run the development environment:
+```tsx
+"use client";
+
+import { useEditor, EditorContent, StarterKit, BlocksKit } from "@collabchron/notiq";
+
+export default function HeadlessEditor() {
+  const editor = useEditor({
+    extensions: [StarterKit, BlocksKit],
+    content: "<h1>Headless Lexical Power</h1>",
+  });
+
+  if (!editor) return null;
+
+  return (
+    <div className="border rounded-lg p-4">
+      <div className="flex gap-2 mb-4 border-b pb-2">
+        <button 
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={editor.isActive("bold") ? "font-bold text-blue-500" : ""}
+        >
+          Bold
+        </button>
+        <button onClick={() => editor.commands.setColumns(2)}>
+          2 Columns
+        </button>
+        <button onClick={() => editor.commands.openAICommandBar()}>
+          Ask AI (⌘K)
+        </button>
+      </div>
+      <EditorContent editor={editor} className="prose max-w-none" />
+    </div>
+  );
+}
+```
+
+#### Option C: Document-to-Canvas Whiteboard View
+Embed the infinite canvas mode:
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { Editor, CanvasMode } from "@collabchron/notiq";
+
+export default function HybridPage() {
+  const [isCanvas, setIsCanvas] = useState(false);
+
+  return (
+    <div>
+      <button onClick={() => setIsCanvas(!isCanvas)}>
+        {isCanvas ? "Switch to Document View" : "Switch to Spatial Canvas View"}
+      </button>
+
+      {isCanvas ? (
+        <CanvasMode onExit={() => setIsCanvas(false)} />
+      ) : (
+        <Editor isEditable={true} />
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+## 📦 Package Subpath Exports
+
+Notiq provides tree-shakeable modern ES and CommonJS subpath exports:
+
+- `@collabchron/notiq` &mdash; Drop-in `<Editor />`, `<CanvasMode />`, UI components, and all framework exports.
+- `@collabchron/notiq/core` &mdash; Headless engine: `Editor`, `Extension`, `NodeExtension`, `MarkExtension`, `CommandChain`, and extensions (`StarterKit`, `AIKit`, `CollaborationKit`, `BlocksKit`).
+- `@collabchron/notiq/react` &mdash; React hooks and components: `useEditor`, `EditorContent`, `BubbleMenu`, `FloatingMenu`.
+- `@collabchron/notiq/styles.css` &mdash; Production CSS bundle containing all editor theme tokens, dot grid utilities, and KaTeX fonts.
+
+---
+
+## 🛠️ Local Development
 
 ### Installation
 
 ```bash
-npm install
-
-# or
-
-yarn install
-
-# or
-
+git clone https://github.com/chinonsochikelue/notiq.git
+cd notiq
 pnpm install
 ```
 
 ### Environment Setup
 
-Create a `.env.local` file with your API keys:
+Create `.env.local`:
 
 ```env
 OPENAI_API_KEY=your_openai_api_key_here
-
 NEXT_PUBLIC_EDGESTORE_ACCESS_KEY=your_edgestore_key
-
 NEXT_PUBLIC_EDGESTORE_SECRET_KEY=your_edgestore_secret
 ```
 
-### Development
+### Development Server
 
 ```bash
 npm run dev
-
 # or
-
-yarn dev
-
-# or
-
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to start writing!
+Visit [http://localhost:3000](http://localhost:3000) for the main editor and [http://localhost:3000/framework](http://localhost:3000/framework) for the interactive framework playground.
 
-## 🏗️ Architecture
-
-### Core Components
-
-- **Editor Core** (`/src/components/editor/Core.tsx`) - Main editor container with Lexical integration
-- **Plugins** (`/src/components/editor/plugins/`) - 40+ feature plugins for rich functionality
-- **Nodes** (`/src/components/editor/nodes/`) - 20+ custom content block types
-- **AI Integration** (`/src/components/ui/ai/`) - AI-powered writing assistance
-- **Toolbar System** - Rich formatting toolbar with contextual actions
-
-### Plugin System
-
-Notiq uses an extensible plugin architecture:
-
-```tsx
-import { Editor } from '@/components/editor'
-
-function MyApp() {
-  return (
-    <Editor
-      plugins={[
-        // Built-in plugins
-        'toolbar',
-        'slash-commands',
-        'ai-assistant',
-        'drag-drop',
-        // Custom plugins
-        MyCustomPlugin
-      ]}
-    />
-  )
-}
-```
-
-## 🎯 Use Cases
-
-- **Documentation**: Technical docs, API references, user guides
-- **Content Creation**: Blog posts, articles, marketing content
-- **Note-taking**: Personal notes, meeting minutes, research
-- **Collaborative Writing**: Team documents, shared knowledge bases
-- **Educational Content**: Tutorials, courses, interactive lessons
-
-## 🛠️ Development
-
-### Adding Custom Nodes
-
-```tsx
-import { DecoratorNode } from 'lexical'
-
-export class MyCustomNode extends DecoratorNode<JSX.Element> {
-  static getType(): string {
-    return 'my-custom-node'
-  }
-  
-  createDOM(): HTMLElement {
-    return document.createElement('div')
-  }
-  
-  decorate(): JSX.Element {
-    return <MyCustomComponent />
-  }
-}
-```
-
-### Creating Plugins
-
-```tsx
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-
-export function MyPlugin() {
-  const [editor] = useLexicalComposerContext()
-  
-  // Plugin logic here
-  
-  return null
-}
-```
-
-## 📦 Building for Production
+### Running Tests
 
 ```bash
-npm run build
-npm run start
+npm run test
+# or
+npx vitest run
 ```
+
+### Building the Package
+
+```bash
+npm run build:lib
+```
+
+---
 
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started, submitting bug reports, and suggesting enhancements.
 
-Please note that this project is released with a [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+---
 
 ## 📄 License
 
 MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
-
-- 📖 [Documentation](https://notiq-editor.vercel.app)
-- 🐛 [Report Issues](https://github.com/chinonsochikelue/notiq/issues)
-- 💬 [Discussions](https://github.com/chinonsochikelue/notiq/discussions)
-
 ---
 
-Built with ❤️ using [Lexical](https://lexical.dev/), [Next.js](https://nextjs.org/), and [OpenAI](https://openai.com/)
+Built with ❤️ by [Chinonso Chikelue (fluantiX)](https://github.com/chinonsochikelue) and the CollabChron community.

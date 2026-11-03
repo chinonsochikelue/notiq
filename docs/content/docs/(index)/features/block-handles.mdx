@@ -1,0 +1,55 @@
+---
+title: Notion Block Handles & Multi-Columns
+description: Drag-and-drop block reorganization, quick insertion, block transformations, and multi-column snapping.
+---
+
+# Notion-Style Block Handles & Multi-Columns
+
+Notiq provides native block-level manipulation inspired by Notion. Every top-level paragraph, heading, list item, or content card is accompanied by an interactive gutter handle.
+
+## Gutter Handle (`⠿`) & Quick Add (`+`)
+
+Hovering your cursor to the left of any block reveals:
+- **Drag Handle (`⠿`)**: Click and drag to reorder blocks anywhere in the document.
+- **Quick Add (`+`)**: Click to immediately insert a fresh, empty paragraph directly beneath the hovered block.
+
+---
+
+## Block Action Context Menu
+
+Clicking the drag handle (`⠿`) opens a context dropdown menu with block-level actions:
+
+1. **Turn Into Submenu**:
+   - Converts the current block into Heading 1, Heading 2, Heading 3, Bulleted List, Numbered List, Quote, or Code Block while preserving its child inline text.
+2. **Columns Layout Submenu**:
+   - **2 Columns (`1fr 1fr`)**: Wraps current block inside a responsive 2-column container.
+   - **3 Columns (`1fr 1fr 1fr`)**: Splits into 3 equal-width columns.
+3. **Ask AI (`⌘K`)**:
+   - Focuses the inline AI Command Bar on the selected block.
+4. **Duplicate**:
+   - Duplicates the node and its content immediately below.
+5. **Delete**:
+   - Removes the block from the document AST.
+
+---
+
+## Programmatic Column Commands
+
+When using the headless framework, `ColumnsLayout` provides chained commands:
+
+```tsx
+import { useEditor, StarterKit, BlocksKit } from "@collabchron/notiq";
+
+const editor = useEditor({
+  extensions: [StarterKit, BlocksKit],
+});
+
+// Split active block into 2 columns
+editor.commands.setColumns(2);
+
+// Split active block into 3 columns
+editor.commands.setColumns(3);
+
+// Using command chains
+editor.chain().focus().setColumns(2).run();
+```

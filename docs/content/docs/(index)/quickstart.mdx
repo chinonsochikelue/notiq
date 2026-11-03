@@ -1,77 +1,133 @@
 ---
 title: Quickstart
-description: Get started with Notiq in minutes.
+description: Get started with Notiq as a drop-in editor or a headless rich text framework.
 ---
 
 # Quickstart
 
-Notiq can be used as a standalone editor component in your React or Next.js projects.
+Notiq offers two primary ways to build rich text experiences in your React or Next.js applications:
+1. **Batteries-Included Drop-In Editor (`<Editor />`)**: A complete Notion-like editor with toolbars, slash commands, drag handles, AI assistance, and rich content blocks.
+2. **Headless Framework (Tiptap Alternative)**: Unstyled, fully customizable editor instance (`useEditor`, `EditorContent`, `BubbleMenu`, `FloatingMenu`, and chained commands).
 
 ## Installation
 
-Install the core package using your preferred package manager:
+Install the package and its peer dependencies using your preferred package manager:
 
 ```package-install
 @collabchron/notiq
 ```
 
-## Setup
+## Setup Styles
 
-### 1. Import Styles
+Add the Notiq styles to your root layout (e.g., `app/layout.tsx` or `pages/_app.tsx`):
 
-Add the Notiq styles to your root layout (e.g., `app/layout.tsx`):
-
-```tsx title="app/layout.tsx OR pages/_app.tsx"
+```tsx title="app/layout.tsx"
 import "@collabchron/notiq/styles.css";
 ```
 
-### 2. Basic Usage
+---
 
-Use the `Editor` component in your application:
+## Approach 1: Drop-In Editor
 
-```tsx
+Import and mount the `<Editor />` component with your preferred configuration:
+
+```tsx title="app/editor/page.tsx"
 "use client";
 
 import { Editor } from "@collabchron/notiq";
 
-export default function Page() {
+export default function EditorPage() {
   return (
-    <Editor 
-      isEditable={true}
-      aiConfig={{
-        apiEndpoint: "/api/ai",
-      }}
-      uploadConfig={{
-        uploadHandler: async (file) => {
-          // Your custom upload logic
-          return { url: "https://your-storage.com/file.png" };
-        }
-      }}
-    />
+    <main className="min-h-screen p-8">
+      <Editor 
+        isEditable={true}
+        aiConfig={{
+          apiEndpoint: "/api/ai", // Endpoint powering Cmd+K AI assistant
+        }}
+        uploadConfig={{
+          uploadHandler: async (file) => {
+            // Your custom file/image storage handler (e.g., S3, Cloudinary, EdgeStore)
+            return { url: "https://your-storage.com/file.png" };
+          }
+        }}
+      />
+    </main>
   );
 }
 ```
 
-## Local Development
+---
 
-If you want to contribute to Notiq:
+## Approach 2: Headless Framework (Tiptap-Compatible)
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/chinonsochikelue/notiq.git
-   ```
+For completely custom UI styling and headless state management:
 
-2. **Install dependencies**:
-   ```bash
-   pnpm install
-   ```
+```tsx title="app/headless/page.tsx"
+"use client";
 
-3. **Set up Environment**:
-   Create a `.env.local` with your `OPENAI_API_KEY`.
+import { useEditor, EditorContent, StarterKit, AIKit, BubbleMenu } from "@collabchron/notiq";
 
-4. **Run Dev Server**:
-   ```bash
-   pnpm dev
-   ```
+export default function HeadlessPage() {
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3] },
+      }),
+      AIKit.configure({
+        apiEndpoint: "/api/ai",
+      }),
+    ],
+    content: "<h1>Welcome to Headless Notiq</h1><p>Start writing...</p>",
+  });
 
-[Explore Features](/docs/features)
+  if (!editor) return null;
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 space-y-4">
+      {/* Custom Formatting Toolbar */}
+      <div className="flex items-center gap-2 border-b pb-3">
+        <button
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={`px-3 py-1 text-sm rounded ${
+            editor.isActive("bold") ? "bg-primary text-white" : "bg-muted"
+          }`}
+        >
+          Bold
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`px-3 py-1 text-sm rounded ${
+            editor.isActive("italic") ? "bg-primary text-white" : "bg-muted"
+          }`}
+        >
+          Italic
+        </button>
+        <button
+          onClick={() => editor.commands.openAICommandBar()}
+          className="ml-auto px-3 py-1 text-sm bg-purple-600 text-white rounded font-medium"
+        >
+          Ask AI (⌘K)
+        </button>
+      </div>
+
+      {/* Floating Selection Bubble Menu */}
+      <BubbleMenu editor={editor} showAskAI={true} />
+
+      {/* Headless Editor Content */}
+      <EditorContent editor={editor} className="prose dark:prose-invert min-h-[400px] outline-none" />
+    </div>
+  );
+}
+```
+
+---
+
+## Spatial Canvas Mode
+
+Notiq also features a Document-to-Canvas hybrid view:
+
+```tsx
+import { CanvasMode } from "@collabchron/notiq";
+
+<CanvasMode onExit={() => console.log("Exit canvas")} />
+```
