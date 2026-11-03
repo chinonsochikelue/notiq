@@ -27,7 +27,7 @@ export const linkItems: LinkItemType[] = [
   },
   {
     type: 'main',
-    url: 'https://notiq-playground.vercel.app',
+    url: '/playground',
     text: 'Playground',
   },
   {

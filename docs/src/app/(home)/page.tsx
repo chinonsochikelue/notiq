@@ -44,13 +44,22 @@ export default function LandingPage(): ReactElement {
 
           <div className="flex flex-wrap items-center justify-center gap-5 pt-6">
             <Link
-              href="/docs"
+              href="/playground"
               className={cn(
                 buttonVariants({ size: 'lg', variant: 'default' }),
                 "rounded-full h-14 px-10 text-lg bg-white text-slate-950 hover:bg-slate-200 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] transition-all hover:scale-105 font-bold"
               )}
             >
-              Start Building
+              Open Playground
+            </Link>
+            <Link
+              href="/docs"
+              className={cn(
+                buttonVariants({ size: 'lg', variant: 'outline' }),
+                "rounded-full h-14 px-8 text-lg border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 hover:text-white backdrop-blur-md transition-all hover:scale-105 font-semibold"
+              )}
+            >
+              Documentation
             </Link>
             <Link
               href="https://github.com/chinonsochikelue/notiq"

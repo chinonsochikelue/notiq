@@ -22,6 +22,7 @@ async function createNextConfig(): Promise<NextConfig> {
         typescript: {
             ignoreBuildErrors: true,
         },
+        transpilePackages: ['@collabchron/notiq'],
         serverExternalPackages: [
             'ts-morph',
             'typescript',

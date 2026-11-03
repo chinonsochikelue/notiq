@@ -1,6 +1,7 @@
 import { title } from '@/lib/layout.shared'
 import { baseUrl, createMetadata } from '@/lib/metadata'
 import '@/styles/globals.css'
+import '../../../src/styles/notiq.css'
 import type { Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Body } from './layout.client'
