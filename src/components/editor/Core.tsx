@@ -97,6 +97,10 @@ const InlineCopilotPlugin = dynamic(
   () => import("./plugins/InlineCopilotPlugin"),
   { ssr: false }
 )
+const AICommandBarPlugin = dynamic(
+  () => import("./plugins/AICommandBarPlugin"),
+  { ssr: false }
+)
 
 function EditorPlaceholder() {
   return (
@@ -288,6 +292,7 @@ export default function Core({
 
           {isEditable && <SlashCommand />}
           {isEditable && <InlineCopilotPlugin />}
+          {isEditable && <AICommandBarPlugin />}
           <CommentsPlugin />
           <VersionHistoryPlugin />
         </motion.div>

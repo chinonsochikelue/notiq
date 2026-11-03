@@ -7,6 +7,7 @@ import { NotiqProvider } from "./context";
 import { NotiqContent } from "./NotiqContent";
 import { StarterKit } from "../extensions/nodes-and-marks";
 import { BlocksKit } from "../extensions/blocks-kit";
+import { AICopilot } from "../extensions/copilot-and-collab";
 import {
   CollabProvider,
   type CollabConfig,
@@ -63,7 +64,7 @@ export function NotiqEditor({
   children,
 }: NotiqEditorProps) {
   const resolvedExtensions = useMemo(() => {
-    return extensions || [StarterKit, BlocksKit];
+    return extensions || [StarterKit, BlocksKit, AICopilot];
   }, [extensions]);
 
   const editorOptions: NotiqEditorOptions = useMemo(

@@ -11,6 +11,7 @@ import {
   NotiqEditor,
   StarterKit,
   BlocksKit,
+  AICopilot,
 } from "../../index";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -45,12 +46,13 @@ import { cn } from "../../lib/utils";
 // Headless Demo Component
 function HeadlessShowcase() {
   const editor = useNotiq({
-    extensions: [StarterKit, BlocksKit],
+    extensions: [StarterKit, BlocksKit, AICopilot],
     content: `# Headless Notiq Framework Demo
 
-Try highlighting any text here to summon the **BubbleMenu**, or click on an empty line to trigger the **FloatingMenu**!
+Try highlighting any text here to summon the **BubbleMenu** with instant **Ask AI (⌘K)**, or click on an empty line to trigger the **FloatingMenu**!
 
 - ⚡ Ultra-fast 60fps typing powered by Lexical's in-memory AST
+- 🤖 Inline AI Command Bar with streaming diff preview
 - 🔗 Fluent command chaining matching Tiptap's syntax
 - 🎨 Complete styling freedom with Tailwind CSS or any design system
 
@@ -136,6 +138,19 @@ Try highlighting any text here to summon the **BubbleMenu**, or click on an empt
               className="h-8 px-2.5"
             >
               <Code className="w-4 h-4" />
+            </Button>
+
+            <div className="w-[1px] h-6 bg-border mx-1" />
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => editor.commands.openAICommandBar()}
+              className="h-8 px-2.5 text-primary border-primary/30 hover:bg-primary/10 gap-1.5 font-medium"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span>Ask AI</span>
+              <kbd className="text-[10px] font-mono text-muted-foreground ml-1">⌘K</kbd>
             </Button>
 
             <div className="w-[1px] h-6 bg-border mx-1" />

@@ -12,7 +12,7 @@ import { ExtractedBlock } from "../../../components/editor/utils/extract-data";
 import { createOpenAI } from "@ai-sdk/openai";
 import { GoogleGenAI } from "@google/genai";
 import { createGroq } from "@ai-sdk/groq";
-import { CoreMessage, streamText } from "ai";
+import { ModelMessage, streamText } from "ai";
 
 export const maxDuration = 30;
 const MAX_TOKEN = 60000;
@@ -287,7 +287,7 @@ export async function POST(req: Request) {
 
     processedContext = context ? await processContext(context) : "";
     const systemMessage = buildSystemMessage(action as AIAction, processedContext);
-    const messages: CoreMessage[] = [
+    const messages: ModelMessage[] = [
       { role: "system", content: systemMessage },
       { role: "user", content: userQuestion || action },
     ];

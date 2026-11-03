@@ -3,6 +3,7 @@
 import React from "react";
 import { Extension } from "../extension";
 import dynamic from "next/dynamic";
+import { OPEN_AI_COMMAND_BAR_COMMAND } from "../../components/editor/plugins/AICommandBarPlugin";
 
 const InlineCopilotPlugin = dynamic(
   () => import("../../components/editor/plugins/InlineCopilotPlugin"),
@@ -14,6 +15,24 @@ const CollaborationPlugin = dynamic(
   { ssr: false }
 );
 
+const AICommandBarPlugin = dynamic(
+  () => import("../../components/editor/plugins/AICommandBarPlugin"),
+  { ssr: false }
+);
+
+export const AICommandBar = Extension.create({
+  name: "aiCommandBar",
+  plugins: () => [AICommandBarPlugin as React.ComponentType<any>],
+  addCommands: () => ({
+    openAICommandBar:
+      (payload?: { initialPrompt?: string; action?: string }) =>
+      ({ lexical }) => {
+        lexical.dispatchCommand(OPEN_AI_COMMAND_BAR_COMMAND, payload);
+        return true;
+      },
+  }),
+});
+
 export interface AICopilotOptions {
   enabled?: boolean;
 }
@@ -23,6 +42,7 @@ export const AICopilot = Extension.create<AICopilotOptions>({
   defaultOptions: {
     enabled: true,
   },
+  addExtensions: () => [AICommandBar],
   plugins: ({ options }) => {
     if (options.enabled === false) return [];
     return [InlineCopilotPlugin as React.ComponentType<any>];

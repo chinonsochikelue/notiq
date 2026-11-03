@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import type { NotiqEditor } from "../types";
 import { NotiqContext } from "./context";
 import { $getSelection, $isRangeSelection } from "lexical";
+import { Sparkles } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export interface BubbleMenuProps {
@@ -13,6 +14,7 @@ export interface BubbleMenuProps {
   children: React.ReactNode;
   shouldShow?: (props: { editor: NotiqEditor }) => boolean;
   offset?: number;
+  showAskAI?: boolean;
 }
 
 export function BubbleMenu({
@@ -21,6 +23,7 @@ export function BubbleMenu({
   children,
   shouldShow,
   offset = 8,
+  showAskAI = true,
 }: BubbleMenuProps) {
   const context = useContext(NotiqContext);
   const editor = propEditor || context.editor;
@@ -127,6 +130,21 @@ export function BubbleMenu({
         e.preventDefault();
       }}
     >
+      {showAskAI && typeof editor?.commands?.openAICommandBar === "function" && (
+        <>
+          <button
+            type="button"
+            onClick={() => editor.commands.openAICommandBar()}
+            className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-all mr-0.5"
+            title="Ask AI (⌘K)"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Ask AI</span>
+            <kbd className="text-[10px] font-mono opacity-60">⌘K</kbd>
+          </button>
+          <div className="w-[1px] h-4 bg-border/60 mx-0.5" />
+        </>
+      )}
       {children}
     </div>,
     document.body
