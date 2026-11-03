@@ -1,4 +1,5 @@
 "use client";
+import { Youtube } from '../../../ui/icons/brand-icons';
 
 import React, { useEffect, useState, useMemo, lazy, Suspense, useCallback, useRef } from "react";
 import {
@@ -40,8 +41,7 @@ import {
   AlertCircle,
   FlipHorizontal2,
   Columns2,
-  Youtube,
-  ChevronDown,
+    ChevronDown,
   Palette,
   Sparkles,
   Eraser,

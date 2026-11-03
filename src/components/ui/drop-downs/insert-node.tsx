@@ -1,7 +1,8 @@
 import { LexicalEditor } from "lexical";
 import React, { useMemo, lazy, Suspense } from "react";
 import useModal from "../models/use-model";
-import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, Figma, FileAudio, FileText, FlipHorizontal2, Image, ImagePlay, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table, Twitter, Youtube } from "lucide-react";
+import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, FileAudio, FileText, FlipHorizontal2, Image, ImagePlay, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table } from "lucide-react";
+import { Figma, Twitter, Youtube } from "../icons/brand-icons";
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import { DropDown } from ".";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "../../editor/plugins/ImagesPlugin";

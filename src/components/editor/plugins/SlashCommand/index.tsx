@@ -38,9 +38,6 @@ import {
   QuoteIcon,
   SquarePenIcon,
   StepForward,
-  Twitter,
-  Youtube,
-  Figma,
   Heading1,
   Heading2,
   Heading3,
@@ -55,6 +52,7 @@ import {
   Music,
   Paperclip,
 } from "lucide-react";
+import { Figma, Twitter, Youtube } from "../../../ui/icons/brand-icons";
 
 import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
 import { cn } from "../../../../lib/utils";

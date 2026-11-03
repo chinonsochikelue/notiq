@@ -18,7 +18,7 @@ import { INSERT_YOUTUBE_COMMAND } from '../YouTubePlugin';
 import { INSERT_TWEET_COMMAND } from '../TwitterPlugin';
 import { Button } from "../../../ui/button";
 import { Input } from "../../../ui/input";
-import { Twitter, Youtube, Figma } from 'lucide-react';
+import { Twitter, Youtube, Figma } from '../../../ui/icons/brand-icons';
 import useModal from "../../../ui/models/use-model";
 
 interface PlaygroundEmbedConfig extends EmbedConfig {

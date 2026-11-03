@@ -9,14 +9,74 @@ import {
   KEY_DOWN_COMMAND,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import { Sparkles, Loader2, Check, X } from "lucide-react";
+import { Sparkles, Loader2 } from "lucide-react";
 import { cn } from "../../../../lib/utils";
 
-interface CaretCoordinates {
+export interface CaretCoordinates {
   x: number;
   y: number;
   height: number;
   maxWidth: number;
+  isNextLine: boolean;
+}
+
+/**
+ * Pure helper function to compute safe, non-overflowing positioning for AI copilot ghost text.
+ */
+export function computeCopilotPositioning({
+  caretRect,
+  rootRect,
+  paddingLeft,
+  paddingRight,
+  windowWidth,
+  suggestionText,
+  rightObstacleLeft,
+}: {
+  caretRect: { right: number; top: number; bottom: number; height: number };
+  rootRect: { left: number; right: number; width: number };
+  paddingLeft: number;
+  paddingRight: number;
+  windowWidth: number;
+  suggestionText: string;
+  rightObstacleLeft?: number;
+}): CaretCoordinates {
+  // Safe right boundary: bounded by editor text padding, window safe margin, and right obstacles
+  const editorContentRight = rootRect.right - paddingRight;
+  const windowSafeRight = windowWidth - 64; // At least 64px from viewport edge
+  const effectiveObstacleRight =
+    rightObstacleLeft && rightObstacleLeft > 0
+      ? rightObstacleLeft - 16
+      : windowSafeRight;
+
+  const maxRight = Math.min(editorContentRight, windowSafeRight, effectiveObstacleRight);
+  const availableWidthOnLine = maxRight - caretRect.right;
+
+  // Approximate rendered text width: ~8.2px per character + 95px Tab badge + buffer
+  const estimatedSuggestionWidth = suggestionText.length * 8.2 + 105;
+
+  // If remaining width is too narrow (< 240px) OR suggestion won't fit on this line:
+  const shouldWrapToNextLine =
+    availableWidthOnLine < 240 || estimatedSuggestionWidth > availableWidthOnLine;
+
+  if (shouldWrapToNextLine) {
+    const nextLineStartX = rootRect.left + paddingLeft;
+    const nextLineMaxWidth = Math.max(160, maxRight - nextLineStartX - 8);
+    return {
+      x: nextLineStartX,
+      y: caretRect.bottom + 3,
+      height: caretRect.height || 22,
+      maxWidth: nextLineMaxWidth,
+      isNextLine: true,
+    };
+  } else {
+    return {
+      x: caretRect.right,
+      y: caretRect.top,
+      height: caretRect.height || 22,
+      maxWidth: Math.max(80, availableWidthOnLine - 8),
+      isNextLine: false,
+    };
+  }
 }
 
 export default function InlineCopilotPlugin({
@@ -64,9 +124,70 @@ export default function InlineCopilotPlugin({
     });
   };
 
+  const getRightObstacleLeft = useCallback((): number | undefined => {
+    if (typeof window === "undefined") return undefined;
+    let obstacleLeft = window.innerWidth - 64;
+
+    // Check for fixed floating analytics toggle or sidebars
+    const fixedElements = document.querySelectorAll<HTMLElement>(
+      '[data-comments-sidebar="true"], [data-version-drawer="true"], .fixed.right-4, aside'
+    );
+    fixedElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.left > 0 && rect.left < obstacleLeft) {
+        obstacleLeft = rect.left;
+      }
+    });
+
+    return obstacleLeft;
+  }, []);
+
+  const calculateCurrentCaretCoords = useCallback(
+    (cleanText: string): CaretCoordinates | null => {
+      if (typeof window === "undefined") return null;
+
+      const domSelection = window.getSelection();
+      if (!domSelection || domSelection.rangeCount === 0) return null;
+
+      const range = domSelection.getRangeAt(0);
+      const caretRect = range.getBoundingClientRect();
+      if (!caretRect || caretRect.top <= 0) return null;
+
+      const rootElement = editor.getRootElement();
+      if (!rootElement) return null;
+
+      const rootRect = rootElement.getBoundingClientRect();
+      const style = window.getComputedStyle(rootElement);
+      const paddingLeft = parseFloat(style.paddingLeft) || 16;
+      const paddingRight = parseFloat(style.paddingRight) || 16;
+
+      const rightObstacle = getRightObstacleLeft();
+
+      return computeCopilotPositioning({
+        caretRect: {
+          right: caretRect.right,
+          top: caretRect.top,
+          bottom: caretRect.bottom,
+          height: caretRect.height,
+        },
+        rootRect: {
+          left: rootRect.left,
+          right: rootRect.right,
+          width: rootRect.width,
+        },
+        paddingLeft,
+        paddingRight,
+        windowWidth: window.innerWidth,
+        suggestionText: cleanText,
+        rightObstacleLeft: rightObstacle,
+      });
+    },
+    [editor, getRightObstacleLeft]
+  );
+
   // Fetch completion from AI endpoint
   const fetchCompletion = useCallback(
-    async (textBeforeCursor: string, coords: CaretCoordinates) => {
+    async (textBeforeCursor: string) => {
       if (!isEnabledRef.current || !textBeforeCursor || textBeforeCursor.length < 12) {
         return;
       }
@@ -118,11 +239,27 @@ export default function InlineCopilotPlugin({
 
         if (clean && clean.length > 3) {
           // Add leading space if needed
-          if (!textBeforeCursor.endsWith(" ") && !clean.startsWith(" ") && !clean.startsWith(",") && !clean.startsWith(".")) {
+          if (
+            !textBeforeCursor.endsWith(" ") &&
+            !clean.startsWith(" ") &&
+            !clean.startsWith(",") &&
+            !clean.startsWith(".")
+          ) {
             clean = " " + clean;
           }
-          setSuggestion(clean);
-          setCaretCoords(coords);
+
+          editor.getEditorState().read(() => {
+            const selection = $getSelection();
+            if ($isRangeSelection(selection) && selection.isCollapsed()) {
+              const coords = calculateCurrentCaretCoords(clean);
+              if (coords) {
+                setSuggestion(clean);
+                setCaretCoords(coords);
+                return;
+              }
+            }
+            clearSuggestion();
+          });
         } else {
           clearSuggestion();
         }
@@ -136,7 +273,7 @@ export default function InlineCopilotPlugin({
         }
       }
     },
-    [clearSuggestion]
+    [clearSuggestion, calculateCurrentCaretCoords, editor]
   );
 
   // Monitor editor typing and pause detection
@@ -174,52 +311,37 @@ export default function InlineCopilotPlugin({
             return;
           }
 
-          // Calculate DOM caret coordinates and container bounds
-          if (typeof window !== "undefined") {
-            const domSelection = window.getSelection();
-            if (domSelection && domSelection.rangeCount > 0) {
-              const range = domSelection.getRangeAt(0);
-              const rect = range.getBoundingClientRect();
-              if (rect && rect.top > 0) {
-                const rootElement = editor.getRootElement();
-                let maxRight = window.innerWidth - 20;
-                let paddingLeft = 16;
-                let paddingRight = 16;
-                let rootRect: DOMRect | null = null;
-
-                if (rootElement) {
-                  rootRect = rootElement.getBoundingClientRect();
-                  const style = window.getComputedStyle(rootElement);
-                  paddingLeft = parseFloat(style.paddingLeft) || 16;
-                  paddingRight = parseFloat(style.paddingRight) || 16;
-                  maxRight = Math.min(rootRect.right - paddingRight, window.innerWidth - 20);
-                }
-
-                const availableWidthOnLine = maxRight - rect.right;
-
-                // If caret is too close to line end (< 140px), wrap preview to start of next line
-                if (availableWidthOnLine < 140 && rootRect) {
-                  fetchCompletion(textBeforeCursor, {
-                    x: rootRect.left + paddingLeft,
-                    y: rect.bottom + 2,
-                    height: rect.height || 20,
-                    maxWidth: Math.max(160, rootRect.width - paddingLeft - paddingRight - 8),
-                  });
-                } else {
-                  fetchCompletion(textBeforeCursor, {
-                    x: rect.right,
-                    y: rect.top,
-                    height: rect.height || 20,
-                    maxWidth: Math.max(80, availableWidthOnLine - 8),
-                  });
-                }
-              }
-            }
-          }
+          fetchCompletion(textBeforeCursor);
         });
       }, 750); // 750ms pause debounce
     });
   }, [editor, clearSuggestion, fetchCompletion]);
+
+  // Reposition or dismiss ghost text when window or editor scrolls / resizes
+  useEffect(() => {
+    if (!suggestion) return;
+
+    const handleReposition = () => {
+      editor.getEditorState().read(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection) && selection.isCollapsed()) {
+          const coords = calculateCurrentCaretCoords(suggestion);
+          if (coords) {
+            setCaretCoords(coords);
+            return;
+          }
+        }
+        clearSuggestion();
+      });
+    };
+
+    window.addEventListener("scroll", handleReposition, { passive: true });
+    window.addEventListener("resize", handleReposition, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleReposition);
+      window.removeEventListener("resize", handleReposition);
+    };
+  }, [suggestion, editor, clearSuggestion, calculateCurrentCaretCoords]);
 
   // Handle Tab to accept and Esc to dismiss
   useEffect(() => {
@@ -297,10 +419,25 @@ export default function InlineCopilotPlugin({
             zIndex: 45,
             pointerEvents: "none",
           }}
-          className="inline-flex items-baseline text-muted-foreground/60 dark:text-muted-foreground/50 italic select-none font-normal animate-in fade-in-50 duration-150 overflow-hidden"
+          className={cn(
+            "inline-flex items-center text-muted-foreground/60 dark:text-muted-foreground/50 select-none font-normal animate-in fade-in-50 duration-150 overflow-hidden",
+            caretCoords.isNextLine &&
+              "py-0.5 px-1.5 rounded-md bg-muted/20 border border-border/40 backdrop-blur-xs shadow-xs"
+          )}
         >
-          <span className="truncate min-w-0 flex-1">{suggestion}</span>
-          <span className="inline-flex items-center gap-1 ml-2 px-1.5 py-0.2 rounded text-[10px] bg-background/90 text-foreground border border-border shadow-xs not-italic font-mono font-medium backdrop-blur-xs pointer-events-auto shrink-0">
+          {caretCoords.isNextLine && (
+            <span className="text-[10px] not-italic text-muted-foreground/50 font-mono select-none mr-1.5 shrink-0">
+              ↵
+            </span>
+          )}
+          <span className="truncate min-w-0 flex-1 italic whitespace-pre">
+            {caretCoords.isNextLine
+              ? suggestion.trimStart()
+              : suggestion.startsWith(" ")
+                ? "\u00A0" + suggestion.slice(1)
+                : suggestion}
+          </span>
+          <span className="inline-flex items-center gap-1 ml-2 px-1.5 py-0.5 rounded text-[10px] bg-background/95 text-foreground border border-border/80 shadow-xs not-italic font-mono font-medium backdrop-blur-xs pointer-events-auto shrink-0">
             <span>Tab</span>
             <span className="text-[9px] text-muted-foreground">⇥ accept</span>
           </span>

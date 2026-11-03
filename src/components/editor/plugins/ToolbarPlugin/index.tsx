@@ -48,7 +48,8 @@ import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { $isTableNode, $isTableSelection } from "@lexical/table";
 import { $isListNode, ListNode } from "@lexical/list";
 import { $isHeadingNode } from "@lexical/rich-text";
-import { $isCodeNode, CODE_LANGUAGE_MAP } from "@lexical/code";
+import { $isCodeNode } from '@lexical/code';
+import { getLanguageFriendlyName } from '../../utils/codeLanguages';
 import dynamic from "next/dynamic.js";
 import { Toggle } from "../../../ui/toggle";
 import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
@@ -174,11 +175,10 @@ export default function ToolbarPlugin({
               );
             }
             if ($isCodeNode(element)) {
-              const language =
-                element.getLanguage() as keyof typeof CODE_LANGUAGE_MAP;
+              const language = element.getLanguage() || "";
               updateToolbarState(
                 "codeLanguage",
-                language ? CODE_LANGUAGE_MAP[language] || language : ""
+                getLanguageFriendlyName(language)
               );
               return;
             }

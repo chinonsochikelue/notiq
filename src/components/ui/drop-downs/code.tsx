@@ -1,19 +1,9 @@
 import React from "react";
-import {
-  CODE_LANGUAGE_FRIENDLY_NAME_MAP,
-  getLanguageFriendlyName,
-} from "@lexical/code";
 import { DropDown } from ".";
-
-function getCodeLanguageOptions(): [string, string][] {
-  const options: [string, string][] = [];
-  for (const [lang, friendlyName] of Object.entries(
-    CODE_LANGUAGE_FRIENDLY_NAME_MAP
-  )) {
-    options.push([lang, friendlyName]);
-  }
-  return options;
-}
+import {
+  getCodeLanguageOptions,
+  getLanguageFriendlyName,
+} from "../../editor/utils/codeLanguages";
 
 export default function CodeList({
   onCodeLanguageSelect,
@@ -26,8 +16,8 @@ export default function CodeList({
 }) {
   const CODE_LANGUAGE_OPTIONS = getCodeLanguageOptions();
 
-  const languageButtons = CODE_LANGUAGE_OPTIONS.map(([lang]) => ({
-    label: lang,
+  const languageButtons = CODE_LANGUAGE_OPTIONS.map(([lang, friendlyName]) => ({
+    label: friendlyName || lang,
     func: () => onCodeLanguageSelect(lang),
   }));
 
