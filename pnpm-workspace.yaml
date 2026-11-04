@@ -2,3 +2,13 @@ packages:
   - '.'
   - 'docs'
   - 'examples/*'
+allowBuilds:
+  '@google/genai': set this to true or false
+  '@parcel/watcher': set this to true or false
+  better-sqlite3: set this to true or false
+  core-js: set this to true or false
+  esbuild: set this to true or false
+  lefthook: set this to true or false
+  msw: set this to true or false
+  protobufjs: set this to true or false
+  vue-demi: set this to true or false

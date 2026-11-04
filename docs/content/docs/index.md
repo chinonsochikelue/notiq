@@ -1,0 +1,57 @@
+---
+title: Documentation Overview
+description: Welcome to the Notiq documentation. Learn how to integrate, customize, and extend the Notiq rich text and spatial canvas framework.
+---
+
+# Notiq Documentation
+
+Welcome to the official documentation for **Notiq** — the modern headless rich text editor and infinite spatial canvas framework built on Meta's Lexical runtime.
+
+Whether you are building a Notion-style block document editor, a Google Docs-like collaborative workspace, or an infinite spatial canvas like Miro or Heptabase, Notiq provides an enterprise-grade, un-opinionated engine to bring your vision to life.
+
+---
+
+## Why Notiq?
+
+Rich text editing in web applications has historically been fraught with browser quirks, contenteditable desynchronization, and sluggish reconciliation loops. Tiptap revolutionized the space by wrapping ProseMirror in a headless API, but ProseMirror's legacy DOM-centric model struggles with high-node block trees, real-time spatial transformations, and mobile IME inputs.
+
+Notiq builds directly on **Meta's Lexical** engine while providing the clean, fluent, chainable developer experience that developers love:
+
+- **60% Lower Input Latency**: Sub-6ms keystroke updates on documents exceeding 20,000 words.
+- **Fluent Chained Transactions**: `editor.chain().focus().toggleBold().run()`
+- **First-Class Notion Blocks**: Native drag handles, 6-dot grips, slash menus, toggle lists, columns, callouts.
+- **Unified Document + Canvas**: Flip any linear document into a 2D spatial whiteboard with pan and zoom.
+- **Turnkey Yjs Collaboration**: Distributed CRDTs with presence awareness, cursor indicators, and offline sync.
+- **Contextual AI Copilots**: Inline streaming completions, tone rewriting, and LLM adapter interfaces.
+
+---
+
+## Documentation Map
+
+Explore the sections below to get up and running:
+
+### 1. Getting Started
+- [Quickstart](/docs/getting-started/quickstart): Install Notiq and create your first editor in under 60 seconds.
+- [Architecture](/docs/getting-started/architecture): Understand the Lexical reconciliation pipeline, AST design, and state lifecycle.
+
+### 2. Headless Framework
+- [Core Concepts](/docs/headless-framework/core-concepts): Master `useNotiq`, `NotiqContent`, reactivity, and editor instances.
+- [Chained Commands](/docs/headless-framework/chained-commands): Execute fluent mutations, command chains, and queries.
+- [Extensions](/docs/headless-framework/extensions): Author custom nodes, marks, commands, and plugins with `Extension.create()`.
+
+### 3. Features & Kits
+- [Notion-Style Blocks](/docs/features/notion-blocks): Slash command palette, block grips, multi-column blocks, callouts.
+- [Spatial Canvas Mode](/docs/features/canvas-mode): Interactive infinite 2D canvas, panning, zooming, and node linking.
+- [AI Copilot](/docs/features/ai-copilot): Streaming text completions, action menus, and custom LLM providers.
+- [Real-Time Collaboration](/docs/features/collaboration): Yjs WebSockets, multi-user cursors, and presence synchronization.
+
+### 4. Comparisons
+- [Notiq vs Tiptap](/docs/comparisons/notiq-vs-tiptap): Detailed technical comparison, benchmark results, and migration guide.
+
+### 5. API Reference
+- [NotiqEditor Instance](/docs/api-reference/editor-instance): Methods, getters, events, and configuration options.
+- [StarterKit](/docs/api-reference/starter-kit): Built-in formatting extensions and configuration options.
+- [BlocksKit](/docs/api-reference/blocks-kit): Notion block nodes, handle configuration, and keyboard shortcuts.
+
+### 6. Interactive Playground
+- [Playground](/docs/playground): Test Notiq in live interactive sandboxes right in the browser.
