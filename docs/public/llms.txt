@@ -1,0 +1,42 @@
+# Notiq — Headless Rich Text & Spatial Canvas Framework
+
+> Notiq is a modern, enterprise-grade headless rich text editor and infinite 2D spatial canvas framework built on Meta's Lexical runtime, Next.js, React 19, TypeScript, and Tailwind CSS. It combines fluent Tiptap-like command chaining, Notion-style drag-and-drop modular blocks, infinite whiteboard canvas nodes, and sub-millisecond Yjs multiplayer collaboration.
+
+## Core Features
+- **Meta Lexical Engine Foundation**: Double-buffered AST state guarantees zero DOM corruption, atomic transaction history, and sub-millisecond input latency.
+- **Fluent Chained Commands**: `editor.chain().focus().toggleBold().run()` syntax eliminates manual event dispatching and brittle selection ranges.
+- **Notion-Style BlocksKit**: Native 6-dot drag handles, slash command palette (`/`), multi-column drag-and-drop layouts, collapsible callouts, and quote blocks without paid pro licenses.
+- **2D Infinite Spatial Canvas**: Seamless toggle between standard linear document mode and infinite zoomable/pannable spatial whiteboard viewports.
+- **Multiplayer CRDT Collaboration**: Native Yjs integration with real-time remote cursor tracking, awareness presence, and offline persistence.
+- **Generative AI Copilot**: Streaming LLM prompt completion, contextual summarization, translation, and tone rewriting.
+
+## Documentation Index
+
+### Getting Started
+- [/docs/introduction](https://notiq.dev/docs/introduction): Overview of Notiq architecture, philosophy, and advantages over Tiptap and ProseMirror.
+- [/docs/installation](https://notiq.dev/docs/installation): Package installation with pnpm, npm, yarn, or bun, basic editor setup, and Tailwind CSS configuration.
+- [/docs/project-structure](https://notiq.dev/docs/project-structure): Monorepo hierarchy, subpath exports (`/starter-kit`, `/blocks`, `/collab`), and bundle tree-shaking.
+- [/docs/troubleshooting](https://notiq.dev/docs/troubleshooting): Resolution for SSR hydration mismatches, Lexical peer dependencies, and Yjs WebSockets.
+
+### Core Architecture
+- [/docs/core-concepts/core-concepts](https://notiq.dev/docs/core-concepts/core-concepts): Deep dive into `useNotiq`, `NotiqContent`, reactive state snapshots, and read/update cycles.
+- [/docs/core-concepts/chained-commands](https://notiq.dev/docs/core-concepts/chained-commands): Chained command builder, dry-run query execution (`editor.can().toggleBold()`), and batch transactions.
+- [/docs/core-concepts/extensions](https://notiq.dev/docs/core-concepts/extensions): Authoring modular extensions via `Extension.create()`, registering nodes, marks, commands, and keyboard shortcuts.
+- [/docs/core-concepts/architecture](https://notiq.dev/docs/core-concepts/architecture): Lexical double-buffering AST architecture, dirty node tracking, and reconciliation flow.
+
+### Features & Kits
+- [/docs/features/notion-blocks](https://notiq.dev/features/notion-blocks): Notion 6-dot drag handles, slash command palette, multi-columns, and callout blocks.
+- [/docs/features/canvas-mode](https://notiq.dev/features/canvas-mode): Infinite 2D spatial canvas with pan, zoom, draggable note cards, and relationship connector links.
+- [/docs/features/ai-copilot](https://notiq.dev/features/ai-copilot): Streaming completions, contextual action menus, and LLM integrations.
+- [/docs/features/collaboration](https://notiq.dev/features/collaboration): Real-time collaboration with Yjs, awareness avatars, remote carets, and WebSocket servers.
+
+### Comparisons & Benchmarks
+- [/docs/comparisons/notiq-vs-tiptap](https://notiq.dev/comparisons/notiq-vs-tiptap): Comprehensive comparison against Tiptap v2 detailing performance, bundle weight, open-source block handles, and memory benchmarks.
+
+### API Reference
+- [/docs/api-reference/editor-instance](https://notiq.dev/api-reference/editor-instance): Complete methods and state properties of the `NotiqEditor` class.
+- [/docs/api-reference/starter-kit](https://notiq.dev/api-reference/starter-kit): Pre-bundled typography, list, code block, and history extensions.
+- [/docs/api-reference/blocks-kit](https://notiq.dev/api-reference/blocks-kit): BlocksKit configuration options, drag-handle callbacks, and custom block definitions.
+
+### Interactive Sandbox
+- [/docs/playground](https://notiq.dev/docs/playground): Live embedded sandbox editor with spatial canvas toggle, AST inspector, and real-time collaboration testbed.
