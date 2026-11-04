@@ -79,17 +79,21 @@ export default function DraggableBlockPlugin({
     if (!targetElem) return null;
 
     let targetNode: LexicalNode | null = null;
-    editor.getEditorState().read(() => {
+    const resolve = () => {
       const node = $getNearestNodeFromDOMNode(targetElem);
       if (node) {
         targetNode =
           node.getKey() === "root"
             ? node
-            : $isElementNode(node)
-            ? node
-            : node.getTopLevelElement();
+            : node.getTopLevelElement() || ($isElementNode(node) ? node : null);
       }
-    });
+    };
+
+    try {
+      resolve();
+    } catch {
+      editor.read(resolve);
+    }
 
     return targetNode;
   }, [editor]);
