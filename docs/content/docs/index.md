@@ -1,6 +1,8 @@
 ---
 title: Documentation Overview
 description: Welcome to the Notiq documentation. Learn how to integrate, customize, and extend the Notiq rich text and spatial canvas framework.
+navigation:
+  icon: i-lucide-book-open
 ---
 
 # Notiq Documentation
