@@ -49,12 +49,6 @@ export default defineAppConfig({
           label: 'Notiq vs Tiptap',
           to: '/docs/comparisons/notiq-vs-tiptap',
         },
-        {
-          icon: 'i-simple-icons-nuxtdotjs',
-          label: 'Nuxt UI & Content',
-          to: 'https://ui.nuxt.com',
-          target: '_blank',
-        },
       ],
     },
   },

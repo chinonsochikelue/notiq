@@ -1,0 +1,63 @@
+/* ==========================================================================
+   Notiq Documentation — Global Scrollbar Hiding
+   Hides scrollbars across all viewports, sidebars, and code containers
+   while preserving full touch, trackpad, mouse wheel, and keyboard scrolling.
+   ========================================================================== */
+
+/* Modern Standard Baseline (Firefox, Chrome 121+, Safari 18.2+, Edge) */
+html,
+body,
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* WebKit / Chromium Legacy Fallback (Safari, older Chrome, iOS WebKit) */
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+
+/* Explicit targeting for scrollable documentation regions */
+aside,
+main,
+nav,
+pre,
+code,
+[data-slot="aside"],
+[data-slot="body"],
+[data-slot="content"],
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-auto,
+.docus-aside-left,
+.docus-aside-right {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+aside::-webkit-scrollbar,
+main::-webkit-scrollbar,
+nav::-webkit-scrollbar,
+pre::-webkit-scrollbar,
+code::-webkit-scrollbar,
+[data-slot="aside"]::-webkit-scrollbar,
+[data-slot="body"]::-webkit-scrollbar,
+[data-slot="content"]::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-auto::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
