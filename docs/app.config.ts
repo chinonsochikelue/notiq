@@ -8,13 +8,30 @@ export default defineAppConfig({
     fluid: true,
   },
   socials: {
+    x: 'https://x.com/notiq_editor',
+    discord: 'https://discord.gg/notiq',
     github: 'https://github.com/chinonsochikelue/notiq',
   },
   github: {
+    url: 'https://github.com/chinonsochikelue/notiq',
+    branch: 'main',
     rootDir: 'docs',
   },
+  assistant: {
+    floatingInput: true,
+    explainWithAi: true,
+    shortcuts: {
+      focusInput: 'meta_i',
+    },
+    icons: {
+      trigger: 'i-lucide-sparkles',
+      explain: 'i-lucide-brain',
+    },
+  },
   toc: {
+    title: 'On this page',
     bottom: {
+      title: 'Community',
       links: [
         {
           icon: 'i-lucide-play',
@@ -32,12 +49,18 @@ export default defineAppConfig({
           label: 'Notiq vs Tiptap',
           to: '/docs/comparisons/notiq-vs-tiptap',
         },
+        {
+          icon: 'i-simple-icons-nuxtdotjs',
+          label: 'Nuxt UI & Content',
+          to: 'https://ui.nuxt.com',
+          target: '_blank',
+        },
       ],
     },
   },
   ui: {
     colors: {
-      primary: 'violet',
+      primary: 'emerald',
       neutral: 'zinc',
     },
     pageHero: {

@@ -1,6 +1,12 @@
 export default defineNuxtConfig({
   extends: ['docus'],
+  modules: ['./node_modules/docus/modules/assistant'],
   devtools: { enabled: true },
+  docus: {
+    assistant: {
+      enabled: true,
+    },
+  },
   site: {
     name: 'Notiq',
   },
