@@ -55,6 +55,9 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
   :::
 ::
 
+::floating-notiq
+::
+
 ::u-page-section
   :::u-page-grid
     ::::u-page-card
@@ -64,7 +67,8 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
     target: _blank
     to: /docs/features/canvas-mode
     ---
-      <img src="/hero-banner.jpg" alt="Notiq Spatial Canvas & Notion Blocks" class="w-full h-80 object-cover rounded-lg shadow-xl border border-zinc-800" />
+      ::spatial-canvas-svg
+      ::
 
     #title
     Unified Document + [Spatial Canvas]{.text-primary}
@@ -77,34 +81,16 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
     ---
     spotlight: true
     class: col-span-2 lg:col-span-1
-    to: /docs/headless-framework/chained-commands
+    to: /docs/getting-started/architecture
     ---
-      :::::tabs
-        ::::::tabs-item{.mt-4 icon="i-lucide-code" label="Notiq Fluent Chain"}
-```ts
-editor
-  .chain()
-  .focus()
-  .toggleBold()
-  .toggleHeading({ level: 2 })
-  .run()
-```
-        ::::::
-        ::::::tabs-item{.mt-4 icon="i-lucide-layers" label="React Hook"}
-```tsx
-const editor = useNotiq({
-  extensions: [StarterKit, BlocksKit],
-  content: '<p>Hello Notiq!</p>',
-})
-```
-        ::::::
-      :::::
+      ::lexical-engine-svg
+      ::
 
     #title
-    Fluent [Chainable Transactions]{.text-primary}
+    [Sub-6ms Speed]{.text-primary} with Lexical AST
 
     #description
-    Batch mutations into atomic Lexical transactions. Zero DOM corruption, instant undo/redo, and complete TypeScript safety.
+    Double-buffered reconciliation and dirty bitmask diffing. Keystrokes render in under 6ms on 10,000+ word documents.
     ::::
 
     ::::u-page-card
@@ -113,25 +99,14 @@ const editor = useNotiq({
     class: col-span-2 lg:col-span-1
     to: /docs/features/notion-blocks
     ---
-      :::::tabs
-        ::::::tabs-item{.mt-4 icon="i-lucide-grip-vertical" label="Handles & Slash"}
-          :::::::div{.flex.flex-col.gap-3}
-            ::::::::note{.my-0}
-            **6-Dot Grip**: Hover over any block to drag & drop or transform.
-            ::::::::
-
-            ::::::::tip{.my-0}
-            **Slash Menu**: Press `/` on any blank line to insert blocks.
-            ::::::::
-          :::::::
-        ::::::
-      :::::
+      ::notion-blocks-svg
+      ::
 
     #title
     First-Class [Notion Blocks]{.text-primary}
 
     #description
-    Block drag handles, multi-column grids, callouts, and collapsible toggles are 100% open-source and built-in — no paid Pro licenses required.
+    6-dot drag handles, block reordering, multi-column layouts, callouts, and slash menus are 100% open-source and built-in.
     ::::
 
     ::::u-page-card
@@ -140,18 +115,8 @@ const editor = useNotiq({
     class: col-span-2 lg:col-span-1
     to: /docs/features/collaboration
     ---
-      :::::tabs
-        ::::::tabs-item{.mt-4 icon="i-lucide-users" label="Multiplayer Yjs"}
-```tsx
-const editor = useNotiq({
-  extensions: [
-    StarterKit,
-    CollabKit.configure({ document: ydoc }),
-  ],
-})
-```
-        ::::::
-      :::::
+      ::collab-cursors-svg
+      ::
 
     #title
     Real-Time [Yjs Collaboration]{.text-primary}
@@ -166,27 +131,53 @@ const editor = useNotiq({
     class: col-span-2 lg:col-span-1
     to: /docs/features/ai-copilot
     ---
-      :::::tabs
-        ::::::tabs-item{.mt-4 icon="i-lucide-sparkles" label="Streaming Copilot"}
-```tsx
-const editor = useNotiq({
-  extensions: [
-    StarterKit,
-    AiKit.configure({
-      endpoint: '/api/ai/complete',
-      model: 'gemini-2.5-flash',
-    }),
-  ],
-})
-```
-        ::::::
-      :::::
+      ::ai-copilot-svg
+      ::
 
     #title
     Generative [AI Copilot]{.text-primary}
 
     #description
     Inline streaming completions, tone rewriting, summarization, and contextual prompt actions with pluggable LLM adapters.
+    ::::
+
+    ::::u-page-card
+    ---
+    spotlight: true
+    class: col-span-2
+    to: /docs/headless-framework/chained-commands
+    ---
+      :::::tabs
+        ::::::tabs-item{.mt-4 icon="i-lucide-code" label="Notiq Fluent Chain"}
+```ts
+editor
+  .chain()
+  .focus()
+  .toggleBold()
+  .toggleHeading({ level: 2 })
+  .run()
+```
+        ::::::
+        ::::::tabs-item{.mt-4 icon="i-lucide-layers" label="React useNotiq Hook"}
+```tsx
+const editor = useNotiq({
+  extensions: [StarterKit, BlocksKit, CanvasKit],
+  content: '<p>Next-gen editing experience.</p>',
+})
+```
+        ::::::
+        ::::::tabs-item{.mt-4 icon="i-lucide-sparkles" label="Streaming AI Action"}
+```ts
+editor.chain().focus().aiPrompt({ prompt: 'Summarize key points' }).run()
+```
+        ::::::
+      :::::
+
+    #title
+    Fluent [Chainable Transactions]{.text-primary}
+
+    #description
+    Batch mutations into atomic Lexical transactions. Zero DOM corruption, instant undo/redo, and complete TypeScript safety.
     ::::
 
     ::::u-page-card
