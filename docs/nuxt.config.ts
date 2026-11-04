@@ -11,6 +11,15 @@ export default defineNuxtConfig({
   site: {
     name: 'Notiq',
   },
+  routeRules: {
+    '/docs': { redirect: { to: '/docs/introduction', statusCode: 301 } },
+    '/docs/': { redirect: { to: '/docs/introduction', statusCode: 301 } },
+    '/docs/getting-started/quickstart': { redirect: { to: '/docs/installation', statusCode: 301 } },
+    '/docs/getting-started/architecture': { redirect: { to: '/docs/core-concepts/architecture', statusCode: 301 } },
+    '/docs/headless-framework/core-concepts': { redirect: { to: '/docs/core-concepts/core-concepts', statusCode: 301 } },
+    '/docs/headless-framework/chained-commands': { redirect: { to: '/docs/core-concepts/chained-commands', statusCode: 301 } },
+    '/docs/headless-framework/extensions': { redirect: { to: '/docs/core-concepts/extensions', statusCode: 301 } },
+  },
   mdc: {
     highlight: {
       shikiEngine: 'javascript',

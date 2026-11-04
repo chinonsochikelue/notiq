@@ -16,7 +16,7 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
   ---
   color: primary
   size: xl
-  to: /docs/getting-started/quickstart
+  to: /docs/installation
   trailing-icon: i-lucide-arrow-right
   ---
   Get started
@@ -81,7 +81,7 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
     ---
     spotlight: true
     class: col-span-2 lg:col-span-1
-    to: /docs/getting-started/architecture
+    to: /docs/core-concepts/architecture
     ---
       ::lexical-engine-svg
       ::
@@ -145,7 +145,7 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
     ---
     spotlight: true
     class: col-span-2
-    to: /docs/headless-framework/chained-commands
+    to: /docs/core-concepts/chained-commands
     ---
       :::::tabs
         ::::::tabs-item{.mt-4 icon="i-lucide-code" label="Notiq Fluent Chain"}
@@ -200,7 +200,7 @@ editor.chain().focus().aiPrompt({ prompt: 'Summarize key points' }).run()
     ---
     spotlight: true
     class: col-span-2
-    to: /docs/getting-started/quickstart
+    to: /docs/introduction
     ---
       :::::div{.flex-1.flex.flex-col.items-center.justify-center.py-8.text-center}
         ::::::div{.flex.flex-col.gap-3.w-full.max-w-xs}
@@ -209,7 +209,7 @@ editor.chain().focus().aiPrompt({ prompt: 'Summarize key points' }).run()
           block: true
           color: primary
           size: lg
-          to: /docs/getting-started/quickstart
+          to: /docs/installation
           trailing-icon: i-lucide-arrow-right
           ---
           Read Documentation

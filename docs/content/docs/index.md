@@ -1,0 +1,41 @@
+---
+title: Introduction
+description: Welcome to the Notiq documentation. Learn how to integrate, customize, and extend the Notiq rich text and spatial canvas framework.
+navigation:
+  icon: i-lucide-home
+---
+
+# Introduction
+
+Welcome to the official documentation for **Notiq** — the modern headless rich text editor and infinite spatial canvas framework built on Meta's Lexical runtime.
+
+Whether you are building a Notion-style block document editor, a Google Docs-like collaborative workspace, or an infinite spatial canvas like Miro or Heptabase, Notiq provides an enterprise-grade, un-opinionated engine to bring your vision to life.
+
+---
+
+## Why Notiq?
+
+Rich text editing in web applications has historically been fraught with browser quirks, contenteditable desynchronization, and sluggish reconciliation loops. Tiptap revolutionized the space by wrapping ProseMirror in a headless API, but ProseMirror's legacy DOM-centric model struggles with high-node block trees, real-time spatial transformations, and mobile IME inputs.
+
+Notiq builds directly on **Meta's Lexical** engine while providing the clean, fluent, chainable developer experience that developers love:
+
+- **60% Lower Input Latency**: Sub-6ms keystroke updates on documents exceeding 20,000 words.
+- **Fluent Chained Transactions**: `editor.chain().focus().toggleBold().run()`
+- **First-Class Notion Blocks**: Native drag handles, 6-dot grips, slash menus, toggle lists, columns, callouts.
+- **Unified Document + Canvas**: Flip any linear document into a 2D spatial whiteboard with pan and zoom.
+- **Turnkey Yjs Collaboration**: Distributed CRDTs with presence awareness, cursor indicators, and offline sync.
+- **Contextual AI Copilots**: Inline streaming completions, tone rewriting, and LLM adapter interfaces.
+
+---
+
+## Quick Navigation
+
+- [Installation](/docs/installation): Install Notiq and create your first editor in under 60 seconds.
+- [Project Structure](/docs/project-structure): Understand the directory layout, package architecture, and core modules.
+- [Architecture & Runtime](/docs/core-concepts/architecture): Deep dive into the Lexical reconciliation pipeline, AST design, and state lifecycle.
+- [Core Concepts](/docs/core-concepts/core-concepts): Master `useNotiq`, `NotiqContent`, reactivity, and editor instances.
+- [Chained Commands](/docs/core-concepts/chained-commands): Execute fluent mutations, command chains, and queries.
+- [Notion-Style Blocks](/docs/features/notion-blocks): Native drag handles, columns, callouts, and slash menus.
+- [Spatial Canvas](/docs/features/canvas-mode): Infinite 2D whiteboard with zoom, pan, and interconnected cards.
+- [Notiq vs Tiptap](/docs/comparisons/notiq-vs-tiptap): Detailed technical comparison and architecture benchmarks.
+- [Interactive Playground](/docs/playground): Test drive Notiq live with real-time AST inspector and canvas switcher.

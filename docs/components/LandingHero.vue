@@ -26,8 +26,8 @@
       <!-- CTA buttons -->
       <div class="flex flex-wrap items-center justify-center gap-4 mb-12">
         <a
-          href="/docs/getting-started/quickstart"
-          class="inline-flex items-center justify-center px-6 py-3.5 text-base font-semibold text-white bg-violet-600 hover:bg-violet-500 rounded-xl shadow-lg shadow-violet-500/25 transition-all duration-200"
+          href="/docs/installation"
+          class="inline-flex items-center justify-center px-6 py-3.5 text-base font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/25 transition-all duration-200"
         >
           Get Started
           <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
