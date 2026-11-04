@@ -1,6 +1,15 @@
 export default defineNuxtConfig({
   extends: ['docus'],
   devtools: { enabled: true },
+  site: {
+    name: 'Notiq',
+  },
+  mdc: {
+    highlight: {
+      shikiEngine: 'javascript',
+    },
+  },
+  compatibilityDate: '2025-07-18',
   app: {
     head: {
       title: 'Notiq — Next-Gen Headless Rich Text & Spatial Canvas Framework',
