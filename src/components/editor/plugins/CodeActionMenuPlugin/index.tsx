@@ -83,7 +83,7 @@ function CodeActionMenuContainer({
         setShown(true);
         setPosition({
           right: `${editorElemRight - right + CODE_PADDING}px`,
-          top: `${y - editorElemY}px`,
+          top: `${y - editorElemY + CODE_PADDING}px`,
         });
       }
     },

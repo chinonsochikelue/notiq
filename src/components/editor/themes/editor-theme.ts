@@ -2,8 +2,8 @@ import type { EditorThemeClasses } from 'lexical';
 const theme: EditorThemeClasses = {
   code: `
   bg-slate-50 dark:bg-[#0c1017] text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800/80
-  rounded-xl my-4 text-sm font-mono leading-relaxed
-  overflow-x-auto relative pl-[54px] p-4 group shadow-sm block line-code
+  rounded-xl my-4 text-[13px] font-mono leading-[1.65]
+  overflow-x-auto relative group shadow-sm block line-code
   `,
   codeHighlight: {
     atrule: 'PlaygroundEditorTheme__tokenAttr',

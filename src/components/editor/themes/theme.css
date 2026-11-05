@@ -259,33 +259,48 @@
 
 .line-code {
   tab-size: 2;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  line-height: 1.7;
-  letter-spacing: -0.01em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  letter-spacing: normal;
+  white-space: pre !important;
+  overflow-x: auto;
+  position: relative;
+  box-sizing: border-box;
+  padding: 16px 20px 16px 64px !important;
+  margin: 1.25rem 0;
+  border-radius: 12px;
 }
 
 .line-code:before {
   content: attr(data-gutter);
   position: absolute;
-  background-color: transparent;
+  background-color: #f8fafc;
   left: 0;
   top: 0;
-  height: 100%;
+  bottom: 0;
+  min-height: 100%;
+  width: 48px;
+  box-sizing: border-box;
   border-right: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 16px 12px 16px 16px;
+  border-top-left-radius: 11px;
+  border-bottom-left-radius: 11px;
+  padding: 16px 12px 16px 0;
   color: #94a3b8;
-  white-space: pre-wrap;
+  white-space: pre;
   text-align: right;
-  min-width: 44px;
   user-select: none;
-  font-size: 0.8125rem;
-  line-height: 1.7;
+  pointer-events: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 :is(.dark *) .line-code:before,
 .dark .line-code:before {
+  background-color: #0c1017;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  color: #475569;
+  color: #64748b;
 }
 
 .PlaygroundEditorTheme__ul1,
