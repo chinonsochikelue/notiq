@@ -1,9 +1,9 @@
 import type { EditorThemeClasses } from 'lexical';
 const theme: EditorThemeClasses = {
   code: `
-  bg-[#e1e1e1] dark:bg-[#1a1a1a] m-0  text-sm  
-  overflow-auto relative pl-[52px]  p-3 font-mono group 
-  rounded-sm  w-full h-fit block  line-code
+  bg-slate-50 dark:bg-[#0c1017] text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800/80
+  rounded-xl my-4 text-sm font-mono leading-relaxed
+  overflow-x-auto relative pl-[54px] p-4 group shadow-sm block line-code
   `,
   codeHighlight: {
     atrule: 'PlaygroundEditorTheme__tokenAttr',
@@ -94,7 +94,7 @@ const theme: EditorThemeClasses = {
   text: {
     bold: 'font-bold',
     capitalize: 'capitalize',
-    code: "inline-flex items-center rounded-sm border border-zinc-200 px-0.1 py-0  h-fit min-h-[20px] transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2 dark:border-zinc-800 dark:focus:ring-zinc-300 border-transparent bg-zinc-100 text-zinc-900 hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80",
+    code: "inline-block font-mono text-[0.875em] font-medium px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-800 text-pink-600 dark:text-pink-400 border border-slate-200/80 dark:border-zinc-700/60 align-baseline",
     italic: 'italic ',
     lowercase: 'lowercase',
     strikethrough: 'line-through',

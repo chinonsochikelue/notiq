@@ -154,7 +154,7 @@ function CodeActionMenuContainer({
     <div>
       {isShown ? (
         <div
-          className="code-action-menu-container   flex flex-row items-center gap-x-2 p-2 absolute "
+          className="code-action-menu-container flex items-center gap-1.5 p-1 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-800 rounded-lg shadow-md absolute z-20 transition-all"
           style={{ ...position }}
         >
           <div>

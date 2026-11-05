@@ -48,19 +48,20 @@ export function CopyButton({ editor, getCodeDOMNode }: Props) {
   };
   return (
     <Button
-      variant="outline"
-      size={"Toolbar"}
-      className="relative rounded-md"
+      variant="ghost"
+      size="Toolbar"
+      className="relative h-7 px-2 text-xs rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
       onClick={copyToClipboard}
       aria-label={isCopyCompleted ? "Copied" : "Copy to clipboard"}
+      title="Copy code"
     >
       <span className="sr-only">{isCopyCompleted ? "Copied" : "Copy"}</span>
       <Copy
-        className={`h-4 w-4 transition-all duration-300 ${isCopyCompleted ? "scale-0" : "scale-100"
+        className={`h-3.5 w-3.5 transition-all duration-300 ${isCopyCompleted ? "scale-0" : "scale-100"
           }`}
       />
       <Check
-        className={`absolute inset-0 m-auto h-4 w-4 transition-all duration-300 ${isCopyCompleted ? "scale-100" : "scale-0"
+        className={`absolute inset-0 m-auto h-3.5 w-3.5 text-emerald-500 transition-all duration-300 ${isCopyCompleted ? "scale-100" : "scale-0"
           }`}
       />
     </Button>

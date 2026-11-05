@@ -130,13 +130,17 @@ export function PrettierButton({lang, editor, getCodeDOMNode}: Props) {
   }
 
   return (
-    <div className='w-full group h-full relative'>
+    <div className='relative flex items-center'>
       <button
+        type="button"
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        aria-label="prettier">
-          <svg width="20" height="20" className='mt-2' viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        className="flex items-center justify-center h-7 px-1.5 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+        title="Format code with Prettier"
+        aria-label="Format with Prettier"
+      >
+        <svg width="15" height="15" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="prettier">
           <g id="prettier_2">
           <path id="Rectangle" d="M73.8095 19.0481H78.5715C79.9048 19.0481 80.9524 20.0957 80.9524 21.429C80.9524 22.7624 79.9048 23.81 78.5715 23.81H73.8095C72.4762 23.81 71.4286 22.7624 71.4286 21.429C71.4286 20.0957 72.4762 19.0481 73.8095 19.0481Z" fill="#56B3B4"/>

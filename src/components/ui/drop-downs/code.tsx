@@ -25,8 +25,10 @@ export default function CodeList({
     <DropDown
       values={languageButtons}
       disabled={disabled}
-      TriggerClassName={{ maxWidth: "200px", minWidth: "60px", width: "130px" }}
-      TriggerLabel={getLanguageFriendlyName(codeLanguage)}
+      triggerVariants="ghost"
+      className="h-7 text-xs px-2 py-0 font-mono text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+      TriggerClassName={{ maxWidth: "140px", minWidth: "60px" }}
+      TriggerLabel={getLanguageFriendlyName(codeLanguage) || "Plain Text"}
     />
   );
 }
