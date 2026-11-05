@@ -15,6 +15,7 @@ import { CopyButton } from "./components/CopyButton";
 import { canBePrettier, PrettierButton } from "./components/PrettierButton";
 import { useDebounce } from "./utils";
 import CodeList from "../../../ui/drop-downs/code";
+import CodeThemeList from "../../../ui/drop-downs/codeTheme";
 
 const CODE_PADDING = 8;
 
@@ -31,6 +32,7 @@ function CodeActionMenuContainer({
   const [editor] = useLexicalComposerContext();
 
   const [lang, setLang] = useState("");
+  const [theme, setTheme] = useState("");
   const [isShown, setShown] = useState<boolean>(false);
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(
     null
@@ -64,6 +66,7 @@ function CodeActionMenuContainer({
 
       let codeNode: CodeNode | null = null;
       let _lang = "";
+      let _theme = "";
 
       editor.update(() => {
         const maybeCodeNode = $getNearestNodeFromDOMNode(codeDOMNode);
@@ -71,6 +74,7 @@ function CodeActionMenuContainer({
         if ($isCodeNode(maybeCodeNode)) {
           codeNode = maybeCodeNode;
           _lang = codeNode.getLanguage() || "";
+          _theme = codeNode.getTheme() || "";
           setSelectedElementKey(codeNode.getKey()); // Set the selectedElementKey
         }
       });
@@ -80,6 +84,7 @@ function CodeActionMenuContainer({
           anchorElem.getBoundingClientRect();
         const { y, right } = codeDOMNode.getBoundingClientRect();
         setLang(_lang);
+        setTheme(_theme);
         setShown(true);
         setPosition({
           right: `${editorElemRight - right + CODE_PADDING}px`,
@@ -149,6 +154,22 @@ function CodeActionMenuContainer({
     [editor, selectedElementKey]
   );
 
+  const onCodeThemeSelect = React.useCallback(
+    (value: string) => {
+      editor.update(() => {
+        if (selectedElementKey !== null) {
+          const node = $getNodeByKey(selectedElementKey);
+          if ($isCodeNode(node)) {
+            const newTheme = value === "auto" ? undefined : value;
+            node.setTheme(newTheme);
+            node.markDirty();
+            setTheme(value);
+          }
+        }
+      });
+    },
+    [editor, selectedElementKey]
+  );
 
   return (
     <div>
@@ -162,6 +183,13 @@ function CodeActionMenuContainer({
               codeLanguage={codeFriendlyName}
               disabled={!editor.isEditable()}
               onCodeLanguageSelect={onCodeLanguageSelect}
+            />
+          </div>
+          <div>
+            <CodeThemeList
+              codeTheme={theme}
+              disabled={!editor.isEditable()}
+              onCodeThemeSelect={onCodeThemeSelect}
             />
           </div>
           <CopyButton editor={editor} getCodeDOMNode={getCodeDOMNode} />

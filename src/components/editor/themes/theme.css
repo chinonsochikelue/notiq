@@ -275,7 +275,7 @@
 .line-code:before {
   content: attr(data-gutter);
   position: absolute;
-  background-color: #f8fafc;
+  background-color: inherit;
   left: 0;
   top: 0;
   bottom: 0;
@@ -298,7 +298,6 @@
 
 :is(.dark *) .line-code:before,
 .dark .line-code:before {
-  background-color: #0c1017;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   color: #64748b;
 }
