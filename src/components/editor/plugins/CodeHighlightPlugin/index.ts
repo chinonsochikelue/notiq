@@ -8,7 +8,6 @@
 
 import { $isCodeNode, CodeNode } from '@lexical/code';
 import {
-  isCodeThemeLoaded,
   loadCodeTheme,
   registerCodeHighlighting,
   ShikiTokenizer,
@@ -55,12 +54,8 @@ export default function CodeHighlightPlugin(): React.JSX.Element | null {
 
   // Preload both themes so switching is instant without any render flicker
   useEffect(() => {
-    if (!isCodeThemeLoaded(DARK_CODE_THEME)) {
-      loadCodeTheme(DARK_CODE_THEME);
-    }
-    if (!isCodeThemeLoaded(LIGHT_CODE_THEME)) {
-      loadCodeTheme(LIGHT_CODE_THEME);
-    }
+    loadCodeTheme(DARK_CODE_THEME);
+    loadCodeTheme(LIGHT_CODE_THEME);
   }, []);
 
   // Register Shiki code highlighting with dynamic tokenizer
