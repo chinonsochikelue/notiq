@@ -5,6 +5,7 @@
 
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../components/editor/themes/theme.css";
 @plugin "@tailwindcss/typography";
 @plugin 'tailwind-scrollbar';
 

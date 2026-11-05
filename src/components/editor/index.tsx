@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useMemo } from "react";
+import "./themes/theme.css";
 import { SharedHistoryContext } from "../providers/SharedHistoryContext";
 import { ToolbarContext } from "../providers/ToolbarContext";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";

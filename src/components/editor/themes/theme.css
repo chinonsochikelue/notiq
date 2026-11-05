@@ -1,16 +1,22 @@
+.PlaygroundEditorTheme__tableScrollableWrapper {
+  overflow-x: auto;
+  margin: 16px 0 28px 0;
+  max-width: 100%;
+}
 .PlaygroundEditorTheme__table {
   border-collapse: collapse;
   border-spacing: 0;
-  overflow-x: auto;
   table-layout: fixed;
   display: table;
-  max-width: 100%;
   width: 100%;
-  margin: 16px 0 28px 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 0;
+  border: 1px solid #d4d4d8;
   border-radius: 8px;
 }
-
+:is(.dark *) .PlaygroundEditorTheme__table,
+.dark .PlaygroundEditorTheme__table {
+  border-color: rgba(255, 255, 255, 0.2);
+}
 .PlaygroundEditorTheme__tableSelection *::selection {
   background-color: transparent;
 }
@@ -18,19 +24,25 @@
   outline: 2px solid #10b981;
 }
 .PlaygroundEditorTheme__tableCell {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e4e4e7;
   width: 90px;
   min-width: 90px;
+  min-height: 40px;
   vertical-align: top;
   text-align: start;
   padding: 8px 12px;
   position: relative;
   outline: none;
   background-color: transparent;
-  color: #e4e4e7;
+  color: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
   transition: background-color 0.15s ease;
+}
+:is(.dark *) .PlaygroundEditorTheme__tableCell,
+.dark .PlaygroundEditorTheme__tableCell {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f4f4f5;
 }
 .PlaygroundEditorTheme__tableCell p {
   margin: 0 !important;
@@ -57,10 +69,16 @@
 }
 .PlaygroundEditorTheme__tableCellHeader {
   text-align: start;
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: #f8fafc;
   font-weight: 600;
-  color: #f4f4f5;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  color: #0f172a;
+  border-bottom: 2px solid #cbd5e1;
+}
+:is(.dark *) .PlaygroundEditorTheme__tableCellHeader,
+.dark .PlaygroundEditorTheme__tableCellHeader {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
 }
 .PlaygroundEditorTheme__tableCellSelected {
   background-color: rgba(16, 185, 129, 0.18) !important;
