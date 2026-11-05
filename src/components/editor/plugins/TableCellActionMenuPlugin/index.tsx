@@ -51,6 +51,7 @@ import {
   Merge,
   PaintBucket,
   Split,
+  Table,
   Table as TableIcon,
   TableColumnsSplit,
   TableRowsSplit,
