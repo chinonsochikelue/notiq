@@ -1,29 +1,40 @@
 import {
-    createCommand,
-    createEditor,
-    DecoratorNode,
-    LexicalCommand,
-    LexicalEditor,
-    LexicalNode,
-    NodeKey,
-    SerializedEditor,
-    SerializedLexicalNode,
-    Spread,
-    $getSelection,
-    $isRangeSelection,
-    COMMAND_PRIORITY_LOW,
+  createCommand,
+  createEditor,
+  DecoratorNode,
+  LexicalCommand,
+  LexicalEditor,
+  LexicalNode,
+  NodeKey,
+  SerializedEditor,
+  SerializedLexicalNode,
+  Spread,
+  $getSelection,
+  $isRangeSelection,
+  COMMAND_PRIORITY_LOW,
 } from "lexical";
 import React, { Suspense, useEffect } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+
 const HintComponent = React.lazy(() => import("./HintComponet"));
 
-export type HintType = "success" | "warning" | "info" | "error" | "hint";
-
+export type HintType =
+  | "hint"
+  | "note"
+  | "info"
+  | "tip"
+  | "important"
+  | "warning"
+  | "caution"
+  | "error"
+  | "success"
+  | "neutral";
 
 export type SerializedHint = Spread<
   {
-    type: "hint"; 
+    type: "hint";
     variant: HintType;
+    emoji?: string;
     caption: SerializedEditor;
   },
   SerializedLexicalNode
@@ -31,12 +42,27 @@ export type SerializedHint = Spread<
 
 export class Hint extends DecoratorNode<React.ReactElement> {
   __variant: HintType;
+  __emoji?: string;
   __caption: LexicalEditor;
 
-  constructor(variant: HintType, caption?: LexicalEditor, key?: NodeKey) {
+  constructor(
+    variant: HintType = "tip",
+    emojiOrCaption?: string | LexicalEditor,
+    caption?: LexicalEditor,
+    key?: NodeKey,
+  ) {
     super(key);
     this.__variant = variant;
-    if (!caption) {
+
+    let initialEditor: LexicalEditor | undefined;
+    if (typeof emojiOrCaption === "string") {
+      this.__emoji = emojiOrCaption;
+      initialEditor = caption;
+    } else {
+      initialEditor = emojiOrCaption;
+    }
+
+    if (!initialEditor) {
       const initialEditorState = {
         root: {
           children: [
@@ -47,7 +73,7 @@ export class Hint extends DecoratorNode<React.ReactElement> {
                   format: 0,
                   mode: "normal",
                   style: "",
-                  text: " ",
+                  text: "",
                   type: "text",
                   version: 1,
                 },
@@ -75,7 +101,7 @@ export class Hint extends DecoratorNode<React.ReactElement> {
 
       this.__caption = newEditor;
     } else {
-      this.__caption = caption;
+      this.__caption = initialEditor;
     }
   }
 
@@ -84,34 +110,45 @@ export class Hint extends DecoratorNode<React.ReactElement> {
   }
 
   static clone(node: Hint): Hint {
-    return new Hint(node.__variant, node.__caption, node.__key);
+    return new Hint(node.__variant, node.__emoji, node.__caption, node.__key);
   }
+
   static importJSON(serializedNode: SerializedHint): Hint {
     return new Hint(
-      serializedNode.variant, // Change from type to variant
+      serializedNode.variant || "tip",
+      serializedNode.emoji,
       undefined
     ).updateFromJSON(serializedNode);
   }
 
-
-  setVariant(variant: HintType) {
-    const self = this.getWritable(); // Get mutable instance
+  setVariant(variant: HintType): this {
+    const self = this.getWritable();
     self.__variant = variant;
+    return self;
+  }
+
+  setEmoji(emoji?: string): this {
+    const self = this.getWritable();
+    self.__emoji = emoji;
     return self;
   }
 
   createDOM(): HTMLElement {
     const element = document.createElement("div");
-    element.className = `hint-${this.__type}`;
+    element.className = `hint-${this.__variant || "tip"}`;
     return element;
   }
 
   updateFromJSON(serializedNode: SerializedHint): this {
     super.updateFromJSON(serializedNode);
+    this.__variant = serializedNode.variant || "tip";
+    this.__emoji = serializedNode.emoji;
     const nestedEditor = this.__caption;
-    const editorState = nestedEditor.parseEditorState(serializedNode.caption.editorState);
-    if (!editorState.isEmpty()) {
-      nestedEditor.setEditorState(editorState);
+    if (serializedNode.caption?.editorState) {
+      const editorState = nestedEditor.parseEditorState(serializedNode.caption.editorState);
+      if (!editorState.isEmpty()) {
+        nestedEditor.setEditorState(editorState);
+      }
     }
     return this;
   }
@@ -120,7 +157,8 @@ export class Hint extends DecoratorNode<React.ReactElement> {
     return {
       ...super.exportJSON(),
       variant: this.__variant,
-      type: "hint", 
+      emoji: this.__emoji,
+      type: "hint",
       caption: this.__caption.toJSON(),
     };
   }
@@ -134,6 +172,7 @@ export class Hint extends DecoratorNode<React.ReactElement> {
       <Suspense fallback={null}>
         <HintComponent
           type={this.__variant}
+          emoji={this.__emoji}
           captionEditor={this.__caption}
           nodeKey={this.getKey()}
         />
@@ -149,22 +188,23 @@ export function $isHintNode(
 }
 
 export function $createHintNode(
-  type: HintType,
+  type: HintType = "tip",
+  emoji?: string,
 ): Hint {
-  return new Hint(type);
+  return new Hint(type, emoji);
 }
 
-export const INSERT_HINT_COMMAND: LexicalCommand<HintType> = createCommand();
+export const INSERT_HINT_COMMAND: LexicalCommand<
+  HintType | { type?: HintType; emoji?: string }
+> = createCommand();
 
-export function $insertHintNode(type: HintType) {
+export function $insertHintNode(type: HintType = "tip", emoji?: string) {
   const selection = $getSelection();
   if ($isRangeSelection(selection)) {
-    const hintNode = $createHintNode(type);
+    const hintNode = $createHintNode(type, emoji);
     selection.insertNodes([hintNode]);
   }
 }
-
-
 
 export default function HintPlugin() {
   const [editor] = useLexicalComposerContext();
@@ -173,12 +213,17 @@ export default function HintPlugin() {
       throw new Error("Hint: Hint not registered on editor");
     }
   }, [editor]);
+
   useEffect(() => {
     return editor.registerCommand(
       INSERT_HINT_COMMAND,
-      (payload: HintType, editor: LexicalEditor) => {
-        editor.update(() => {
-          $insertHintNode(payload);
+      (payload: HintType | { type?: HintType; emoji?: string }, targetEditor: LexicalEditor) => {
+        targetEditor.update(() => {
+          if (typeof payload === "string") {
+            $insertHintNode(payload);
+          } else {
+            $insertHintNode(payload?.type || "tip", payload?.emoji);
+          }
         });
         return true;
       },

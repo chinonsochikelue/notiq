@@ -1,7 +1,7 @@
 import { LexicalEditor } from "lexical";
 import React, { useMemo, lazy, Suspense } from "react";
 import useModal from "../models/use-model";
-import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, FileAudio, FileText, FlipHorizontal2, Image, ImagePlay, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table } from "lucide-react";
+import { AlertCircle, Columns2, Columns3, Columns4, DraftingCompassIcon, FileAudio, FileText, FlipHorizontal2, Image, ImagePlay, Lightbulb, PencilRuler, Plus, SquareChevronRight, SquarePenIcon, Table } from "lucide-react";
 import { Figma, Twitter, Youtube } from "../icons/brand-icons";
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import { DropDown } from ".";
@@ -221,10 +221,10 @@ export default function InsertNode({
         },
       },
       {
-        label: "Hint",
-        icon: <AlertCircle />,
+        label: "Callout",
+        icon: <Lightbulb className="h-4 w-4 text-emerald-500" />,
         func: () => {
-          editor.dispatchCommand(INSERT_HINT_COMMAND, 'info')
+          editor.dispatchCommand(INSERT_HINT_COMMAND, 'tip')
         }
       }
 

@@ -3,6 +3,7 @@ import { createEditor, $getRoot } from "lexical";
 import nodes from "../nodes";
 import { $createAudioNode, $isAudioNode, AudioNode } from "../nodes/AudioNode";
 import { $createFileNode, $isFileNode, FileNode } from "../nodes/FileNode";
+import { $createHintNode, $isHintNode, Hint } from "../nodes/Hint";
 import { $convertToMarkdownString, $convertFromMarkdownString } from "@lexical/markdown";
 import { NOTIQ_TRANSFORMERS } from "../utils/markdownTransformers";
 
@@ -93,6 +94,38 @@ describe("New Block Types: AudioNode & FileNode", () => {
 
       const markdown = $convertToMarkdownString(NOTIQ_TRANSFORMERS);
       expect(markdown).toContain("📎 [Financial Report (1.5 MB)](https://example.com/report.pdf)");
+    });
+  });
+
+  it("creates, serializes, and transforms Callout HintNode with emojis and variants", () => {
+    const editor = createEditor({ nodes: [...nodes] });
+
+    editor.update(() => {
+      const callout = $createHintNode("tip", "💡");
+      expect($isHintNode(callout)).toBe(true);
+      expect(callout.__variant).toBe("tip");
+      expect(callout.__emoji).toBe("💡");
+
+      const json = callout.exportJSON();
+      expect(json.variant).toBe("tip");
+      expect(json.emoji).toBe("💡");
+
+      const restored = Hint.importJSON(json);
+      expect(restored.__variant).toBe("tip");
+      expect(restored.__emoji).toBe("💡");
+
+      restored.setVariant("warning");
+      expect(restored.__variant).toBe("warning");
+
+      restored.setEmoji("⚠️");
+      expect(restored.__emoji).toBe("⚠️");
+
+      const root = $getRoot();
+      root.clear();
+      root.append(restored);
+
+      const markdown = $convertToMarkdownString(NOTIQ_TRANSFORMERS);
+      expect(markdown).toContain("> [!WARNING]");
     });
   });
 });

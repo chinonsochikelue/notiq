@@ -20,7 +20,7 @@ import { TweetNode, $createTweetNode, $isTweetNode } from "../nodes/TweetNode";
 import { FigmaNode, $createFigmaNode, $isFigmaNode } from "../nodes/FigmaNode/FigmaNode";
 import { ExcalidrawNode, $isExcalidrawNode } from "../nodes/ExcalidrawNode";
 import { EquationNode, $isEquationNode } from "../nodes/EquationNode/EquationNode";
-import { Hint } from "../nodes/Hint";
+import { Hint, $createHintNode, HintType } from "../nodes/Hint";
 import { StepperNode, $isStepperNode } from "../nodes/Stepper";
 import { PollNode, $isPollNode } from "../nodes/PollNode";
 import { AudioNode, $isAudioNode, $createAudioNode } from "../nodes/AudioNode";
@@ -33,7 +33,7 @@ import {
   $isTableRowNode,
   $isTableCellNode,
 } from "@lexical/table";
-import { $getRoot, LexicalNode } from "lexical";
+import { $getRoot, $createParagraphNode, $createTextNode, LexicalNode } from "lexical";
 
 // 1. Horizontal Rule Transformer
 export const HR_TRANSFORMER: ElementTransformer = {
@@ -159,7 +159,34 @@ export const HINT_TRANSFORMER: ElementTransformer = {
     return `> [!${variant}]\n> ${text.trim() || "Note"}`;
   },
   regExp: /^>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION|INFO|ERROR)\]\s*(.*)$/i,
-  replace: () => {},
+  replace: (parentNode, _1, match) => {
+    const rawTag = (match[1] || "note").toLowerCase();
+    const tagMap: Record<string, HintType> = {
+      note: "note",
+      info: "note",
+      tip: "tip",
+      important: "important",
+      warning: "warning",
+      caution: "caution",
+      error: "caution",
+    };
+    const variant: HintType = tagMap[rawTag] || "note";
+    const hintNode = $createHintNode(variant);
+    const content = match[2]?.trim();
+    if (content) {
+      const nested = (hintNode as any).__caption;
+      if (nested?.update) {
+        nested.update(() => {
+          const root = $getRoot();
+          root.clear();
+          const p = $createParagraphNode();
+          p.append($createTextNode(content));
+          root.append(p);
+        });
+      }
+    }
+    parentNode.replace(hintNode);
+  },
   type: "element",
 };
 

@@ -51,6 +51,7 @@ import {
   Sparkles,
   Music,
   Paperclip,
+  Lightbulb,
 } from "lucide-react";
 import { Figma, Twitter, Youtube } from "../../../ui/icons/brand-icons";
 
@@ -239,20 +240,22 @@ function getBaseOptions(
           columns: "4",
         }),
     }),
-    new ComponentPickerOption("Hint", {
-      icon: <OctagonX className="h-4 w-4" />,
+    new ComponentPickerOption("Callout", {
+      icon: <Lightbulb className="h-4 w-4 text-emerald-500" />,
       keywords: [
-        "Hint",
+        "callout",
+        "hint",
         "note",
+        "tip",
         "info",
+        "admonition",
         "alert",
-        "alert",
-        "success",
         "warning",
-        "error",
+        "important",
+        "caution",
       ],
-      desc: "Add a hint to your content.",
-      onSelect: () => editor.dispatchCommand(INSERT_HINT_COMMAND, "hint"),
+      desc: "Notion-style callout box with icon and style picker",
+      onSelect: () => editor.dispatchCommand(INSERT_HINT_COMMAND, "tip"),
     }),
     new ComponentPickerOption("Numbered List", {
       icon: <ListOrdered className="h-4 w-4" />,
