@@ -693,6 +693,33 @@ function TableActionMenu({
       >
         <X className="w-4 h-4" />
       </button>
+
+      {canMergeCells && (
+        <>
+          <div className="w-[1px] h-4 bg-zinc-700/80 mx-1" />
+          <button
+            type="button"
+            onClick={mergeTableCellsAtSelection}
+            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+            title="Merge selected cells"
+          >
+            <Merge className="w-4 h-4 text-emerald-400" />
+          </button>
+        </>
+      )}
+      {canUnmergeCell && (
+        <>
+          <div className="w-[1px] h-4 bg-zinc-700/80 mx-1" />
+          <button
+            type="button"
+            onClick={unmergeTableCellsAtSelection}
+            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+            title="Unmerge cells"
+          >
+            <Split className="w-4 h-4 text-emerald-400" />
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -876,7 +903,7 @@ function TableCellActionMenuContainer({
 
   return (
     <div
-      className=" absolute  top-1 left-1 will-change-transform"
+      className="absolute top-1 left-1 will-change-transform z-40 transition-opacity duration-150"
       ref={menuButtonRef}
     >
       {tableCellNode != null && (

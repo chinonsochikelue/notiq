@@ -213,13 +213,13 @@ export default function TableDropDown({
           variant="ghost"
           size="Toolbar"
           className={cn(
-            "flex items-center gap-1 px-2.5 h-8 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors",
+            "flex items-center gap-1 px-2.5 h-8 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors",
             className
           )}
           title="Table menu"
         >
-          <TableIcon className="w-4 h-4 text-zinc-300" />
-          <ChevronDown className="w-3 h-3 text-zinc-500" />
+          <TableIcon className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+          <ChevronDown className="w-3 h-3 text-zinc-400 dark:text-zinc-500" />
         </Button>
       </PopoverTrigger>
 

@@ -128,26 +128,30 @@ function TableHoverActionsContainer({
         if (hoveredRowNode) {
           setShownColumn(false);
           setShownRow(true);
+          const tableLeft =
+            tableHasScroll && parentElement
+              ? parentElement.offsetLeft
+              : tableElemLeft - editorElemLeft;
+          const tableWidth =
+            tableHasScroll && parentElement
+              ? parentElement.offsetWidth
+              : tableElemWidth;
+          const btnWidth = 92;
+          const leftPos = tableLeft + tableWidth / 2 - btnWidth / 2;
           setPosition({
-            height: BUTTON_WIDTH_PX,
-            left:
-              tableHasScroll && parentElement
-                ? parentElement.offsetLeft
-                : tableElemLeft - editorElemLeft,
-            top: tableElemBottom - editorElemY + 5,
-            width:
-              tableHasScroll && parentElement
-                ? parentElement.offsetWidth
-                : tableElemWidth,
+            height: 26,
+            left: Math.max(0, leftPos),
+            top: tableElemBottom - editorElemY + 4,
+            width: btnWidth,
           });
         } else if (hoveredColumnNode) {
           setShownColumn(true);
           setShownRow(false);
           setPosition({
-            height: tableElemHeight,
-            left: tableElemRight - editorElemLeft + 5,
-            top: tableElemY - editorElemY,
-            width: BUTTON_WIDTH_PX,
+            height: 36,
+            left: tableElemRight - editorElemLeft + 4,
+            top: tableElemY - editorElemY + tableElemHeight / 2 - 18,
+            width: 24,
           });
         }
       }
@@ -247,24 +251,27 @@ function TableHoverActionsContainer({
   return (
     <>
       {isShownRow && (
-        <Button
-          size={"sm"}
-          className={"PlaygroundEditorTheme__tableAddRows"}
+        <button
+          type="button"
+          className="PlaygroundEditorTheme__tableAddRows absolute flex items-center justify-center gap-1 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/80 text-zinc-600 dark:text-zinc-300 rounded-full shadow-md hover:shadow-lg transition-all text-xs font-medium z-30 cursor-pointer group"
           style={{ ...position }}
           onClick={() => insertAction(true)}
+          title="Add row below"
         >
-          <Plus className="text-black" />
-        </Button>
+          <Plus className="w-3.5 h-3.5 text-emerald-500 group-hover:scale-110 transition-transform" />
+          <span className="text-[11px] font-medium tracking-wide">Add Row</span>
+        </button>
       )}
       {isShownColumn && (
-        <Button
-          size={"sm"}
-          className={"PlaygroundEditorTheme__tableAddColumns"}
+        <button
+          type="button"
+          className="PlaygroundEditorTheme__tableAddColumns absolute flex items-center justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/80 text-zinc-600 dark:text-zinc-300 rounded-full shadow-md hover:shadow-lg transition-all text-xs font-medium z-30 cursor-pointer group"
           style={{ ...position }}
           onClick={() => insertAction(false)}
+          title="Add column right"
         >
-          <Plus className="text-black" />
-        </Button>
+          <Plus className="w-3.5 h-3.5 text-emerald-500 group-hover:scale-110 transition-transform" />
+        </button>
       )}
     </>
   );

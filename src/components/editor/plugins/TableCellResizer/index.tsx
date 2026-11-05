@@ -383,7 +383,8 @@ function TableCellResizer({editor}: {editor: LexicalEditor}): React.JSX.Element 
           styles[draggingDirection].height = `${tableRect.height}px`;
         }
 
-        styles[draggingDirection].backgroundColor = '#adf';
+        styles[draggingDirection].backgroundColor = '#10b981';
+        styles[draggingDirection].boxShadow = '0 0 8px rgba(16, 185, 129, 0.5)';
       }
 
       return styles;
