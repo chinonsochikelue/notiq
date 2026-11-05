@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import { LexicalEditor } from "lexical";
 import {
   INSERT_TABLE_COMMAND,
+  $createTableNodeWithDimensions,
   $deleteTableColumn__EXPERIMENTAL,
   $deleteTableRow__EXPERIMENTAL,
   $getTableCellNodeFromLexicalNode,
@@ -17,9 +18,11 @@ import {
   TableCellNode,
   $getNodeTriplet,
 } from "@lexical/table";
+import { $insertNodeToNearestRoot } from "@lexical/utils";
 import {
   $getSelection,
   $isRangeSelection,
+  $isElementNode,
 } from "lexical";
 import {
   Table as TableIcon,
@@ -41,7 +44,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Button } from "../button";
 import { cn } from "../../../lib/utils";
 
-const GRID_MAX_COLS = 10;
+const GRID_MAX_COLS = 8;
 const GRID_MAX_ROWS = 8;
 
 export function TableGridPicker({
@@ -53,9 +56,9 @@ export function TableGridPicker({
   const [hoveredCol, setHoveredCol] = useState(8);
 
   return (
-    <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col items-center">
+    <div className="p-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl flex flex-col items-center">
       <div
-        className="grid gap-1 mb-2 select-none"
+        className="grid gap-1 mb-1 select-none"
         style={{
           gridTemplateColumns: `repeat(${GRID_MAX_COLS}, minmax(0, 1fr))`,
         }}
@@ -81,17 +84,17 @@ export function TableGridPicker({
                 className={cn(
                   "w-4 h-4 rounded-[2px] transition-colors duration-75 cursor-pointer border",
                   isHighlighted
-                    ? "bg-emerald-500/30 border-emerald-500"
-                    : "bg-zinc-900 border-zinc-800 hover:border-zinc-700"
+                    ? "bg-zinc-800/10 dark:bg-emerald-500/25 border-zinc-800 dark:border-emerald-500"
+                    : "bg-zinc-100/50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700"
                 )}
               />
             );
           });
         })}
       </div>
-      <div className="text-xs font-mono text-zinc-300 font-semibold tracking-wide">
+      <div className="text-xs font-mono text-zinc-700 dark:text-zinc-200 font-semibold tracking-wide mt-1">
         {hoveredCol > 0 && hoveredRow > 0
-          ? `${hoveredCol} × ${hoveredRow}`
+          ? `${hoveredRow} x ${hoveredCol}`
           : "Insert Table"}
       </div>
     </div>
@@ -114,10 +117,13 @@ export default function TableDropDown({
 
   const insertTable = useCallback(
     (rows: number, cols: number) => {
-      editor.dispatchCommand(INSERT_TABLE_COMMAND, {
-        columns: String(cols),
-        rows: String(rows),
-        includeHeaders: true,
+      editor.update(() => {
+        const tableNode = $createTableNodeWithDimensions(rows, cols, true);
+        $insertNodeToNearestRoot(tableNode);
+        const firstCell = tableNode.getFirstChild()?.getFirstChild();
+        if (firstCell && $isElementNode(firstCell)) {
+          firstCell.select();
+        }
       });
       setIsOpen(false);
     },
@@ -168,14 +174,16 @@ export default function TableDropDown({
 
   const deleteTable = useCallback(() => {
     editor.update(() => {
-      const selection = $getSelection();
-      if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-        const [cell] = $getNodeTriplet(selection.anchor);
-        if ($isTableCellNode(cell)) {
-          const tableNode = $getTableNodeFromLexicalNodeOrThrow(cell);
-          tableNode.remove();
+      try {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
+          const [cell] = $getNodeTriplet(selection.anchor);
+          if ($isTableCellNode(cell)) {
+            const tableNode = $getTableNodeFromLexicalNodeOrThrow(cell);
+            tableNode.remove();
+          }
         }
-      }
+      } catch {}
     });
     setIsOpen(false);
   }, [editor]);
@@ -183,13 +191,15 @@ export default function TableDropDown({
   const setCellBgColor = useCallback(
     (color: string) => {
       editor.update(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-          const [cell] = $getNodeTriplet(selection.anchor);
-          if ($isTableCellNode(cell)) {
-            cell.setBackgroundColor(color);
+        try {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection) || $isTableSelection(selection)) {
+            const [cell] = $getNodeTriplet(selection.anchor);
+            if ($isTableCellNode(cell)) {
+              cell.setBackgroundColor(color);
+            }
           }
-        }
+        } catch {}
       });
       setIsOpen(false);
     },
@@ -227,8 +237,8 @@ export default function TableDropDown({
 
         {/* Submenu for Cell Background */}
         {activeSubMenu === "cell" && (
-          <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl w-44 flex flex-col gap-2 animate-in fade-in-50 zoom-in-95 duration-100">
-            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+          <div className="p-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl w-44 flex flex-col gap-2 animate-in fade-in-50 zoom-in-95 duration-100">
+            <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
               Cell Color
             </span>
             <div className="grid grid-cols-4 gap-1.5">
@@ -247,7 +257,7 @@ export default function TableDropDown({
                   type="button"
                   title={swatch.label}
                   onClick={() => setCellBgColor(swatch.color)}
-                  className="w-7 h-7 rounded border border-zinc-700 hover:scale-110 transition-transform relative flex items-center justify-center"
+                  className="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 hover:scale-110 transition-transform relative flex items-center justify-center"
                   style={{
                     backgroundColor: swatch.color || "transparent",
                   }}
@@ -263,27 +273,27 @@ export default function TableDropDown({
 
         {/* Submenu for Row Actions */}
         {activeSubMenu === "row" && (
-          <div className="p-1.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl w-48 flex flex-col gap-0.5 animate-in fade-in-50 zoom-in-95 duration-100">
+          <div className="p-1.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl w-48 flex flex-col gap-0.5 animate-in fade-in-50 zoom-in-95 duration-100">
             <button
               onClick={insertRowAbove}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
             >
-              <ArrowUp className="w-3.5 h-3.5 text-emerald-400" />
+              <ArrowUp className="w-3.5 h-3.5 text-emerald-500" />
               <span>Insert row above</span>
             </button>
             <button
               onClick={insertRowBelow}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
             >
-              <ArrowDown className="w-3.5 h-3.5 text-emerald-400" />
+              <ArrowDown className="w-3.5 h-3.5 text-emerald-500" />
               <span>Insert row below</span>
             </button>
-            <div className="my-1 border-t border-zinc-800" />
+            <div className="my-1 border-t border-zinc-200 dark:border-zinc-800" />
             <button
               onClick={deleteRow}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition-colors text-left"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors text-left"
             >
-              <X className="w-3.5 h-3.5 text-red-400" />
+              <X className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
               <span>Delete row</span>
             </button>
           </div>
@@ -291,46 +301,46 @@ export default function TableDropDown({
 
         {/* Submenu for Column Actions */}
         {activeSubMenu === "column" && (
-          <div className="p-1.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl w-48 flex flex-col gap-0.5 animate-in fade-in-50 zoom-in-95 duration-100">
+          <div className="p-1.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl w-48 flex flex-col gap-0.5 animate-in fade-in-50 zoom-in-95 duration-100">
             <button
               onClick={insertColLeft}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-emerald-400" />
+              <ArrowLeft className="w-3.5 h-3.5 text-emerald-500" />
               <span>Insert column left</span>
             </button>
             <button
               onClick={insertColRight}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 rounded-lg transition-colors text-left"
             >
-              <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-500" />
               <span>Insert column right</span>
             </button>
-            <div className="my-1 border-t border-zinc-800" />
+            <div className="my-1 border-t border-zinc-200 dark:border-zinc-800" />
             <button
               onClick={deleteCol}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition-colors text-left"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors text-left"
             >
-              <X className="w-3.5 h-3.5 text-red-400" />
+              <X className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
               <span>Delete column</span>
             </button>
           </div>
         )}
 
-        {/* Main Menu (Right Panel) matching Image 1 */}
-        <div className="w-52 p-1.5 bg-zinc-950/95 border border-zinc-800 rounded-xl shadow-2xl backdrop-blur-md flex flex-col gap-0.5 text-zinc-300">
+        {/* Main Menu (Right Panel) matching Image 2 */}
+        <div className="w-48 p-1.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl backdrop-blur-md flex flex-col gap-0.5 text-zinc-700 dark:text-zinc-300">
           {/* Table item */}
           <button
             onMouseEnter={() => setActiveSubMenu("table")}
             className={cn(
               "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors",
               activeSubMenu === "table"
-                ? "bg-zinc-800 text-white"
-                : "hover:bg-zinc-900 text-zinc-300"
+                ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                : "hover:bg-zinc-100/70 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
             )}
           >
             <div className="flex items-center gap-2.5">
-              <TableIcon className="w-4 h-4 text-emerald-400" />
+              <TableIcon className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
               <span>Table</span>
             </div>
             <ChevronRight className="w-3.5 h-3.5 opacity-60" />
@@ -340,16 +350,13 @@ export default function TableDropDown({
           <button
             onMouseEnter={() => setActiveSubMenu("cell")}
             className={cn(
-              "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+              "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors pl-9",
               activeSubMenu === "cell"
-                ? "bg-zinc-800 text-white"
-                : "hover:bg-zinc-900 text-zinc-300"
+                ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                : "hover:bg-zinc-100/70 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
             )}
           >
-            <div className="flex items-center gap-2.5">
-              <PaintBucket className="w-4 h-4 text-cyan-400" />
-              <span>Cell</span>
-            </div>
+            <span>Cell</span>
             <ChevronRight className="w-3.5 h-3.5 opacity-60" />
           </button>
 
@@ -357,16 +364,13 @@ export default function TableDropDown({
           <button
             onMouseEnter={() => setActiveSubMenu("row")}
             className={cn(
-              "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+              "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors pl-9",
               activeSubMenu === "row"
-                ? "bg-zinc-800 text-white"
-                : "hover:bg-zinc-900 text-zinc-300"
+                ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                : "hover:bg-zinc-100/70 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
             )}
           >
-            <div className="flex items-center gap-2.5">
-              <Rows className="w-4 h-4 text-violet-400" />
-              <span>Row</span>
-            </div>
+            <span>Row</span>
             <ChevronRight className="w-3.5 h-3.5 opacity-60" />
           </button>
 
@@ -374,27 +378,24 @@ export default function TableDropDown({
           <button
             onMouseEnter={() => setActiveSubMenu("column")}
             className={cn(
-              "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+              "flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors pl-9",
               activeSubMenu === "column"
-                ? "bg-zinc-800 text-white"
-                : "hover:bg-zinc-900 text-zinc-300"
+                ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                : "hover:bg-zinc-100/70 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
             )}
           >
-            <div className="flex items-center gap-2.5">
-              <Columns className="w-4 h-4 text-amber-400" />
-              <span>Column</span>
-            </div>
+            <span>Column</span>
             <ChevronRight className="w-3.5 h-3.5 opacity-60" />
           </button>
 
-          <div className="my-1 border-t border-zinc-800" />
+          <div className="my-1 border-t border-zinc-200 dark:border-zinc-800" />
 
           {/* Delete Table item */}
           <button
             onClick={deleteTable}
-            className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors"
+            className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
           >
-            <Trash2 className="w-4 h-4 text-red-400" />
+            <Trash2 className="w-4 h-4" />
             <span>Delete table</span>
           </button>
         </div>

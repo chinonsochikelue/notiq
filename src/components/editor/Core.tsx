@@ -13,6 +13,9 @@ import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin
 import ImagesPlugin from "./plugins/ImagesPlugin"
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin"
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin"
+import { INSERT_TABLE_COMMAND, $createTableNodeWithDimensions } from "@lexical/table"
+import { $insertNodeToNearestRoot } from "@lexical/utils"
+import { $isElementNode, COMMAND_PRIORITY_EDITOR } from "lexical"
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin"
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin"
 import ShortcutsPlugin from "./plugins/ShortcutsPlugin"
@@ -146,6 +149,25 @@ export default function Core({
     })
 
     return unregister
+  }, [editor])
+
+  // Register Table insertion command handler
+  useEffect(() => {
+    return editor.registerCommand(
+      INSERT_TABLE_COMMAND,
+      ({ columns, rows, includeHeaders = true }: { columns: string; rows: string; includeHeaders?: boolean }) => {
+        const numRows = Number(rows) || 4;
+        const numCols = Number(columns) || 4;
+        const tableNode = $createTableNodeWithDimensions(numRows, numCols, includeHeaders);
+        $insertNodeToNearestRoot(tableNode);
+        const firstCell = tableNode.getFirstChild()?.getFirstChild();
+        if (firstCell && $isElementNode(firstCell)) {
+          firstCell.select();
+        }
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR
+    );
   }, [editor])
 
   return (

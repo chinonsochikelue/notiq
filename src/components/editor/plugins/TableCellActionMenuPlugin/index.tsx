@@ -75,16 +75,20 @@ function computeSelectionCount(selection: TableSelection): {
 }
 
 function $canUnmerge(): boolean {
-  const selection = $getSelection();
-  if (
-    ($isRangeSelection(selection) && !selection.isCollapsed()) ||
-    ($isTableSelection(selection) && !selection.anchor.is(selection.focus)) ||
-    (!$isRangeSelection(selection) && !$isTableSelection(selection))
-  ) {
+  try {
+    const selection = $getSelection();
+    if (
+      ($isRangeSelection(selection) && !selection.isCollapsed()) ||
+      ($isTableSelection(selection) && !selection.anchor.is(selection.focus)) ||
+      (!$isRangeSelection(selection) && !$isTableSelection(selection))
+    ) {
+      return false;
+    }
+    const [cell] = $getNodeTriplet(selection.anchor);
+    return cell ? (cell.__colSpan > 1 || cell.__rowSpan > 1) : false;
+  } catch {
     return false;
   }
-  const [cell] = $getNodeTriplet(selection.anchor);
-  return cell.__colSpan > 1 || cell.__rowSpan > 1;
 }
 
 function $cellContainsEmptyParagraph(cell: TableCellNode): boolean {
@@ -110,16 +114,24 @@ function $selectLastDescendant(node: ElementNode): void {
 }
 
 function currentCellBackgroundColor(editor: LexicalEditor): null | string {
-  return editor.getEditorState().read(() => {
-    const selection = $getSelection();
-    if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-      const [cell] = $getNodeTriplet(selection.anchor);
-      if ($isTableCellNode(cell)) {
-        return cell.getBackgroundColor();
+  try {
+    return editor.getEditorState().read(() => {
+      try {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
+          const [cell] = $getNodeTriplet(selection.anchor);
+          if ($isTableCellNode(cell)) {
+            return cell.getBackgroundColor();
+          }
+        }
+      } catch {
+        return null;
       }
-    }
+      return null;
+    });
+  } catch {
     return null;
-  });
+  }
 }
 
 type TableCellActionMenuProps = Readonly<{
@@ -220,24 +232,23 @@ function TableActionMenu({
   const clearTableSelection = useCallback(() => {
     editor.update(() => {
       if (tableCellNode.isAttached()) {
-        const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
-        const tableElement = getTableElement(
-          tableNode,
-          editor.getElementByKey(tableNode.getKey())
-        );
+        try {
+          const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
+          const tableElement = getTableElement(
+            tableNode,
+            editor.getElementByKey(tableNode.getKey())
+          );
 
-        invariant(
-          tableElement !== null,
-          "TableActionMenu: Expected to find tableElement in DOM"
-        );
+          if (tableElement !== null) {
+            const tableObserver = getTableObserverFromTableElement(tableElement);
+            if (tableObserver !== null) {
+              tableObserver.$clearHighlight();
+            }
+          }
 
-        const tableObserver = getTableObserverFromTableElement(tableElement);
-        if (tableObserver !== null) {
-          tableObserver.$clearHighlight();
-        }
-
-        tableNode.markDirty();
-        updateTableCellNode(tableCellNode.getLatest());
+          tableNode.markDirty();
+          updateTableCellNode(tableCellNode.getLatest());
+        } catch {}
       }
 
       const rootNode = $getRoot();
@@ -321,9 +332,12 @@ function TableActionMenu({
 
   const deleteTableAtSelection = useCallback(() => {
     editor.update(() => {
-      const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
-      tableNode.remove();
-
+      try {
+        if (tableCellNode.isAttached()) {
+          const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNode);
+          tableNode.remove();
+        }
+      } catch {}
       clearTableSelection();
     });
   }, [editor, tableCellNode, clearTableSelection]);
@@ -424,27 +438,36 @@ function TableActionMenu({
   const handleCellBackgroundColor = useCallback(
     (value: string) => {
       editor.update(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-          const [cell] = $getNodeTriplet(selection.anchor);
-          if ($isTableCellNode(cell)) {
-            cell.setBackgroundColor(value);
-          }
+        try {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection) || $isTableSelection(selection)) {
+            const [cell] = $getNodeTriplet(selection.anchor);
+            if ($isTableCellNode(cell)) {
+              cell.setBackgroundColor(value);
+            }
 
-          if ($isTableSelection(selection)) {
-            const nodes = selection.getNodes();
+            if ($isTableSelection(selection)) {
+              const nodes = selection.getNodes();
 
-            for (let i = 0; i < nodes.length; i++) {
-              const node = nodes[i];
-              if ($isTableCellNode(node)) {
-                node.setBackgroundColor(value);
+              for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i];
+                if ($isTableCellNode(node)) {
+                  node.setBackgroundColor(value);
+                }
               }
             }
+          } else if (tableCellNode && tableCellNode.isAttached()) {
+            tableCellNode.setBackgroundColor(value);
+          }
+        } catch {
+          if (tableCellNode && tableCellNode.isAttached()) {
+            tableCellNode.setBackgroundColor(value);
           }
         }
       });
+      setBackgroundColor(value);
     },
-    [editor]
+    [editor, tableCellNode]
   );
 
   const commands = React.useMemo(
@@ -511,7 +534,7 @@ function TableActionMenu({
       { label: "Toggle Striping", func: toggleRowStriping, icon: <Table /> },
     ],
     [
-      currentCellBackgroundColor(editor),
+      backgroundColor,
       canMergeCells,
       canUnmergeCell,
       insertTableRowAtSelection,
@@ -547,7 +570,7 @@ function TableActionMenu({
   }
 
   return (
-    <div className="flex items-center gap-0.5 bg-zinc-950/95 border border-zinc-700/80 rounded-xl px-2 py-1 shadow-2xl backdrop-blur-md text-zinc-300">
+    <div className="flex items-center gap-0.5 bg-zinc-900/95 border border-zinc-700/80 rounded-xl px-2 py-1 shadow-2xl backdrop-blur-md text-zinc-300">
       <Popover modal={false}>
         <PopoverTrigger asChild>
           <button
@@ -555,7 +578,7 @@ function TableActionMenu({
             className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
             title="Cell background color"
           >
-            <PaintBucket className="w-3.5 h-3.5 text-cyan-400" />
+            <PaintBucket className="w-4 h-4" />
           </button>
         </PopoverTrigger>
         <PopoverContent
@@ -601,7 +624,7 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
         title="Toggle header row"
       >
-        <TableIcon className="w-3.5 h-3.5 text-emerald-400" />
+        <TableIcon className="w-4 h-4" />
       </button>
 
       <button
@@ -610,10 +633,10 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
         title="Delete table"
       >
-        <Trash2 className="w-3.5 h-3.5" />
+        <Trash2 className="w-4 h-4" />
       </button>
 
-      <div className="w-[1px] h-3.5 bg-zinc-700/80 mx-1" />
+      <div className="w-[1px] h-4 bg-zinc-700/80 mx-1" />
 
       <button
         type="button"
@@ -621,7 +644,7 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
         title="Insert row above"
       >
-        <ArrowUp className="w-3.5 h-3.5" />
+        <ArrowUp className="w-4 h-4" />
       </button>
 
       <button
@@ -630,7 +653,7 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
         title="Insert row below"
       >
-        <ArrowDown className="w-3.5 h-3.5" />
+        <ArrowDown className="w-4 h-4" />
       </button>
 
       <button
@@ -639,10 +662,10 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
         title="Delete row"
       >
-        <X className="w-3.5 h-3.5" />
+        <X className="w-4 h-4" />
       </button>
 
-      <div className="w-[1px] h-3.5 bg-zinc-700/80 mx-1" />
+      <div className="w-[1px] h-4 bg-zinc-700/80 mx-1" />
 
       <button
         type="button"
@@ -650,7 +673,7 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
         title="Insert column left"
       >
-        <ArrowLeft className="w-3.5 h-3.5" />
+        <ArrowLeft className="w-4 h-4" />
       </button>
 
       <button
@@ -659,7 +682,7 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
         title="Insert column right"
       >
-        <ArrowRight className="w-3.5 h-3.5" />
+        <ArrowRight className="w-4 h-4" />
       </button>
 
       <button
@@ -668,7 +691,7 @@ function TableActionMenu({
         className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
         title="Delete column"
       >
-        <X className="w-3.5 h-3.5" />
+        <X className="w-4 h-4" />
       </button>
     </div>
   );
@@ -739,40 +762,46 @@ function TableCellActionMenuContainer({
         return disable();
       }
 
-      const tableNode = $getTableNodeFromLexicalNodeOrThrow(
-        tableCellNodeFromSelection
-      );
-      const tableElement = getTableElement(
-        tableNode,
-        editor.getElementByKey(tableNode.getKey())
-      );
+      try {
+        const tableNode = $getTableNodeFromLexicalNodeOrThrow(
+          tableCellNodeFromSelection
+        );
+        const tableElement = getTableElement(
+          tableNode,
+          editor.getElementByKey(tableNode.getKey())
+        );
 
-      invariant(
-        tableElement !== null,
-        "TableActionMenu: Expected to find tableElement in DOM"
-      );
+        if (tableElement === null) {
+          return disable();
+        }
 
-      tableObserver = getTableObserverFromTableElement(tableElement);
-      setTableMenuCellNode(tableCellNodeFromSelection);
+        tableObserver = getTableObserverFromTableElement(tableElement);
+        setTableMenuCellNode(tableCellNodeFromSelection);
+      } catch {
+        return disable();
+      }
     } else if ($isTableSelection(selection)) {
-      const anchorNode = $getTableCellNodeFromLexicalNode(
-        selection.anchor.getNode()
-      );
-      invariant(
-        $isTableCellNode(anchorNode),
-        "TableSelection anchorNode must be a TableCellNode"
-      );
-      const tableNode = $getTableNodeFromLexicalNodeOrThrow(anchorNode);
-      const tableElement = getTableElement(
-        tableNode,
-        editor.getElementByKey(tableNode.getKey())
-      );
-      invariant(
-        tableElement !== null,
-        "TableActionMenu: Expected to find tableElement in DOM"
-      );
-      tableObserver = getTableObserverFromTableElement(tableElement);
-      tableCellParentNodeDOM = editor.getElementByKey(anchorNode.getKey());
+      try {
+        const anchorNode = $getTableCellNodeFromLexicalNode(
+          selection.anchor.getNode()
+        );
+        if (!$isTableCellNode(anchorNode)) {
+          return disable();
+        }
+        const tableNode = $getTableNodeFromLexicalNodeOrThrow(anchorNode);
+        const tableElement = getTableElement(
+          tableNode,
+          editor.getElementByKey(tableNode.getKey())
+        );
+        if (tableElement === null) {
+          return disable();
+        }
+        tableObserver = getTableObserverFromTableElement(tableElement);
+        tableCellParentNodeDOM = editor.getElementByKey(anchorNode.getKey());
+        setTableMenuCellNode(anchorNode);
+      } catch {
+        return disable();
+      }
     } else if (!activeElement) {
       return disable();
     }
