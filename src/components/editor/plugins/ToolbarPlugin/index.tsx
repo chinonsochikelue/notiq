@@ -78,6 +78,9 @@ const InsertNode = dynamic(
 const TextAlign = dynamic(
   () => import("../../../ui/drop-downs/text-align")
 );
+const TableDropDown = dynamic(
+  () => import("../../../ui/drop-downs/table-dropdown")
+);
 // import { type } from './../../../providers/ToolbarContext';
 
 
@@ -344,7 +347,7 @@ export default function ToolbarPlugin({
     "block-format", "separator",
     "font-family", "separator",
     "font-size", "separator",
-    "bold", "italic", "underline", "code", "link", "separator",
+    "bold", "italic", "underline", "code", "link", "table", "separator",
     "color", "bg-color", "separator",
     "text-format", "separator",
     "insert", "separator",
@@ -518,6 +521,15 @@ export default function ToolbarPlugin({
           >
             <Link size={16} />
           </Toggle>
+        );
+      case "table":
+        return (
+          <TableDropDown
+            key={`table-${index}`}
+            disabled={!isEditable}
+            editor={activeEditor || editor}
+            className={itemClassName}
+          />
         );
       case "color":
         return (

@@ -54,6 +54,7 @@ export type ToolbarItem =
   | "underline"
   | "code"
   | "link"
+  | "table"
   | "color"
   | "bg-color"
   | "text-format"

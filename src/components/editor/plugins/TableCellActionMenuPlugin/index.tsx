@@ -43,15 +43,22 @@ import { ReactPortal, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import invariant from "../../utils/invariant";
 import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
   Menu,
   Merge,
   PaintBucket,
   Split,
-  Table,
+  Table as TableIcon,
   TableColumnsSplit,
   TableRowsSplit,
   Trash,
+  Trash2,
+  X,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../ui/popover";
 import { DropDown } from "../../../ui/drop-downs";
 import useModal from "../../../ui/models/use-model";
 
@@ -539,23 +546,130 @@ function TableActionMenu({
   }
 
   return (
-    <>
-      <DropDown
-        values={commands}
-        TriggerLabel={<Menu className="w-4 h-4  " />}
-        TriggerClassName={{
-          height: "24px",
-          padding: "0px 4px",
-          position: "absolute",
-          top: 0,
-          right: "10px",
-        }}
-        ShowChevronsUpDown={false}
-        triggerVariants={"ghost"}
-        disabled={false}
-      />
-      {model}
-    </>
+    <div className="flex items-center gap-0.5 bg-zinc-950/95 border border-zinc-700/80 rounded-xl px-2 py-1 shadow-2xl backdrop-blur-md text-zinc-300">
+      <Popover modal={false}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+            title="Cell background color"
+          >
+            <PaintBucket className="w-3.5 h-3.5 text-cyan-400" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          side="top"
+          align="center"
+          sideOffset={8}
+          className="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl w-44 z-50"
+        >
+          <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block mb-2">
+            Cell Color
+          </span>
+          <div className="grid grid-cols-4 gap-1.5">
+            {[
+              { label: "Clear", color: "" },
+              { label: "Zinc", color: "#18181b" },
+              { label: "Emerald", color: "#064e3b" },
+              { label: "Indigo", color: "#312e81" },
+              { label: "Rose", color: "#881337" },
+              { label: "Amber", color: "#78350f" },
+              { label: "Cyan", color: "#164e63" },
+              { label: "Violet", color: "#4c1d95" },
+            ].map((swatch) => (
+              <button
+                key={swatch.label}
+                type="button"
+                title={swatch.label}
+                onClick={() => handleCellBackgroundColor(swatch.color)}
+                className="w-7 h-7 rounded border border-zinc-700 hover:scale-110 transition-transform relative flex items-center justify-center"
+                style={{ backgroundColor: swatch.color || "transparent" }}
+              >
+                {!swatch.color && (
+                  <span className="w-3.5 h-[1.5px] bg-red-500 rotate-45 block" />
+                )}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+
+      <button
+        type="button"
+        onClick={toggleTableRowIsHeader}
+        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        title="Toggle header row"
+      >
+        <TableIcon className="w-3.5 h-3.5 text-emerald-400" />
+      </button>
+
+      <button
+        type="button"
+        onClick={deleteTableAtSelection}
+        className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
+        title="Delete table"
+      >
+        <Trash2 className="w-3.5 h-3.5" />
+      </button>
+
+      <div className="w-[1px] h-3.5 bg-zinc-700/80 mx-1" />
+
+      <button
+        type="button"
+        onClick={() => insertTableRowAtSelection(false)}
+        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        title="Insert row above"
+      >
+        <ArrowUp className="w-3.5 h-3.5" />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => insertTableRowAtSelection(true)}
+        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        title="Insert row below"
+      >
+        <ArrowDown className="w-3.5 h-3.5" />
+      </button>
+
+      <button
+        type="button"
+        onClick={deleteTableRowAtSelection}
+        className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
+        title="Delete row"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+
+      <div className="w-[1px] h-3.5 bg-zinc-700/80 mx-1" />
+
+      <button
+        type="button"
+        onClick={() => insertTableColumnAtSelection(false)}
+        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        title="Insert column left"
+      >
+        <ArrowLeft className="w-3.5 h-3.5" />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => insertTableColumnAtSelection(true)}
+        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        title="Insert column right"
+      >
+        <ArrowRight className="w-3.5 h-3.5" />
+      </button>
+
+      <button
+        type="button"
+        onClick={deleteTableColumnAtSelection}
+        className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
+        title="Delete column"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+    </div>
   );
 }
 
@@ -676,8 +790,16 @@ function TableCellActionMenuContainer({
     if (enabled) {
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
       const anchorRect = anchorElem.getBoundingClientRect();
-      const top = tableCellRect.top - anchorRect.top;
-      const left = tableCellRect.right - anchorRect.left;
+      let targetRect = tableCellRect;
+      try {
+        const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNodeFromSelection || (anchorNode as any));
+        const tableDOM = getTableElement(tableNode, editor.getElementByKey(tableNode.getKey()));
+        if (tableDOM) {
+          targetRect = tableDOM.getBoundingClientRect();
+        }
+      } catch {}
+      const top = Math.max(8, targetRect.top - anchorRect.top - 44);
+      const left = Math.max(16, targetRect.left - anchorRect.left + (targetRect.width / 2) - 150);
       menu.style.transform = `translate(${left}px, ${top}px)`;
     }
   }, [editor, anchorElem]);
