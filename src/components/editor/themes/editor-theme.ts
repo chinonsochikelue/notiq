@@ -3,7 +3,7 @@ const theme: EditorThemeClasses = {
   code: `
   bg-slate-50 dark:bg-[#0c1017] text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800/80
   rounded-xl my-4 text-[13px] font-mono leading-[1.65]
-  overflow-x-auto relative group shadow-sm block line-code
+  overflow-x-auto relative group shadow-sm block line-code not-prose
   `,
   codeHighlight: {
     atrule: 'PlaygroundEditorTheme__tokenAttr',
@@ -69,7 +69,7 @@ const theme: EditorThemeClasses = {
   paragraph: 'leading-7 mb-3',
   link: `underline cursor-pointer text-blue-600 after:content-['_↗']`,
   hr: 'w-full my-6 border-t border-border',
-  table: 'PlaygroundEditorTheme__table',
+  table: 'PlaygroundEditorTheme__table not-prose',
   tableCell: 'PlaygroundEditorTheme__tableCell',
   tableCellActionButton: 'PlaygroundEditorTheme__tableCellActionButton',
   tableCellActionButtonContainer: 'PlaygroundEditorTheme__tableCellActionButtonContainer',

@@ -570,12 +570,12 @@ function TableActionMenu({
   }
 
   return (
-    <div className="flex items-center gap-0.5 bg-zinc-900/95 border border-zinc-700/80 rounded-xl px-2 py-1 shadow-2xl backdrop-blur-md text-zinc-300">
+    <div className="flex items-center gap-0.5 bg-white/95 dark:bg-zinc-900/95 border border-zinc-200 dark:border-zinc-700/80 rounded-xl px-2 py-1 shadow-xl backdrop-blur-md text-zinc-700 dark:text-zinc-300">
       <Popover modal={false}>
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
             title="Cell background color"
           >
             <PaintBucket className="w-4 h-4" />
@@ -585,9 +585,9 @@ function TableActionMenu({
           side="top"
           align="center"
           sideOffset={8}
-          className="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl w-44 z-50"
+          className="p-2.5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl w-44 z-50 text-zinc-900 dark:text-zinc-100"
         >
-          <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block mb-2">
+          <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2">
             Cell Color
           </span>
           <div className="grid grid-cols-4 gap-1.5">
@@ -606,7 +606,7 @@ function TableActionMenu({
                 type="button"
                 title={swatch.label}
                 onClick={() => handleCellBackgroundColor(swatch.color)}
-                className="w-7 h-7 rounded border border-zinc-700 hover:scale-110 transition-transform relative flex items-center justify-center"
+                className="w-7 h-7 rounded border border-zinc-200 dark:border-zinc-700 hover:scale-110 transition-transform relative flex items-center justify-center"
                 style={{ backgroundColor: swatch.color || "transparent" }}
               >
                 {!swatch.color && (
@@ -621,7 +621,7 @@ function TableActionMenu({
       <button
         type="button"
         onClick={toggleTableRowIsHeader}
-        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
         title="Toggle header row"
       >
         <TableIcon className="w-4 h-4" />
@@ -630,18 +630,18 @@ function TableActionMenu({
       <button
         type="button"
         onClick={deleteTableAtSelection}
-        className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
+        className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/50 text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
         title="Delete table"
       >
         <Trash2 className="w-4 h-4" />
       </button>
 
-      <div className="w-[1px] h-4 bg-zinc-700/80 mx-1" />
+      <div className="w-[1px] h-4 bg-zinc-200 dark:bg-zinc-700/80 mx-1" />
 
       <button
         type="button"
         onClick={() => insertTableRowAtSelection(false)}
-        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
         title="Insert row above"
       >
         <ArrowUp className="w-4 h-4" />
@@ -650,7 +650,7 @@ function TableActionMenu({
       <button
         type="button"
         onClick={() => insertTableRowAtSelection(true)}
-        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
         title="Insert row below"
       >
         <ArrowDown className="w-4 h-4" />
@@ -659,18 +659,18 @@ function TableActionMenu({
       <button
         type="button"
         onClick={deleteTableRowAtSelection}
-        className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
+        className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/50 text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
         title="Delete row"
       >
         <X className="w-4 h-4" />
       </button>
 
-      <div className="w-[1px] h-4 bg-zinc-700/80 mx-1" />
+      <div className="w-[1px] h-4 bg-zinc-200 dark:bg-zinc-700/80 mx-1" />
 
       <button
         type="button"
         onClick={() => insertTableColumnAtSelection(false)}
-        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
         title="Insert column left"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -679,7 +679,7 @@ function TableActionMenu({
       <button
         type="button"
         onClick={() => insertTableColumnAtSelection(true)}
-        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+        className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
         title="Insert column right"
       >
         <ArrowRight className="w-4 h-4" />
@@ -688,7 +688,7 @@ function TableActionMenu({
       <button
         type="button"
         onClick={deleteTableColumnAtSelection}
-        className="p-1.5 rounded-lg hover:bg-red-950/50 text-zinc-400 hover:text-red-400 transition-colors"
+        className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/50 text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
         title="Delete column"
       >
         <X className="w-4 h-4" />
@@ -750,8 +750,8 @@ function TableCellActionMenuContainer({
     }
     function disable() {
       if (menu) {
-        menu.classList.remove("table-cell-action-button-container--active");
-        menu.classList.add("table-cell-action-button-container--inactive");
+        menu.style.display = "none";
+        menu.style.opacity = "0";
       }
       setTableMenuCellNode(null);
     }
@@ -836,15 +836,9 @@ function TableCellActionMenuContainer({
       return disable();
     }
     const enabled = !tableObserver || !tableObserver.isSelecting;
-    menu.classList.toggle(
-      "table-cell-action-button-container--active",
-      enabled
-    );
-    menu.classList.toggle(
-      "table-cell-action-button-container--inactive",
-      !enabled
-    );
     if (enabled) {
+      menu.style.display = "block";
+      menu.style.opacity = "1";
       const tableCellRect = tableCellParentNodeDOM.getBoundingClientRect();
       const anchorRect = anchorElem.getBoundingClientRect();
       let targetRect = tableCellRect;
@@ -855,9 +849,12 @@ function TableCellActionMenuContainer({
           targetRect = tableDOM.getBoundingClientRect();
         }
       } catch {}
-      const top = Math.max(8, targetRect.top - anchorRect.top - 44);
-      const left = Math.max(16, targetRect.left - anchorRect.left + (targetRect.width / 2) - 150);
+      const top = Math.max(8, targetRect.top - anchorRect.top - 46);
+      const left = Math.max(16, targetRect.left - anchorRect.left + (targetRect.width / 2) - 160);
       menu.style.transform = `translate(${left}px, ${top}px)`;
+    } else {
+      menu.style.display = "none";
+      menu.style.opacity = "0";
     }
   }, [editor, anchorElem]);
 
