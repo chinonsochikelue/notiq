@@ -279,14 +279,14 @@ export default function HintComponent({
               <ContentEditable
                 className="w-full border-0 resize-none cursor-text block relative outline-none select-text whitespace-pre-wrap break-words text-sm sm:text-[15px] leading-relaxed"
                 aria-placeholder="Write a callout note..."
-                contentEditable={editor.isEditable()}
+                placeholder={
+                  <div className="text-sm sm:text-[15px] text-zinc-400/80 dark:text-zinc-500/80 overflow-hidden absolute top-0 left-0 select-none whitespace-nowrap text-ellipsis pointer-events-none">
+                    Write a callout note...
+                  </div>
+                }
               />
             }
-            placeholder={
-              <div className="text-sm sm:text-[15px] text-zinc-400/80 dark:text-zinc-500/80 overflow-hidden absolute top-0 left-0 select-none whitespace-nowrap text-ellipsis pointer-events-none">
-                Write a callout note...
-              </div>
-            }
+            placeholder={null}
             ErrorBoundary={LexicalErrorBoundary}
           />
         </LexicalNestedComposer>

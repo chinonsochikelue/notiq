@@ -155,12 +155,14 @@ export default function Core({
   useEffect(() => {
     return editor.registerCommand(
       INSERT_TABLE_COMMAND,
-      ({ columns, rows, includeHeaders = true }: { columns: string; rows: string; includeHeaders?: boolean }) => {
+      (payload: any) => {
+        const { columns, rows, includeHeaders = true } = payload || {};
         const numRows = Number(rows) || 4;
         const numCols = Number(columns) || 4;
         const tableNode = $createTableNodeWithDimensions(numRows, numCols, includeHeaders);
         $insertNodeToNearestRoot(tableNode);
-        const firstCell = tableNode.getFirstChild()?.getFirstChild();
+        const firstRow = tableNode.getFirstChild();
+        const firstCell = $isElementNode(firstRow) ? firstRow.getFirstChild() : null;
         if (firstCell && $isElementNode(firstCell)) {
           firstCell.select();
         }

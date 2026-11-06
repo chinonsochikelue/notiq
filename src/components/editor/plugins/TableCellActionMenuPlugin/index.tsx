@@ -763,6 +763,7 @@ function TableCellActionMenuContainer({
     const rootElement = editor.getRootElement();
     let tableObserver: TableObserver | null = null;
     let tableCellParentNodeDOM: HTMLElement | null = null;
+    let activeTableCellNode: TableCellNode | null = null;
 
     if (
       $isRangeSelection(selection) &&
@@ -803,6 +804,7 @@ function TableCellActionMenuContainer({
         }
 
         tableObserver = getTableObserverFromTableElement(tableElement);
+        activeTableCellNode = tableCellNodeFromSelection;
         setTableMenuCellNode(tableCellNodeFromSelection);
       } catch {
         return disable();
@@ -825,6 +827,7 @@ function TableCellActionMenuContainer({
         }
         tableObserver = getTableObserverFromTableElement(tableElement);
         tableCellParentNodeDOM = editor.getElementByKey(anchorNode.getKey());
+        activeTableCellNode = anchorNode;
         setTableMenuCellNode(anchorNode);
       } catch {
         return disable();
@@ -832,7 +835,7 @@ function TableCellActionMenuContainer({
     } else if (!activeElement) {
       return disable();
     }
-    if (tableObserver === null || tableCellParentNodeDOM === null) {
+    if (tableObserver === null || tableCellParentNodeDOM === null || activeTableCellNode === null) {
       return disable();
     }
     const enabled = !tableObserver || !tableObserver.isSelecting;
@@ -843,7 +846,7 @@ function TableCellActionMenuContainer({
       const anchorRect = anchorElem.getBoundingClientRect();
       let targetRect = tableCellRect;
       try {
-        const tableNode = $getTableNodeFromLexicalNodeOrThrow(tableCellNodeFromSelection || (anchorNode as any));
+        const tableNode = $getTableNodeFromLexicalNodeOrThrow(activeTableCellNode);
         const tableDOM = getTableElement(tableNode, editor.getElementByKey(tableNode.getKey()));
         if (tableDOM) {
           targetRect = tableDOM.getBoundingClientRect();

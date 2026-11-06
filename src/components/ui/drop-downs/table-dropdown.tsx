@@ -120,7 +120,8 @@ export default function TableDropDown({
       editor.update(() => {
         const tableNode = $createTableNodeWithDimensions(rows, cols, true);
         $insertNodeToNearestRoot(tableNode);
-        const firstCell = tableNode.getFirstChild()?.getFirstChild();
+        const firstRow = tableNode.getFirstChild();
+        const firstCell = $isElementNode(firstRow) ? firstRow.getFirstChild() : null;
         if (firstCell && $isElementNode(firstCell)) {
           firstCell.select();
         }

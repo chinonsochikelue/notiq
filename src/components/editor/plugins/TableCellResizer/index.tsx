@@ -339,7 +339,7 @@ function TableCellResizer({editor}: {editor: LexicalEditor}): React.JSX.Element 
         activeCell.elem.getBoundingClientRect();
       const zoom = calculateZoomLevel(activeCell.elem);
       const zoneWidth = 10; // Pixel width of the zone where you can drag the edge
-      const styles = {
+      const styles: Record<'bottom' | 'right', React.CSSProperties> = {
         bottom: {
           backgroundColor: 'none',
           "zIndex":"10",
