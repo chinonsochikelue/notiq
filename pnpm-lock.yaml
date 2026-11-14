@@ -419,7 +419,7 @@ importers:
         version: 2.1.1
       docus:
         specifier: ^5.15.0
-        version: 5.15.0(1fddf766fac89926ffd94d46fa44ffc6)
+        version: 5.15.0(1eac66061d98aad7a0e2269f8cc9dff6)
       feed:
         specifier: ^5.1.0
         version: 5.2.0
@@ -508,8 +508,8 @@ importers:
         specifier: ^6.1.2
         version: 6.1.2
       shiki:
-        specifier: ^3.19.0
-        version: 3.21.0
+        specifier: ^4.0.0
+        version: 4.6.0
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -6814,9 +6814,6 @@ packages:
   '@shikijs/types@4.6.0':
     resolution: {integrity: sha512-+ENG1adsKt/X7cRYw1Nl7BEpBmPOjmQ7bR/eGmHuMlT8gtOFf3KEi5l31DJYyAWhW6Y6bjP1plU7FmaxWGENFw==}
     engines: {node: '>=20'}
-
-  '@shikijs/vscode-textmate@10.0.2':
-    resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
 
   '@shikijs/vscode-textmate@10.1.0':
     resolution: {integrity: sha512-cVBuhDQjBZaNMTwBquYfPydrUP+E3hE6oYGasx8h6ZrODIM7/r+gxLDXdd66oszbrggZHEntdE6j+5gYIVyMWQ==}
@@ -17837,13 +17834,13 @@ snapshots:
 
   '@colordx/core@7.3.0': {}
 
-  '@comark/vue@0.7.0(katex@0.16.27)(shiki@3.21.0)(vue@3.5.44(typescript@5.9.3))':
+  '@comark/vue@0.7.0(katex@0.16.27)(shiki@4.6.0)(vue@3.5.44(typescript@5.9.3))':
     dependencies:
-      comark: 0.7.0(katex@0.16.27)(shiki@3.21.0)
+      comark: 0.7.0(katex@0.16.27)(shiki@4.6.0)
       vue: 3.5.44(typescript@5.9.3)
     optionalDependencies:
       katex: 0.16.27
-      shiki: 3.21.0
+      shiki: 4.6.0
     transitivePeerDependencies:
       - rangi
 
@@ -20015,7 +20012,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/mdx': 2.0.13
       acorn: 8.15.0
       collapse-white-space: 2.1.0
@@ -23934,8 +23931,8 @@ snapshots:
   '@shikijs/core@3.21.0':
     dependencies:
       '@shikijs/types': 3.21.0
-      '@shikijs/vscode-textmate': 10.0.2
-      '@types/hast': 3.0.4
+      '@shikijs/vscode-textmate': 10.1.0
+      '@types/hast': 3.0.5
       hast-util-to-html: 9.0.5
 
   '@shikijs/core@4.6.0':
@@ -23949,7 +23946,7 @@ snapshots:
   '@shikijs/engine-javascript@3.21.0':
     dependencies:
       '@shikijs/types': 3.21.0
-      '@shikijs/vscode-textmate': 10.0.2
+      '@shikijs/vscode-textmate': 10.1.0
       oniguruma-to-es: 4.3.4
 
   '@shikijs/engine-javascript@4.6.0':
@@ -23961,7 +23958,7 @@ snapshots:
   '@shikijs/engine-oniguruma@3.21.0':
     dependencies:
       '@shikijs/types': 3.21.0
-      '@shikijs/vscode-textmate': 10.0.2
+      '@shikijs/vscode-textmate': 10.1.0
 
   '@shikijs/engine-oniguruma@4.6.0':
     dependencies:
@@ -24027,15 +24024,13 @@ snapshots:
 
   '@shikijs/types@3.21.0':
     dependencies:
-      '@shikijs/vscode-textmate': 10.0.2
-      '@types/hast': 3.0.4
+      '@shikijs/vscode-textmate': 10.1.0
+      '@types/hast': 3.0.5
 
   '@shikijs/types@4.6.0':
     dependencies:
       '@shikijs/vscode-textmate': 10.1.0
       '@types/hast': 3.0.5
-
-  '@shikijs/vscode-textmate@10.0.2': {}
 
   '@shikijs/vscode-textmate@10.1.0': {}
 
@@ -27080,7 +27075,7 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark@0.7.0(katex@0.16.27)(shiki@3.21.0):
+  comark@0.7.0(katex@0.16.27)(shiki@4.6.0):
     dependencies:
       entities: 8.1.0
       htmlparser2: 12.0.0
@@ -27088,7 +27083,7 @@ snapshots:
       markdown-exit: 1.1.0-beta.2
     optionalDependencies:
       katex: 0.16.27
-      shiki: 3.21.0
+      shiki: 4.6.0
 
   comma-separated-tokens@2.0.3: {}
 
@@ -27708,12 +27703,12 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  docus@5.15.0(1fddf766fac89926ffd94d46fa44ffc6):
+  docus@5.15.0(1eac66061d98aad7a0e2269f8cc9dff6):
     dependencies:
       '@ai-sdk/gateway': 4.0.132(zod@4.6.7)
       '@ai-sdk/mcp': 2.0.88(zod@4.6.7)
       '@ai-sdk/vue': 4.0.162(vue@3.5.44(typescript@5.9.3))(zod@4.6.7)
-      '@comark/vue': 0.7.0(katex@0.16.27)(shiki@3.21.0)(vue@3.5.44(typescript@5.9.3))
+      '@comark/vue': 0.7.0(katex@0.16.27)(shiki@4.6.0)(vue@3.5.44(typescript@5.9.3))
       '@iconify-json/lucide': 1.2.150
       '@iconify-json/simple-icons': 1.2.101
       '@iconify-json/vscode-icons': 1.2.95
@@ -29439,20 +29434,20 @@ snapshots:
 
   hast-util-from-dom@5.0.1:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       hastscript: 9.0.1
       web-namespaces: 2.0.1
 
   hast-util-from-html-isomorphic@2.0.0:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       hast-util-from-dom: 5.0.1
       hast-util-from-html: 2.0.3
       unist-util-remove-position: 5.0.0
 
   hast-util-from-html@2.0.3:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       devlop: 1.1.0
       hast-util-from-parse5: 8.0.3
       parse5: 7.3.0
@@ -29484,7 +29479,7 @@ snapshots:
 
   hast-util-is-element@3.0.0:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
 
   hast-util-minify-whitespace@1.0.1:
     dependencies:
@@ -29526,7 +29521,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       comma-separated-tokens: 2.0.3
       devlop: 1.1.0
       estree-util-attach-comments: 3.0.0
@@ -29545,7 +29540,7 @@ snapshots:
 
   hast-util-to-html@9.0.5:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/unist': 3.0.3
       ccount: 2.0.1
       comma-separated-tokens: 2.0.3
@@ -29640,18 +29635,18 @@ snapshots:
 
   hast-util-to-string@3.0.1:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
 
   hast-util-to-text@4.0.2:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/unist': 3.0.3
       hast-util-is-element: 3.0.0
       unist-util-find-after: 5.0.0
 
   hast-util-whitespace@3.0.0:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
 
   hastscript@9.0.1:
     dependencies:
@@ -30857,7 +30852,7 @@ snapshots:
 
   mdast-util-math@3.0.0(supports-color@10.2.2):
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
       devlop: 1.1.0
       longest-streak: 3.1.0
@@ -30870,7 +30865,7 @@ snapshots:
   mdast-util-mdx-expression@2.0.1(supports-color@10.2.2):
     dependencies:
       '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
       devlop: 1.1.0
       mdast-util-from-markdown: 2.0.2(supports-color@10.2.2)
@@ -30881,7 +30876,7 @@ snapshots:
   mdast-util-mdx-jsx@3.2.0(supports-color@10.2.2):
     dependencies:
       '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
       '@types/unist': 3.0.3
       ccount: 2.0.1
@@ -30908,7 +30903,7 @@ snapshots:
   mdast-util-mdxjs-esm@2.0.1(supports-color@10.2.2):
     dependencies:
       '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
       devlop: 1.1.0
       mdast-util-from-markdown: 2.0.2(supports-color@10.2.2)
@@ -30923,7 +30918,7 @@ snapshots:
 
   mdast-util-to-hast@13.2.0:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
       '@ungap/structured-clone': 1.3.0
       devlop: 1.1.0
@@ -33589,7 +33584,7 @@ snapshots:
   rehype-recma@1.0.0(supports-color@10.2.2):
     dependencies:
       '@types/estree': 1.0.10
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       hast-util-to-estree: 3.1.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
@@ -34171,8 +34166,8 @@ snapshots:
       '@shikijs/langs': 3.21.0
       '@shikijs/themes': 3.21.0
       '@shikijs/types': 3.21.0
-      '@shikijs/vscode-textmate': 10.0.2
-      '@types/hast': 3.0.4
+      '@shikijs/vscode-textmate': 10.1.0
+      '@types/hast': 3.0.5
 
   shiki@4.6.0:
     dependencies:
