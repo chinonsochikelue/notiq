@@ -28,8 +28,9 @@ import { cn } from "../../../../lib/utils";
 import { TemplateDialog } from "../TemplatePlugin/TemplateDialog";
 import { ToolbarConfig, ToolbarItem } from "../../index";
 
-import { Bold, Code, DownloadIcon, FileJson, FileText, Italic, Link, Mic, Printer, Redo, Redo2Icon, Underline, Undo, Undo2Icon } from "lucide-react";
+import { Bold, Code, DownloadIcon, FileJson, FileText, Italic, Link, Mic, Printer, Redo, Redo2Icon, Sparkles, Underline, Undo, Undo2Icon } from "lucide-react";
 import { EXPORT_MARKDOWN_COMMAND, EXPORT_PDF_COMMAND, EXPORT_HTML_COMMAND } from "../ExportPlugin";
+import { OPEN_AI_COMMAND_BAR_COMMAND } from "../AICommandBarPlugin";
 
 import { Separator } from "../../../ui/separator";
 import { Button } from "../../../ui/button";
@@ -50,37 +51,23 @@ import { $isListNode, ListNode } from "@lexical/list";
 import { $isHeadingNode } from "@lexical/rich-text";
 import { $isCodeNode } from '@lexical/code';
 import { getLanguageFriendlyName } from '../../utils/codeLanguages';
-import dynamic from "next/dynamic.js";
 import { Toggle } from "../../../ui/toggle";
 import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { sanitizeUrl } from "../../utils/url";
 import CodeList from "../../../ui/drop-downs/code"
 import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
 import { downloadHTML, exportEditorToHTML } from "../../../../utils/htmlExport";
-const BlockFormatDropDown = dynamic(
-  () => import("../../../ui/drop-downs/block-format")
-);
-const MobileToolbar = dynamic(() => import("./MobileToolbar"), { ssr: false });
-const FontDropDown = dynamic(
-  () => import("../../../ui/drop-downs/font")
-);
-const FontSize = dynamic(
-  () => import("../../../ui/drop-downs/font-size")
-);
-const Color = dynamic(() => import("../../../ui/drop-downs/color"));
-const BackgroundColor = dynamic(() => import("../../../ui/drop-downs/background-color"));
-const TextFormat = dynamic(
-  () => import("../../../ui/drop-downs/text-format")
-);
-const InsertNode = dynamic(
-  () => import("../../../ui/drop-downs/insert-node")
-);
-const TextAlign = dynamic(
-  () => import("../../../ui/drop-downs/text-align")
-);
-const TableDropDown = dynamic(
-  () => import("../../../ui/drop-downs/table-dropdown")
-);
+
+import BlockFormatDropDown from "../../../ui/drop-downs/block-format";
+import MobileToolbar from "./MobileToolbar";
+import FontDropDown from "../../../ui/drop-downs/font";
+import FontSize from "../../../ui/drop-downs/font-size";
+import Color from "../../../ui/drop-downs/color";
+import BackgroundColor from "../../../ui/drop-downs/background-color";
+import TextFormat from "../../../ui/drop-downs/text-format";
+import InsertNode from "../../../ui/drop-downs/insert-node";
+import TextAlign from "../../../ui/drop-downs/text-align";
+import TableDropDown from "../../../ui/drop-downs/table-dropdown";
 // import { type } from './../../../providers/ToolbarContext';
 
 
@@ -109,7 +96,12 @@ export default function ToolbarPlugin({
     null
   );
   const [isFocused, setIsFocused] = useState(false);
+  const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
   const { toolbarState, updateToolbarState } = useToolbarState();
+
+  useEffect(() => {
+    setHasSpeechSupport(SUPPORT_SPEECH_RECOGNITION);
+  }, []);
 
   const $updateToolbar = useCallback(() => {
     const currentEditor = activeEditor || editor;
@@ -344,6 +336,7 @@ export default function ToolbarPlugin({
 
   const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
     "undo", "redo", "separator",
+    "ai", "separator",
     "block-format", "separator",
     "font-family", "separator",
     "font-size", "separator",
@@ -397,6 +390,27 @@ export default function ToolbarPlugin({
             aria-label="Redo"
           >
             <Redo2Icon className=" size-4" />
+          </Button>
+        );
+      case "ai":
+        return (
+          <Button
+            key={`ai-${index}`}
+            variant={"outline"}
+            size={"Toolbar"}
+            disabled={!isEditable}
+            onClick={() => {
+              editor.dispatchCommand(OPEN_AI_COMMAND_BAR_COMMAND, undefined);
+            }}
+            tip="Ask AI (⌘K)"
+            type="button"
+            className={cn(
+              "toolbar-item border-none text-violet-600 dark:text-violet-400 hover:bg-violet-500/10 hover:text-violet-700 dark:hover:text-violet-300",
+              itemClassName
+            )}
+            aria-label="Ask AI"
+          >
+            <Sparkles className="size-4" />
           </Button>
         );
       case "separator":
@@ -573,7 +587,7 @@ export default function ToolbarPlugin({
           />
         );
       case "speech":
-        return SUPPORT_SPEECH_RECOGNITION ? (
+        return hasSpeechSupport ? (
           <Button
             key={`speech-${index}`}
             variant={"outline"}

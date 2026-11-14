@@ -63,6 +63,7 @@ export interface ExtensionConfig<Options = any, Storage = any> {
 export interface NotiqEditorOptions {
   extensions?: any[];
   content?: string | SerializedEditorState | Record<string, any>;
+  theme?: any;
   editable?: boolean;
   autofocus?: boolean | "start" | "end" | "all";
   placeholder?: string | React.ReactNode;

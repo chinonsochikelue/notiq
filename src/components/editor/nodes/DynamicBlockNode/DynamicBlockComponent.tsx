@@ -22,6 +22,7 @@ interface DynamicBlockComponentProps {
 
 export default function DynamicBlockComponent({ nodeKey, payload }: DynamicBlockComponentProps) {
   const [editor] = useLexicalComposerContext()
+  const isEditable = editor.isEditable()
   const [currentBlockId, setCurrentBlockId] = useState(payload.currentBlockId || payload.blocks[0]?.id)
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -160,6 +161,8 @@ export default function DynamicBlockComponent({ nodeKey, payload }: DynamicBlock
             </Badge>
           </div>
           <div className="flex items-center gap-2">
+            {isEditable && (
+              <>
             <Button variant="ghost" size="sm" onClick={() => setIsPreviewMode(!isPreviewMode)} className="h-8 px-2">
               {isPreviewMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               {isPreviewMode ? "Edit" : "Preview"}
@@ -168,10 +171,13 @@ export default function DynamicBlockComponent({ nodeKey, payload }: DynamicBlock
               <Button variant="ghost" size="sm" onClick={() => setIsPlaying(!isPlaying)} className="h-8 px-2">
                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               </Button>
+
             )}
             <Button variant="ghost" size="sm" onClick={() => setShowSettings(!showSettings)} className="h-8 px-2">
               <Settings className="w-4 h-4" />
             </Button>
+            </>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -193,7 +199,7 @@ export default function DynamicBlockComponent({ nodeKey, payload }: DynamicBlock
         </div>
 
         {/* Block Selection */}
-        {!isPreviewMode && (
+        {!isPreviewMode && isEditable && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-sm">Content Blocks ({payload.blocks.length})</h4>

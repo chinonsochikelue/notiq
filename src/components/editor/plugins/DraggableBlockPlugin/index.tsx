@@ -66,6 +66,7 @@ export default function DraggableBlockPlugin({
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const targetLineRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingRef = useRef(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const getTargetNode = useCallback((): LexicalNode | null => {
@@ -241,8 +242,17 @@ export default function DraggableBlockPlugin({
       menuComponent={
         <div
           ref={menuRef}
+          onDragStartCapture={() => {
+            isDraggingRef.current = true;
+            setIsMenuOpen(false);
+          }}
+          onDragEndCapture={() => {
+            setTimeout(() => {
+              isDraggingRef.current = false;
+            }, 50);
+          }}
           className={cn(
-            "draggable-block-menu flex items-center gap-0.5 rounded-md border border-border/40 bg-background/90 text-muted-foreground shadow-sm backdrop-blur transition-all duration-150 group z-40 absolute top-0 left-0",
+            "draggable-block-menu flex items-center gap-0.5 rounded-md border border-border/40 bg-background/90 px-0.5 text-muted-foreground shadow-sm backdrop-blur transition-opacity duration-150 group z-40 absolute top-0 left-0",
             className
           )}
         >
@@ -250,23 +260,30 @@ export default function DraggableBlockPlugin({
           <button
             type="button"
             onClick={handleInsertBelow}
-            className="flex items-center justify-center w-5 h-5 rounded hover:bg-muted hover:text-foreground transition-colors"
+            className="flex items-center justify-center w-4 h-5 rounded hover:bg-muted hover:text-foreground transition-colors"
             title="Insert block below"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3 h-3" />
           </button>
 
           {/* Six-Dot Drag Handle & Context Menu Trigger */}
           <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="flex items-center justify-center w-5 h-5 rounded cursor-grab active:cursor-grabbing hover:bg-muted hover:text-foreground transition-colors"
-                title="Drag to move or click for block actions"
-              >
-                <GripVertical className="w-3.5 h-3.5" />
-              </button>
+              <span className="sr-only" aria-hidden="true" />
             </DropdownMenuTrigger>
+            <button
+              type="button"
+              onClick={() => {
+                if (!isDraggingRef.current) {
+                  setIsMenuOpen((prev) => !prev);
+                }
+              }}
+              className="flex items-center justify-center w-4 h-5 rounded cursor-grab active:cursor-grabbing hover:bg-muted hover:text-foreground transition-colors"
+              title="Drag to move or click for block actions"
+              aria-label="Drag to move or click for block actions"
+            >
+              <GripVertical className="w-3.5 h-3.5" />
+            </button>
 
             <DropdownMenuContent
               align="start"

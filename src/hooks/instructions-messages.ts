@@ -10,7 +10,67 @@ export type AIAction =
   | "SimplifyLanguage"
   | "WriteHint"
   | "Steps"
+  | "Tone"
+  | "Translate"
+  | "Summarize"
   | "askPageQuestion";
+
+export type WritingStylePresetId =
+  | "balanced"
+  | "technical"
+  | "editorial"
+  | "executive"
+  | "academic";
+
+export const WRITING_STYLE_PRESETS: Record<
+  WritingStylePresetId,
+  { label: string; instruction: string }
+> = {
+  balanced: {
+    label: "Balanced",
+    instruction:
+      "Write in clear, natural, engaging prose. Balance conciseness with warmth and strong structure.",
+  },
+  technical: {
+    label: "Technical Docs",
+    instruction:
+      "Write like senior engineering documentation: precise terminology, active voice, zero marketing fluff, concrete examples, and crisp scannable structure.",
+  },
+  editorial: {
+    label: "Editorial",
+    instruction:
+      "Write with compelling narrative flow, vivid transitions, varied sentence rhythm, and strong opening hooks.",
+  },
+  executive: {
+    label: "Executive Brief",
+    instruction:
+      "Lead with the bottom line (BLUF). Use tight bullet points, quantified tradeoffs, and decisive, action-oriented language.",
+  },
+  academic: {
+    label: "Academic",
+    instruction:
+      "Use formal, objective, well-qualified prose with rigorous logical transitions and precise definitions.",
+  },
+};
+
+export const NOTIQ_RICH_MARKDOWN_RULE = `
+Formatting Guidelines (Notiq Block Canvas):
+- Output clean, standard Markdown that hydrates directly into rich blocks.
+- Headings: '# ' (H1), '## ' (H2), '### ' (H3).
+- Lists: '- ' for bullets, '1. ' for numbered lists, '- [ ] ' / '- [x] ' for interactive task checklists.
+- Quotes: '> ' for blockquotes.
+- Code: Fenced code blocks with language tags (\`\`\`tsx, \`\`\`ts, \`\`\`python, etc.).
+- Math: Inline '$E = mc^2$' or block '$$\n...\n$$'.
+- Tables: Standard GFM Markdown tables ('| Header | ... |') when comparing options or structured data.
+- Callouts: '> [!NOTE]', '> [!TIP]', '> [!WARNING]', or '> [!IMPORTANT]' for highlighted callout boxes.
+- Normal Images: '![Descriptive Alt](https://...)' on its own line for full-width/block visuals.
+- Inline Images: '![inline:left:Alt](https://...)' or '![inline:right:Alt](https://...)' for inline/floated visuals inside a paragraph.
+- Diagrams (Interactive Excalidraw): When asked to draw a diagram, flowchart, or architecture, output a fenced \`\`\`excalidraw JSON block using:
+  \`\`\`excalidraw
+  {"nodes":[{"id":"a","label":"Step A"},{"id":"b","label":"Step B"}],"edges":[{"from":"a","to":"b","label":"next"}]}
+  \`\`\`
+- Dividers: '---' between major sections when appropriate.
+- Never wrap the entire response in an outer \`\`\`markdown code fence unless explicitly asked for raw code.`;
 
 const GenerateAgainInstruction = `
         Create a system that allows the AI to regenerate its response if the user is not satisfied with the initial answer.
@@ -35,51 +95,20 @@ const GenerateAgainInstruction = `
 
 
 
-const autoCompleteInstruction=`        Generate a completion without combining it with the user's text. Limit the response to a concise length and do not include additional commentary or explanations.`
-const improveMesgInstruction= `Provide constructive feedback to improve the writing of a user, focusing on clarity, grammar, style, and coherence. 
-Assess the user's writing thoughtfully before providing feedback, ensuring to highlight both strengths and areas for improvement. Offer specific, actionable suggestions to help the user enhance their writing skills.
+const autoCompleteInstruction = `Continue writing naturally from the cursor position based on the surrounding document context. Match the document's existing tone, tense, and formatting. Output ONLY the continuation text with no preamble, no repetition of the preceding sentence, and no commentary.`;
 
-# Steps
+const improveMesgInstruction = `Rewrite and polish the provided text for clarity, flow, active voice, and impact while preserving its original meaning and Markdown formatting.
 
-1. **Read and Analyze** the provided text to understand its context, purpose, and audience.
-2. **Identify Strengths**: Note areas where the user excels in their writing.
-3. **Highlight Issues**: Identify aspects that need improvement, such as grammatical errors, awkward phrasing, or unclear arguments.
-4. **Provide Suggestions**: Offer clear, practical advice on how to address the identified issues.
-5. **Conclude with Encouragement**: Motivate the user to apply the feedback and continue improving their writing.
+Rules:
+- Output ONLY the rewritten replacement text.
+- Do NOT include commentary, critique, "Strengths/Issues", preambles ("Here is the improved version:"), or wrapping quotation marks.
+- Keep technical terms, names, and inline code intact.`;
 
-# Output Format
+const ToneInstruction = `Rewrite the provided text in the requested tone while preserving its core meaning, facts, and formatting. Output ONLY the rewritten text with no preamble or wrapping quotes.`;
 
-Provide feedback in a structured paragraph format. Use bullet points or numbered lists for specific suggestions when needed.
+const TranslateInstruction = `Translate the provided text accurately into the target language, preserving tone, idioms, and Markdown formatting. Output ONLY the translated text with no preamble or explanation.`;
 
-# Examples
-
-**User's Text:**  
-"I think it's important because to the happiness of people is sometimes underestimated but more important than money."
-
-**Feedback:**  
-- Strengths: Your writing demonstrates a passionate perspective on the importance of happiness.
-- Issues:
-  - The sentence is somewhat confusing due to misplaced phrases.
-  - There is a grammatical error with the use of "because."
-- Suggestions:
-  1. Consider rephrasing for clarity: "I believe happiness is often underrated and is more important than money."
-  2. Remove unnecessary words that obstruct the message.
-
-**User's Text:**  
-"The cat swiftly leaped over the wall, its movements were agile and graceful, capturing the attention of everyone nearby."
-
-**Feedback:**  
-- Strengths: Vivid imagery is successfully used to engage the reader.
-- Issues:
-  - The sentence could be split for better readability.
-- Suggestions:
-  1. Break the sentence into two: "The cat swiftly leaped over the wall. Its movements were agile and graceful, capturing the attention of everyone nearby."
-
-# Notes
-
-- Tailor feedback according to the level of the user's proficiency.
-- Be specific in your suggestions to aid clarity and understanding.
-- Encourage sustained practice and application of advice for continuous improvement.`
+const SummarizeInstruction = `Distill the provided document or selection into a crisp, high-signal summary. Start with a 1-2 sentence synthesis, followed by 3-5 concise bullet points of the key takeaways. Output clean Markdown with no preamble.`;
 
 
 const FixSpellingGrammarInstruction=`Correct any spelling and grammar errors in a given text.
@@ -297,4 +326,7 @@ export {
     SimplifyLanguageInstruction,
     WriteHintInstruction,
     StepsInstruction,
+    ToneInstruction,
+    TranslateInstruction,
+    SummarizeInstruction,
 }

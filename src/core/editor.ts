@@ -22,6 +22,7 @@ import {
 import { $generateHtmlFromNodes } from "@lexical/html";
 import { $convertToMarkdownString } from "@lexical/markdown";
 import { NOTIQ_TRANSFORMERS } from "../components/editor/utils/markdownTransformers";
+import editorTheme from "../components/editor/themes/editor-theme";
 import {
   importContentToEditor,
   detectContentFormat,
@@ -75,6 +76,7 @@ export class NotiqEditorImpl implements NotiqEditor {
     } else {
       this.lexical = createLexicalEditor({
         nodes: allNodes,
+        theme: (this.options.theme as any) || editorTheme,
         editable: this.options.editable,
         onError: (err) => console.error("[Notiq Editor Core Error]:", err),
       });

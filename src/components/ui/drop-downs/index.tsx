@@ -65,6 +65,9 @@ export function DropDown({
           size={"Toolbar"}
           style={TriggerClassName}
           className={className}
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
         >
           <div className="flex  flex-row justify-center gap-x-3 items-center">
             {TriggerLabel}

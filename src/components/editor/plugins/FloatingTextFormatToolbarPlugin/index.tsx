@@ -139,15 +139,16 @@ function useFloatingTextFormatToolbar(
 
       if (
         !$isCodeHighlightNode(selection.anchor.getNode()) &&
-        selection.getTextContent() !== ''
+        !selection.isCollapsed() &&
+        selection.getTextContent().trim() !== ''
       ) {
-        setIsText($isTextNode(node) || $isParagraphNode(node));
+        setIsText(true);
       } else {
         setIsText(false);
       }
 
       const rawTextContent = selection.getTextContent().replace(/\n/g, '');
-      if (!selection.isCollapsed() && rawTextContent === '') {
+      if (selection.isCollapsed() || rawTextContent === '') {
         setIsText(false);
         return;
       }
@@ -227,7 +228,7 @@ function useFloatingTextFormatToolbar(
   }
 
   return createPortal(
-    <div ref={toolbarRef} className="hidden md:block">
+    <div ref={toolbarRef} className="z-50 pointer-events-auto">
       <TextFormatFloatingToolbar
         editor={editor}
         anchorElem={anchorElem}

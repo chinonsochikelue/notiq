@@ -30,6 +30,7 @@ interface StoryBuilderComponentProps {
 
 export default function StoryBuilderComponent({ nodes, currentNodeId, title, nodeKey }: StoryBuilderComponentProps) {
   const [editor] = useLexicalComposerContext()
+  const isEditable = editor.isEditable()
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [previewNodeId, setPreviewNodeId] = useState("")
   const [editingNode, setEditingNode] = useState<string | null>(null)

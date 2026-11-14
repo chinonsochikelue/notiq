@@ -16,7 +16,7 @@ import type { JSX } from 'react';
 
 import '@excalidraw/excalidraw/index.css';
 
-import { Excalidraw } from '@excalidraw/excalidraw';
+import type { Excalidraw as IExcalidraw } from '@excalidraw/excalidraw';
 import { isDOMNode } from 'lexical';
 import * as React from 'react';
 import { ReactPortal, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -143,6 +143,21 @@ export default function ExcalidrawModal({
   const [files, setFiles] = useState<BinaryFiles>(initialFiles);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [ExcalidrawComponent, setExcalidrawComponent] = useState<any>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    if (typeof window !== 'undefined' && isShown) {
+      import('@excalidraw/excalidraw').then((mod) => {
+        if (mounted) {
+          setExcalidrawComponent(() => mod.Excalidraw);
+        }
+      });
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [isShown]);
 
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
@@ -428,26 +443,32 @@ export default function ExcalidrawModal({
 
           {/* Excalidraw Canvas Area */}
           <div className="flex-1 w-full h-full overflow-hidden bg-background relative">
-            <Excalidraw
-              onChange={onChange}
-              excalidrawAPI={setExcalidrawAPI}
-              initialData={{
-                appState: initialAppState || { isLoading: false },
-                elements: initialElements,
-                files: initialFiles,
-              }}
-              theme={isDarkMode ? 'dark' : 'light'}
-              UIOptions={{
-                canvasActions: {
-                  changeViewBackgroundColor: true,
-                  clearCanvas: true,
-                  export: { saveFileToDisk: true },
-                  loadScene: false,
-                  saveToActiveFile: false,
-                  toggleTheme: true,
-                },
-              }}
-            />
+            {ExcalidrawComponent ? (
+              <ExcalidrawComponent
+                onChange={onChange}
+                excalidrawAPI={setExcalidrawAPI}
+                initialData={{
+                  appState: initialAppState || { isLoading: false },
+                  elements: initialElements,
+                  files: initialFiles,
+                }}
+                theme={isDarkMode ? 'dark' : 'light'}
+                UIOptions={{
+                  canvasActions: {
+                    changeViewBackgroundColor: true,
+                    clearCanvas: true,
+                    export: { saveFileToDisk: true },
+                    loadScene: false,
+                    saveToActiveFile: false,
+                    toggleTheme: true,
+                  },
+                }}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+                Loading drawing canvas...
+              </div>
+            )}
           </div>
 
           {/* Footer Controls */}

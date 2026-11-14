@@ -9,7 +9,7 @@ import {
   KEY_DOWN_COMMAND,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Check, X } from "lucide-react";
 import { cn } from "../../../../lib/utils";
 
 export interface CaretCoordinates {
@@ -85,13 +85,14 @@ export default function InlineCopilotPlugin({
   enabledDefault?: boolean;
 }) {
   const [editor] = useLexicalComposerContext();
-  const [isEnabled, setIsEnabled] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("notiq_copilot_enabled");
-      if (saved !== null) return saved === "true";
+  const [isEnabled, setIsEnabled] = useState<boolean>(enabledDefault);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("notiq_copilot_enabled");
+    if (saved !== null) {
+      setIsEnabled(saved === "true");
     }
-    return enabledDefault;
-  });
+  }, []);
 
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -343,6 +344,19 @@ export default function InlineCopilotPlugin({
     };
   }, [suggestion, editor, clearSuggestion, calculateCurrentCaretCoords]);
 
+  const acceptSuggestion = useCallback(() => {
+    if (!suggestion) return;
+    const textToInsert = suggestion;
+    clearSuggestion();
+
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        selection.insertText(textToInsert);
+      }
+    });
+  }, [editor, suggestion, clearSuggestion]);
+
   // Handle Tab to accept and Esc to dismiss
   useEffect(() => {
     return editor.registerCommand(
@@ -359,17 +373,7 @@ export default function InlineCopilotPlugin({
         if (event.key === "Tab" && suggestion) {
           event.preventDefault();
           event.stopPropagation();
-
-          const textToInsert = suggestion;
-          clearSuggestion();
-
-          editor.update(() => {
-            const selection = $getSelection();
-            if ($isRangeSelection(selection)) {
-              selection.insertText(textToInsert);
-            }
-          });
-
+          acceptSuggestion();
           return true;
         }
 
@@ -389,7 +393,7 @@ export default function InlineCopilotPlugin({
       },
       COMMAND_PRIORITY_CRITICAL
     );
-  }, [editor, suggestion, clearSuggestion]);
+  }, [editor, suggestion, clearSuggestion, acceptSuggestion, toggleEnabled]);
 
   // Dismiss on selection click
   useEffect(() => {
@@ -403,7 +407,7 @@ export default function InlineCopilotPlugin({
       },
       COMMAND_PRIORITY_CRITICAL
     );
-  }, [editor, suggestion, clearSuggestion]);
+  }, [editor, suggestion, clearSuggestion, acceptSuggestion, toggleEnabled]);
 
   return (
     <>
@@ -437,15 +441,45 @@ export default function InlineCopilotPlugin({
                 ? "\u00A0" + suggestion.slice(1)
                 : suggestion}
           </span>
-          <span className="inline-flex items-center gap-1 ml-2 px-1.5 py-0.5 rounded text-[10px] bg-background/95 text-foreground border border-border/80 shadow-xs not-italic font-mono font-medium backdrop-blur-xs pointer-events-auto shrink-0">
-            <span>Tab</span>
-            <span className="text-[9px] text-muted-foreground">⇥ accept</span>
+          <span className="inline-flex items-center gap-1 ml-2 not-italic pointer-events-auto shrink-0">
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                acceptSuggestion();
+              }}
+              title="Accept suggestion (Tab)"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-violet-600 hover:bg-violet-500 text-white shadow-xs transition-colors cursor-pointer"
+            >
+              <Check className="w-3 h-3" />
+              <span>Accept</span>
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                clearSuggestion();
+              }}
+              title="Reject suggestion (Esc)"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-background/95 text-muted-foreground hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 border border-border/80 shadow-xs transition-colors cursor-pointer"
+            >
+              <X className="w-3 h-3" />
+              <span>Reject</span>
+            </button>
           </span>
         </div>
       )}
 
       {/* Floating Copilot Status Pill (Bottom right of editor) */}
-      <div className="fixed bottom-4 left-4 z-40 hidden sm:flex items-center gap-1.5 animate-in fade-in duration-300">
+      <div className="fixed bottom-4 right-4 z-40 hidden sm:flex items-center gap-1.5 animate-in fade-in duration-300">
         <button
           type="button"
           onClick={toggleEnabled}

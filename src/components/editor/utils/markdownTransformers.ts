@@ -6,8 +6,13 @@ import {
 import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
+  CHECK_LIST,
+  TEXT_FORMAT_TRANSFORMERS,
+  TEXT_MATCH_TRANSFORMERS,
   TRANSFORMERS,
   ElementTransformer,
+  MultilineElementTransformer,
+  TextMatchTransformer,
 } from "@lexical/markdown";
 import { ImageNode, $createImageNode, $isImageNode } from "../nodes/ImageNode";
 import {
@@ -18,17 +23,26 @@ import {
 import { YouTubeNode, $createYouTubeNode, $isYouTubeNode } from "../plugins/YouTubeNode";
 import { TweetNode, $createTweetNode, $isTweetNode } from "../nodes/TweetNode";
 import { FigmaNode, $createFigmaNode, $isFigmaNode } from "../nodes/FigmaNode/FigmaNode";
-import { ExcalidrawNode, $isExcalidrawNode } from "../nodes/ExcalidrawNode";
-import { EquationNode, $isEquationNode } from "../nodes/EquationNode/EquationNode";
+import { ExcalidrawNode, $createExcalidrawNode, $isExcalidrawNode } from "../nodes/ExcalidrawNode";
+import { compileExcalidrawDiagram } from "./excalidrawDiagramBuilder";
+import {
+  EquationNode,
+  $createEquationNode,
+  $isEquationNode,
+} from "../nodes/EquationNode/EquationNode";
 import { Hint, $createHintNode, HintType } from "../nodes/Hint";
 import { StepperNode, $isStepperNode } from "../nodes/Stepper";
 import { PollNode, $isPollNode } from "../nodes/PollNode";
 import { AudioNode, $isAudioNode, $createAudioNode } from "../nodes/AudioNode";
 import { FileNode, $isFileNode, $createFileNode } from "../nodes/FileNode";
 import {
+  $createTableNode,
+  $createTableRowNode,
+  $createTableCellNode,
   TableNode,
   TableRowNode,
   TableCellNode,
+  TableCellHeaderStates,
   $isTableNode,
   $isTableRowNode,
   $isTableCellNode,
@@ -59,7 +73,7 @@ export const IMAGE_TRANSFORMER: ElementTransformer = {
     }
     return null;
   },
-  regExp: /^!\[(.*?)\]\((https?:\/\/.*?)\)$/,
+  regExp: /^!\[(.*?)\]\(((?:https?:\/\/|data:image\/).*?)\)$/,
   replace: (parentNode, _1, match) => {
     const [, altText, src] = match;
     const imageNode = $createImageNode({
@@ -137,7 +151,13 @@ export const EQUATION_TRANSFORMER: ElementTransformer = {
     return isInline ? `$${equation}$` : `$$\n${equation}\n$$`;
   },
   regExp: /^\$\$(.*?)\$\$$/,
-  replace: () => {},
+  replace: (parentNode, _children, match) => {
+    const equation = match[1]?.trim();
+    if (!equation) return;
+    const paragraph = $createParagraphNode();
+    paragraph.append($createEquationNode(equation, false));
+    parentNode.replace(paragraph);
+  },
   type: "element",
 };
 
@@ -176,13 +196,17 @@ export const HINT_TRANSFORMER: ElementTransformer = {
     if (content) {
       const nested = (hintNode as any).__caption;
       if (nested?.update) {
-        nested.update(() => {
-          const root = $getRoot();
-          root.clear();
-          const p = $createParagraphNode();
-          p.append($createTextNode(content));
-          root.append(p);
-        });
+        nested.update(
+          () => {
+            const root = $getRoot();
+            root.clear();
+            $convertFromMarkdownString(content, [
+              ...TEXT_FORMAT_TRANSFORMERS,
+              ...TEXT_MATCH_TRANSFORMERS,
+            ]);
+          },
+          { discrete: true }
+        );
       }
     }
     parentNode.replace(hintNode);
@@ -272,8 +296,68 @@ export const TABLE_TRANSFORMER: ElementTransformer = {
     return mdLines.join("\n");
   },
   regExp: /^\|(.+)\|$/,
-  replace: () => {},
+  replace: (parentNode, _1, match) => {
+    const rawLine = match[1];
+    const cells = rawLine.split("|").map((c) => c.trim());
+    // Skip markdown table divider rows like | --- | --- |
+    if (cells.every((c) => /^:?-{2,}:?$/.test(c))) {
+      parentNode.remove();
+      return;
+    }
+
+    const prev = parentNode.getPreviousSibling();
+    const isHeaderRow = !$isTableNode(prev);
+
+    const row = $createTableRowNode();
+    for (const cellText of cells) {
+      const cell = $createTableCellNode(
+        isHeaderRow ? TableCellHeaderStates.ROW : TableCellHeaderStates.NO_STATUS
+      );
+      if (cellText) {
+        $convertFromMarkdownString(
+          cellText,
+          [
+            INLINE_EQUATION_TRANSFORMER,
+            ...TEXT_FORMAT_TRANSFORMERS,
+            ...TEXT_MATCH_TRANSFORMERS,
+          ],
+          cell
+        );
+      } else {
+        cell.append($createParagraphNode());
+      }
+      row.append(cell);
+    }
+
+    if ($isTableNode(prev)) {
+      prev.append(row);
+      parentNode.remove();
+    } else {
+      const table = $createTableNode();
+      table.append(row);
+      parentNode.replace(table);
+    }
+  },
   type: "element",
+};
+
+// 11b. Inline KaTeX Equation Transformer ($...$)
+export const INLINE_EQUATION_TRANSFORMER: TextMatchTransformer = {
+  dependencies: [EquationNode],
+  export: (node: LexicalNode) => {
+    if (!$isEquationNode(node)) return null;
+    return `$${node.getEquation()}$`;
+  },
+  importRegExp: /(?<!\$)\$(?!\s)([^$\n]*?\S)\$/,
+  regExp: /(?<!\$)\$(?!\s)([^$\n]*?\S)\$$/,
+  replace: (textNode, match) => {
+    const equation = match[1]?.trim();
+    if (!equation) return;
+    const eqNode = $createEquationNode(equation, true);
+    textNode.replace(eqNode);
+  },
+  trigger: "$",
+  type: "text-match",
 };
 
 // 12. Audio Track Transformer
@@ -321,7 +405,65 @@ export const FILE_TRANSFORMER: ElementTransformer = {
  * Guarantees that YouTube, Tweets, Figma, Images, Tables, Steppers,
  * Equations, Polls, Audio, and Files are fully preserved when exporting to Markdown.
  */
+// 13b. Inline Image Transformer (![inline:left|right|full:alt](url))
+export const INLINE_IMAGE_TRANSFORMER: TextMatchTransformer = {
+  dependencies: [InlineImageNode],
+  export: (node: LexicalNode) => {
+    if (!$isInlineImageNode(node)) return null;
+    const pos = node.getPosition();
+    const prefix = pos ? `inline:${pos}:` : "inline:";
+    return `![${prefix}${node.getAltText() || "Image"}](${node.getSrc()})`;
+  },
+  importRegExp: /!\[inline:(?:(left|right|full):)?([^\]]*?)\]\(((?:https?:\/\/|data:image\/)[^)\s]+)\)/,
+  regExp: /!\[inline:(?:(left|right|full):)?([^\]]*?)\]\(((?:https?:\/\/|data:image\/)[^)\s]+)\)$/,
+  replace: (textNode, match) => {
+    const [, posRaw, altText, src] = match;
+    if (!src) return;
+    const position =
+      posRaw === "left" || posRaw === "right" || posRaw === "full"
+        ? posRaw
+        : "left";
+    const inlineImg = $createInlineImageNode({
+      altText: altText?.trim() || "Inline Image",
+      src,
+      position,
+      width: 280,
+    });
+    textNode.replace(inlineImg);
+  },
+  trigger: ")",
+  type: "text-match",
+};
+
+// 14. Excalidraw Fenced Diagram Block Transformer (```excalidraw ... ```)
+export const EXCALIDRAW_BLOCK_TRANSFORMER: MultilineElementTransformer = {
+  dependencies: [ExcalidrawNode],
+  export: (node: LexicalNode) => {
+    if (!$isExcalidrawNode(node)) return null;
+    return `\`\`\`excalidraw\n${(node as any).__data || "[]"}\n\`\`\``;
+  },
+  regExpStart: /^```excalidraw\s*$/i,
+  regExpEnd: /^```\s*$/,
+  replace: (rootNode, _children, startMatch, _endMatch, linesInBetween, isImport) => {
+    if (!startMatch || !linesInBetween) return;
+    const rawJson = linesInBetween.join("\n").trim();
+    const compiled = compileExcalidrawDiagram(rawJson);
+    if (!compiled) return false;
+    const excalidrawNode = $createExcalidrawNode(compiled);
+    const paragraph = $createParagraphNode();
+    paragraph.append(excalidrawNode);
+    if (isImport) {
+      rootNode.append(paragraph);
+    } else {
+      rootNode.replace(paragraph);
+    }
+  },
+  type: "multiline-element",
+};
+
 export const NOTIQ_TRANSFORMERS = [
+  EXCALIDRAW_BLOCK_TRANSFORMER,
+  INLINE_IMAGE_TRANSFORMER,
   HR_TRANSFORMER,
   IMAGE_TRANSFORMER,
   YOUTUBE_TRANSFORMER,
@@ -333,7 +475,9 @@ export const NOTIQ_TRANSFORMERS = [
   POLL_TRANSFORMER,
   EXCALIDRAW_TRANSFORMER,
   TABLE_TRANSFORMER,
+  INLINE_EQUATION_TRANSFORMER,
   AUDIO_TRANSFORMER,
   FILE_TRANSFORMER,
+  CHECK_LIST,
   ...TRANSFORMERS,
 ];

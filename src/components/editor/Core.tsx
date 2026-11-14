@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { useSharedHistoryContext } from "../providers/SharedHistoryContext"
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable"
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
-import dynamic from "next/dynamic.js"
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
 import { ContentEditable } from "@lexical/react/LexicalContentEditable"
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
@@ -15,7 +14,10 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin"
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin"
 import { INSERT_TABLE_COMMAND, $createTableNodeWithDimensions } from "@lexical/table"
 import { $insertNodeToNearestRoot } from "@lexical/utils"
-import { $isElementNode, COMMAND_PRIORITY_EDITOR } from "lexical"
+import { $isElementNode, COMMAND_PRIORITY_EDITOR, type EditorState, type LexicalEditor } from "lexical"
+import { $generateHtmlFromNodes } from "@lexical/html"
+import { $convertToMarkdownString } from "@lexical/markdown"
+import { NOTIQ_TRANSFORMERS } from "./utils/markdownTransformers"
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin"
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin"
 import ShortcutsPlugin from "./plugins/ShortcutsPlugin"
@@ -53,57 +55,24 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ToolbarConfig } from "./index"
 import { useCollab } from "../providers/CollabContext"
 
-const SlashCommand = dynamic(() => import("./plugins/SlashCommand"), { ssr: false })
-const ToolbarPlugin = dynamic(() => import("./plugins/ToolbarPlugin"), {
-  ssr: false,
-  loading: () => (
-    <div className="hidden md:block w-full flex justify-center p-4">
-    </div>
-  ),
-})
-const ExportPlugin = dynamic(() => import("./plugins/ExportPlugin"), { ssr: false });
-const TemplatePlugin = dynamic(() => import("./plugins/TemplatePlugin"), { ssr: false });
-const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
-  ssr: false
-});
-const FloatingLinkEditorPlugin = dynamic(() => import("./plugins/FloatingLinkEditorPlugin"), {
-  ssr: false,
-})
-const TableCellActionMenuPlugin = dynamic(() => import("./plugins/TableCellActionMenuPlugin"), {
-  ssr: false,
-})
-const TableHoverActionsPlugin = dynamic(() => import("./plugins/TableHoverActionsPlugin"), {
-  ssr: false,
-})
-const CodeActionMenuPlugin = dynamic(() => import("./plugins/CodeActionMenuPlugin"), { ssr: false })
-const FloatingTextFormatToolbarPlugin = dynamic(
-  () => import("./plugins/FloatingTextFormatToolbarPlugin"),
-  { ssr: false },
-)
-const CollaborationPlugin = dynamic(
-  () => import("./plugins/CollaborationPlugin"),
-  { ssr: false }
-)
-const CollaboratorsBar = dynamic(
-  () => import("./plugins/CollaborationPlugin/CollaboratorsBar"),
-  { ssr: false }
-)
-const CommentsPlugin = dynamic(
-  () => import("./plugins/CommentsPlugin"),
-  { ssr: false }
-)
-const VersionHistoryPlugin = dynamic(
-  () => import("./plugins/VersionHistoryPlugin"),
-  { ssr: false }
-)
-const InlineCopilotPlugin = dynamic(
-  () => import("./plugins/InlineCopilotPlugin"),
-  { ssr: false }
-)
-const AICommandBarPlugin = dynamic(
-  () => import("./plugins/AICommandBarPlugin"),
-  { ssr: false }
-)
+import SlashCommand from "./plugins/SlashCommand"
+import ToolbarPlugin from "./plugins/ToolbarPlugin"
+import ExportPlugin from "./plugins/ExportPlugin"
+import TemplatePlugin from "./plugins/TemplatePlugin"
+import ExcalidrawPlugin from "./plugins/ExcalidrawPlugin"
+import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin"
+import TableCellActionMenuPlugin from "./plugins/TableCellActionMenuPlugin"
+import TableHoverActionsPlugin from "./plugins/TableHoverActionsPlugin"
+import CodeActionMenuPlugin from "./plugins/CodeActionMenuPlugin"
+import FloatingTextFormatToolbarPlugin from "./plugins/FloatingTextFormatToolbarPlugin"
+import CollaborationPlugin from "./plugins/CollaborationPlugin"
+import CollaboratorsBar from "./plugins/CollaborationPlugin/CollaboratorsBar"
+import CommentsPlugin from "./plugins/CommentsPlugin"
+import VersionHistoryPlugin from "./plugins/VersionHistoryPlugin"
+import InlineCopilotPlugin from "./plugins/InlineCopilotPlugin"
+import AICommandBarPlugin from "./plugins/AICommandBarPlugin"
+import SmartTypographyPlugin from "./plugins/SmartTypographyPlugin"
+import MarkdownPastePlugin from "./plugins/MarkdownPastePlugin"
 
 function EditorPlaceholder() {
   return (
@@ -117,15 +86,29 @@ function EditorPlaceholder() {
   );
 }
 
+export interface CoreProps {
+  toolbarConfig?: ToolbarConfig;
+  content?: unknown;
+  showCollaboratorsBar?: boolean;
+  className?: string;
+  editorClassName?: string;
+  onChange?: (editorState: EditorState, editor: LexicalEditor) => void;
+  onUpdate?: (payload: { json: any; html: string; markdown: string; editor: LexicalEditor }) => void;
+  onEditorReady?: (editor: LexicalEditor) => void;
+  children?: React.ReactNode;
+}
+
 export default function Core({
   toolbarConfig,
   content,
   showCollaboratorsBar = true,
-}: {
-  toolbarConfig?: ToolbarConfig;
-  content?: unknown;
-  showCollaboratorsBar?: boolean;
-}) {
+  className,
+  editorClassName,
+  onChange,
+  onUpdate,
+  onEditorReady,
+  children,
+}: CoreProps) {
   const { historyState } = useSharedHistoryContext()
   const isEditable = useLexicalEditable()
   const { enabled: isCollabEnabled } = useCollab()
@@ -141,6 +124,59 @@ export default function Core({
       setFloatingAnchorElem(_floatingAnchorElem)
     }
   }, [])
+
+  // Helper to create enhanced editor instance with convenience getters
+  const enhanceEditor = useCallback((ed: LexicalEditor) => {
+    return Object.assign(ed, {
+      getJSON: () => ed.getEditorState().toJSON(),
+      getHTML: () => {
+        let html = "";
+        ed.getEditorState().read(() => {
+          html = $generateHtmlFromNodes(ed, null);
+        });
+        return html;
+      },
+      getMarkdown: () => {
+        let markdown = "";
+        ed.getEditorState().read(() => {
+          markdown = $convertToMarkdownString(NOTIQ_TRANSFORMERS);
+        });
+        return markdown;
+      },
+    });
+  }, []);
+
+  // Notify consumer when editor instance is ready
+  useEffect(() => {
+    if (onEditorReady) {
+      onEditorReady(enhanceEditor(editor));
+    }
+  }, [editor, onEditorReady, enhanceEditor]);
+
+  // Handle onChange and onUpdate events
+  useEffect(() => {
+    if (!onChange && !onUpdate) return;
+    return editor.registerUpdateListener(({ editorState, dirtyElements, dirtyLeaves }) => {
+      if (dirtyElements.size === 0 && dirtyLeaves.size === 0) return;
+      if (onChange) {
+        onChange(editorState, enhanceEditor(editor));
+      }
+      if (onUpdate) {
+        let html = "";
+        let markdown = "";
+        editorState.read(() => {
+          html = $generateHtmlFromNodes(editor, null);
+          markdown = $convertToMarkdownString(NOTIQ_TRANSFORMERS);
+        });
+        onUpdate({
+          json: editorState.toJSON(),
+          html,
+          markdown,
+          editor: enhanceEditor(editor),
+        });
+      }
+    });
+  }, [editor, onChange, onUpdate, enhanceEditor]);
 
   // Monitor editor content to hide placeholder
   useEffect(() => {
@@ -187,7 +223,8 @@ export default function Core({
       <div className={cn(
         "flex justify-center w-full min-h-[calc(100dvh-5rem)] transition-all duration-300",
         "dark:md:from-gray-900/50 dark:md:to-gray-800/30",
-        "pt-2 md:pt-4"
+        "pt-2 md:pt-4",
+        className
       )}>
         <motion.div
           className={cn(
@@ -237,7 +274,8 @@ export default function Core({
                     "font-['Inter',_system-ui,_sans-serif] antialiased",
                     "leading-relaxed tracking-wide",
                     "transition-all duration-200 ease-in-out",
-                    "rounded-2xl"
+                    "rounded-2xl",
+                    editorClassName
                   )}
                 />
               </div>
@@ -295,7 +333,7 @@ export default function Core({
           <FilePlugin />
           <ExportPlugin />
           <TemplatePlugin />
-          <MarkdownShortcutPlugin />
+          <MarkdownShortcutPlugin transformers={NOTIQ_TRANSFORMERS} />
           <ClickableLinkPlugin disabled={isEditable} />
           <TablePlugin hasCellMerge={true} hasCellBackgroundColor={true} hasHorizontalScroll={true} />
 
@@ -317,8 +355,11 @@ export default function Core({
           {isEditable && <SlashCommand />}
           {isEditable && <InlineCopilotPlugin />}
           {isEditable && <AICommandBarPlugin />}
+          {isEditable && <SmartTypographyPlugin />}
+          {isEditable && <MarkdownPastePlugin />}
           <CommentsPlugin />
           <VersionHistoryPlugin />
+          {children}
         </motion.div>
       </div>
     </>

@@ -1,91 +1,64 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
+  $createParagraphNode,
+  $getNodeByKey,
   $getSelection,
   $isRangeSelection,
   COMMAND_PRIORITY_LOW,
   createCommand,
+  DOMExportOutput,
   EditorConfig,
   ElementNode,
+  LexicalCommand,
   LexicalEditor,
   LexicalNode,
   NodeKey,
 } from "lexical";
 import { $insertNodeToNearestRoot } from "@lexical/utils";
 import { useEffect } from "react";
-
-// Utility function to fetch metadata from a URL
-async function fetchMetadata(url: string) {
-  try {
-    const proxyUrl = "https://api.allorigins.win/get?url=";
-    const response = await fetch(`${proxyUrl}${encodeURIComponent(url)}`);
-    const data = await response.json();
-
-    // Extract the HTML content from the proxy response
-    const html = data.contents;
-
-    // Parse the HTML using DOMParser
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    // Helper function to extract meta tag content
-    const getMetaTagContent = (property: string) => {
-      const element =
-        doc.querySelector(`meta[property="${property}"]`) ||
-        doc.querySelector(`meta[name="${property}"]`);
-      return element ? element.getAttribute("content") : null;
-    };
-
-    // Extract metadata
-    const metadata = {
-      title:
-        doc.querySelector("title")?.textContent ||
-        getMetaTagContent("og:title") ||
-        "No title",
-      description:
-        getMetaTagContent("og:description") ||
-        getMetaTagContent("description") ||
-        "No description",
-      image: getMetaTagContent("og:image") || undefined, // Use a valid fallback image URL
-      website: getMetaTagContent("og:site_name") || new URL(url).hostname, // Use hostname as fallback
-    };
-
-    return metadata;
-  } catch (error) {
-    return {
-      title: "No title",
-      description: "No description",
-      image: undefined, 
-      website: new URL(url).hostname,
-    };
-  }
-}
+import {
+  fetchMetadata,
+  getInitialMetadata,
+  Metadata,
+  normalizeUrl,
+} from "../../utils/url";
 
 export class LinkWithMetaDataNode extends ElementNode {
   __url: string | null;
-  __metadata: {
-    title: string;
-    description: string;
-    image?: string | undefined |null;
-    website: string;
-  } | null = null;
-  __editor: LexicalEditor; 
+  __metadata: Metadata | null = null;
+  __editor?: LexicalEditor;
 
-  constructor(url: string | null, editor: LexicalEditor, key?: NodeKey) {
+  constructor(
+    url: string | null,
+    editor?: LexicalEditor,
+    metadata?: Metadata | null,
+    key?: NodeKey
+  ) {
     super(key);
-    this.__url = url;
-    this.__editor = editor; // Store the editor instance
+    this.__url = url ? normalizeUrl(url) : null;
+    this.__editor = editor;
+    this.__metadata =
+      metadata || (this.__url ? getInitialMetadata(this.__url) : null);
   }
 
   static clone(node: LinkWithMetaDataNode): LinkWithMetaDataNode {
-    return new LinkWithMetaDataNode(node.__url, node.__editor, node.__key);
+    return new LinkWithMetaDataNode(
+      node.__url,
+      node.__editor,
+      node.__metadata ? { ...node.__metadata } : null,
+      node.__key
+    );
   }
+
   static importJSON(serializedNode: any): LinkWithMetaDataNode {
-    const node = $createLinkNode(serializedNode.url, serializedNode.__editor);
-    node.__metadata = serializedNode.metadata;
-    node.__url = serializedNode.url
-    
+    const node = new LinkWithMetaDataNode(
+      serializedNode.url,
+      undefined,
+      serializedNode.metadata
+    );
     return node;
   }
+
   exportJSON() {
     return {
       ...super.exportJSON(),
@@ -100,86 +73,134 @@ export class LinkWithMetaDataNode extends ElementNode {
     return "link-with-metadata";
   }
 
-  // Method to update metadata
-  setMetadata(metadata: {
-    title: string;
-    description: string;
-    image?: string;
-    website: string;
-  }) {
+  isInline(): boolean {
+    return false;
+  }
+
+  canBeEmpty(): boolean {
+    return false;
+  }
+
+  isKeyboardSelectable(): boolean {
+    return true;
+  }
+
+  setMetadata(metadata: Metadata) {
     const writable = this.getWritable();
     writable.__metadata = metadata;
   }
 
-  createDOM(): HTMLElement {
+  getMetadata(): Metadata | null {
+    return this.__metadata;
+  }
+
+  getUrl(): string | null {
+    return this.__url;
+  }
+
+  createDOM(config?: EditorConfig, editor?: LexicalEditor): HTMLElement {
     const elementDIV = document.createElement("div");
-    elementDIV.className ="dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 border border-zinc-200 bg-white/90   text-zinc-950 shadow-md  w-full  cursor-pointer p-3 rounded-sm border flex flex-row items-center justify-between";
-    elementDIV.setAttribute("contenteditable", "false"); 
+    elementDIV.className =
+      "notiq-link-card my-3 w-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-sm hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 select-none";
+    elementDIV.setAttribute("contenteditable", "false");
 
-    // Create a container for the left and right sections
     const container = document.createElement("div");
-    container.className = "flex flex-row w-full max-sm:flex-col max-sm:gap-y-2 justify-between items-start gap-x-2";
+    container.className =
+      "flex flex-row w-full justify-between items-stretch min-h-[96px]";
 
-    // Conditionally create the left container for the image
+    // Left container for text content
+    const leftContainer = document.createElement("div");
+    leftContainer.className =
+      "flex flex-col flex-1 justify-between p-3.5 sm:p-4 min-w-0";
+
+    const topSection = document.createElement("div");
+    topSection.className = "space-y-1";
+
+    // Title Link
+    const titleLink = document.createElement("a");
+    titleLink.className =
+      "font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 line-clamp-1 truncate block hover:underline";
+    titleLink.href = this.__url || "#";
+    titleLink.target = "_blank";
+    titleLink.rel = "noopener noreferrer";
+    titleLink.textContent =
+      this.__metadata?.title || this.__url || "No URL provided";
+    topSection.appendChild(titleLink);
+
+    // Description
+    const descriptionSmall = document.createElement("p");
+    descriptionSmall.className =
+      "text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-1 break-words leading-relaxed";
+    descriptionSmall.textContent =
+      this.__metadata?.description || "Loading preview...";
+    topSection.appendChild(descriptionSmall);
+
+    leftContainer.appendChild(topSection);
+
+    // Source footer with favicon and domain
+    const footer = document.createElement("div");
+    footer.className =
+      "flex items-center gap-2 mt-3 text-xs text-zinc-400 dark:text-zinc-500";
+
+    const favicon = document.createElement("img");
+    favicon.className = "w-4 h-4 rounded-sm object-contain";
+    favicon.src =
+      this.__metadata?.logo ||
+      (this.__url
+        ? `https://www.google.com/s2/favicons?domain=${new URL(this.__url).hostname}&sz=64`
+        : "/favicon.ico");
+    favicon.alt = "";
+    footer.appendChild(favicon);
+
+    const sourceText = document.createElement("span");
+    sourceText.className = "font-medium truncate";
+    sourceText.textContent =
+      this.__metadata?.website || (this.__url ? new URL(this.__url).hostname : "");
+    footer.appendChild(sourceText);
+
+    leftContainer.appendChild(footer);
+    container.appendChild(leftContainer);
+
+    // Right container for thumbnail image
+    const rightContainer = document.createElement("div");
+    rightContainer.className =
+      "link-card-thumbnail w-32 sm:w-44 shrink-0 bg-zinc-100 dark:bg-zinc-800 overflow-hidden flex items-center justify-center";
+
     if (this.__metadata?.image) {
-      const leftContainer = document.createElement("div");
-      leftContainer.className = "flex  w-full h-full max-w-[250px]  max-h-[100px] min-h-[100px] order-6";
-
-      // Create the image element
       const image = document.createElement("img");
-      image.src = this.__metadata.image; 
-      image.alt = `image for ${this.__metadata.title}`;
-      image.className = "w-full h-[100px] rounded-lg object-cover";
-      leftContainer.appendChild(image);
-
-      // Append the left container to the main container
-      container.appendChild(leftContainer);
+      image.src = this.__metadata.image;
+      image.alt = this.__metadata.title || "Link preview";
+      image.className = "w-full h-full object-cover";
+      rightContainer.appendChild(image);
+    } else {
+      rightContainer.style.display = "none";
     }
 
-    // Right container for the text content
-    const rightContainer = document.createElement("div");
-    rightContainer.className = "flex flex-col flex-1 w-full flex-wrap items-start space-y-4";
-
-    
-    
-    // Create the title as a clickable link
-    const titleLink = document.createElement("a");
-    titleLink.className = "font-bold break-words hover:underline";
-    titleLink.href = this.__url || "#"; // Use the URL or a fallback
-    titleLink.textContent = this.__url || "No URL provided";
-    titleLink.target = "_blank"; // Open link in a new tab
-    rightContainer.appendChild(titleLink);
-
-    // Create the description small element
-    const descriptionSmall = document.createElement("small");
-    descriptionSmall.className = "font-[400] dark:text-gray-200 text-gray-500";
-    descriptionSmall.textContent =
-      this.__metadata?.description || "Loading metadata...";
-    rightContainer.appendChild(descriptionSmall);
-
-    // Create the source small element
-    const sourceSmall = document.createElement("small");
-    sourceSmall.className = "text-sm mt-4 font-[400] dark:text-gray-300 text-gray-500/50";
-    sourceSmall.textContent = this.__metadata?.website || "";
-    rightContainer.appendChild(sourceSmall);
-
-    // Append the right container to the main container
     container.appendChild(rightContainer);
-
-    // Append the main container to the root div
     elementDIV.appendChild(container);
 
-    // Fetch metadata and update the node
-    if (this.__url && !this.__metadata) {
+    // Click handler for opening the link
+    elementDIV.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).tagName.toLowerCase() !== "a" && this.__url) {
+        window.open(this.__url, "_blank", "noopener,noreferrer");
+      }
+    });
+
+    // If metadata needs full details, trigger async fetch
+    const currentEditor = editor || this.__editor;
+    if (this.__url && currentEditor) {
+      const nodeKey = this.getKey();
       fetchMetadata(this.__url)
         .then((metadata) => {
-          // Use editor.update() to perform state updates
-          this.__editor.update(() => {
-            this.setMetadata(metadata);
+          currentEditor.update(() => {
+            const node = $getNodeByKey(nodeKey);
+            if ($isLinkNode(node)) {
+              node.setMetadata(metadata);
+            }
           });
         })
         .catch((error) => {
-          console.error("Error fetching metadata:", error);
+          console.error("Error fetching link metadata:", error);
         });
     }
 
@@ -187,85 +208,133 @@ export class LinkWithMetaDataNode extends ElementNode {
   }
 
   updateDOM(prevNode: LinkWithMetaDataNode, dom: HTMLElement): boolean {
-    // Check if metadata has changed
-    if (this.__metadata !== prevNode.__metadata) {
-      const container = dom.querySelector("div");
-      const image = dom.querySelector("img");
+    if (this.__metadata !== prevNode.__metadata || this.__url !== prevNode.__url) {
       const titleLink = dom.querySelector("a");
-      const descriptionSmall = dom.querySelector("small:nth-of-type(1)");
-      const sourceSmall = dom.querySelector("small:nth-of-type(2)");
+      const descriptionSmall = dom.querySelector("p");
+      const sourceSmall = dom.querySelector("span");
+      const favicon = dom.querySelector("img[alt='']");
+      const thumbContainer = dom.querySelector(
+        ".link-card-thumbnail"
+      ) as HTMLElement | null;
 
-      if (titleLink && descriptionSmall && sourceSmall) {
+      if (titleLink) {
         titleLink.href = this.__url || "#";
         titleLink.textContent =
           this.__metadata?.title || this.__url || "No URL provided";
+      }
+      if (descriptionSmall) {
         descriptionSmall.textContent =
-          this.__metadata?.description || "Loading metadata...";
-        sourceSmall.textContent = this.__metadata?.website || "";
+          this.__metadata?.description || "Loading preview...";
+      }
+      if (sourceSmall) {
+        sourceSmall.textContent =
+          this.__metadata?.website ||
+          (this.__url ? new URL(this.__url).hostname : "");
+      }
+      if (favicon && this.__metadata?.logo) {
+        (favicon as HTMLImageElement).src = this.__metadata.logo;
       }
 
-      // Handle image updates
-      if (this.__metadata?.image) {
-        if (!image) {
-          const leftContainer = document.createElement("div");
-          leftContainer.className = "flex h-full flex-shrink-0 order-6";
-
-          const newImage = document.createElement("img");
-          newImage.src = this.__metadata.image;
-          newImage.alt = "Custom Image";
-          newImage.className = "w-24 min-h-24 max-[250px] h-[200px] rounded-lg object-fill";
-          leftContainer.appendChild(newImage);
-
-          // Insert the left container before the right container
-          container?.insertBefore(leftContainer, container.firstChild);
-        } else {
+      if (thumbContainer) {
+        if (this.__metadata?.image) {
+          thumbContainer.style.display = "";
+          let image = thumbContainer.querySelector("img");
+          if (!image) {
+            image = document.createElement("img");
+            image.className = "w-full h-full object-cover";
+            thumbContainer.appendChild(image);
+          }
           image.src = this.__metadata.image;
+          image.alt = this.__metadata.title || "Link preview";
+        } else {
+          thumbContainer.style.display = "none";
         }
-      } else if (image) {
-       
-        image.remove();
       }
 
-      return true; 
+      return true;
     }
+    return false;
+  }
 
-    return false; 
+  exportDOM(editor: LexicalEditor): DOMExportOutput {
+    const element = this.createDOM(undefined, editor);
+    return { element };
   }
 }
+
 export function $createLinkNode(
   url: string | null,
-  editor: LexicalEditor
+  editor?: LexicalEditor,
+  metadata?: Metadata | null
 ): LinkWithMetaDataNode {
-  return new LinkWithMetaDataNode(url, editor);
+  return new LinkWithMetaDataNode(url, editor, metadata);
 }
 
-export function $isLinkNode(node: LexicalNode): node is LinkWithMetaDataNode {
+export function $isLinkNode(node: LexicalNode | null | undefined): node is LinkWithMetaDataNode {
   return node instanceof LinkWithMetaDataNode;
 }
 
-export const TOGGLE_LINK_COMMAND_LinkWithMetaDataNode = createCommand<string | null>("toggleLink");
+export const TOGGLE_LINK_COMMAND_LinkWithMetaDataNode: LexicalCommand<
+  string | null | { url: string; metadata?: Metadata | null }
+> = createCommand("toggleLinkWithMetadata");
 
 export function LinkWithMetaDataPlugin(): null {
   const [editor] = useLexicalComposerContext();
-  
+
   useEffect(() => {
     if (!editor.hasNodes([LinkWithMetaDataNode])) {
-      throw new Error("LinkWithMetaDataPlugin: LinkWithMetaDataNode not registered on editor");
+      throw new Error(
+        "LinkWithMetaDataPlugin: LinkWithMetaDataNode not registered on editor"
+      );
     }
   }, [editor]);
 
-  editor.registerCommand(
-    TOGGLE_LINK_COMMAND_LinkWithMetaDataNode,
-    (url: string | null) => {
-      const selection = $getSelection();
-      if ($isRangeSelection(selection)) {
-        const linkNode = $createLinkNode(url, editor);
-        $insertNodeToNearestRoot(linkNode);
-      }
-      return true;
-    },
-    COMMAND_PRIORITY_LOW
-  );
+  useEffect(() => {
+    return editor.registerCommand(
+      TOGGLE_LINK_COMMAND_LinkWithMetaDataNode,
+      (payload: string | null | { url: string; metadata?: Metadata | null }) => {
+        if (!payload) return false;
+        const rawUrl = typeof payload === "string" ? payload : payload.url;
+        if (!rawUrl) return false;
+
+        const normalized = normalizeUrl(rawUrl);
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          const anchor = selection.anchor.getNode();
+          const topLevel = anchor.getTopLevelElement();
+          const initialMeta =
+            typeof payload === "object" && payload.metadata
+              ? payload.metadata
+              : getInitialMetadata(normalized);
+
+          const linkNode = $createLinkNode(normalized, editor, initialMeta);
+
+          if (topLevel && topLevel.getTextContent().trim() === "") {
+            topLevel.replace(linkNode);
+          } else {
+            $insertNodeToNearestRoot(linkNode);
+          }
+
+          const p = $createParagraphNode();
+          linkNode.insertAfter(p);
+          p.select();
+
+          // Fetch full asynchronous metadata to enrich card
+          const nodeKey = linkNode.getKey();
+          fetchMetadata(normalized).then((meta) => {
+            editor.update(() => {
+              const node = $getNodeByKey(nodeKey);
+              if ($isLinkNode(node)) {
+                node.setMetadata(meta);
+              }
+            });
+          });
+        }
+        return true;
+      },
+      COMMAND_PRIORITY_LOW
+    );
+  }, [editor]);
 
   return null;
 }

@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { $getNodeByKey, type ElementFormatType, type NodeKey } from "lexical";
 import {
   Play,
@@ -46,6 +47,7 @@ export default function AudioComponent({
   author: initialAuthor,
 }: AudioComponentProps) {
   const [editor] = useLexicalComposerContext();
+  const isEditable = useLexicalEditable();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -194,11 +196,13 @@ export default function AudioComponent({
                 </div>
               ) : (
                 <div
-                  onDoubleClick={() => setIsEditingTitle(true)}
-                  className="cursor-pointer group/title"
-                  title="Double click to edit title"
+                  onDoubleClick={() => {
+                    if (isEditable) setIsEditingTitle(true);
+                  }}
+                  className={cn(isEditable ? "cursor-pointer group/title" : "")}
+                  title={isEditable ? "Double click to edit title" : undefined}
                 >
-                  <p className="truncate text-sm font-semibold text-foreground group-hover/title:text-primary transition-colors">
+                  <p className={cn("truncate text-sm font-semibold text-foreground transition-colors", isEditable && "group-hover/title:text-primary")}>
                     {title}
                   </p>
                   <p className="truncate text-[11px] text-muted-foreground">{author}</p>
@@ -235,14 +239,16 @@ export default function AudioComponent({
             >
               <Download className="h-4 w-4" />
             </a>
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-              title="Delete audio player"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+            {isEditable && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                title="Delete audio player"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
 

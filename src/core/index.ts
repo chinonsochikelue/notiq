@@ -1,5 +1,5 @@
 export type {
-  NotiqEditor,
+  NotiqEditor as NotiqEditorInstance,
   NotiqEditorOptions,
   NotiqEventType,
   NotiqEventListener,
@@ -11,6 +11,7 @@ export type {
   CommandFunction,
   SelectionType,
 } from "./types";
+export type { NotiqEditor } from "./types";
 
 export * from "./extension";
 export * from "./chain";

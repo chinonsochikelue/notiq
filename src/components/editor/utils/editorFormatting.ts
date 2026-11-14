@@ -120,6 +120,7 @@ export const updateFontSizeInSelection = (
     return `${nextFontSize}px`;
   };
 
+  editor.focus();
   editor.update(() => {
     if (editor.isEditable()) {
       const selection = $getSelection();
@@ -146,6 +147,7 @@ export const updateFontSize = (
 };
 
 export const formatParagraph = (editor: LexicalEditor) => {
+  editor.focus();
   editor.update(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
@@ -160,7 +162,8 @@ export const formatHeading = (
   headingSize: HeadingTagType,
 ) => {
   if (blockType !== headingSize) {
-    editor.update(() => {
+    editor.focus();
+  editor.update(() => {
       const selection = $getSelection();
       $setBlocksType(selection, () => $createHeadingNode(headingSize));
     });
@@ -196,7 +199,8 @@ export const formatNumberedList = (
 
 export const formatQuote = (editor: LexicalEditor, blockType: string) => {
   if (blockType !== 'quote') {
-    editor.update(() => {
+    editor.focus();
+  editor.update(() => {
       const selection = $getSelection();
       $setBlocksType(selection, () => $createQuoteNode());
     });
@@ -205,7 +209,8 @@ export const formatQuote = (editor: LexicalEditor, blockType: string) => {
 
 export const formatCode = (editor: LexicalEditor, blockType: string) => {
   if (blockType !== 'code') {
-    editor.update(() => {
+    editor.focus();
+  editor.update(() => {
       let selection = $getSelection();
 
       if (selection !== null) {
@@ -226,6 +231,7 @@ export const formatCode = (editor: LexicalEditor, blockType: string) => {
 };
 
 export const clearFormatting = (editor: LexicalEditor) => {
+  editor.focus();
   editor.update(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection) || $isTableSelection(selection)) {

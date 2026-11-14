@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useMemo } from "react";
-import "./themes/theme.css";
 import { SharedHistoryContext } from "../providers/SharedHistoryContext";
 import { ToolbarContext } from "../providers/ToolbarContext";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
@@ -27,6 +26,7 @@ import nodes from "./nodes";
 
 import { AIProvider, type AIConfig } from "../providers/AIContext";
 import { UploadProvider, type UploadConfig } from "../providers/UploadContext";
+import QueryProvider from "../providers/QueryProvider";
 
 export {
   CollaboratorsBar,
@@ -47,6 +47,7 @@ export {
 export type ToolbarItem =
   | "undo"
   | "redo"
+  | "ai"
   | "block-format"
   | "font-family"
   | "font-size"
@@ -77,6 +78,22 @@ export type ToolbarConfig = {
   mobileItemClassName?: string;
 };
 
+export type EditorProps = {
+  isEditable?: boolean;
+  content?: unknown;
+  aiConfig?: AIConfig;
+  uploadConfig?: UploadConfig;
+  toolbarConfig?: ToolbarConfig;
+  collabConfig?: CollabConfig;
+  showCollaboratorsBar?: boolean;
+  className?: string;
+  editorClassName?: string;
+  onChange?: (editorState: any, editor: any) => void;
+  onUpdate?: (payload: { json: any; html: string; markdown: string; editor: any }) => void;
+  onEditorReady?: (editor: any) => void;
+  children?: React.ReactNode;
+};
+
 export default function Editor({
   isEditable = false,
   content,
@@ -85,15 +102,13 @@ export default function Editor({
   toolbarConfig,
   collabConfig,
   showCollaboratorsBar,
-}: {
-  isEditable: boolean;
-  content?: unknown;
-  aiConfig?: AIConfig;
-  uploadConfig?: UploadConfig;
-  toolbarConfig?: ToolbarConfig;
-  collabConfig?: CollabConfig;
-  showCollaboratorsBar?: boolean;
-}) {
+  className,
+  editorClassName,
+  onChange,
+  onUpdate,
+  onEditorReady,
+  children,
+}: EditorProps) {
   const isCollabActive = Boolean(collabConfig?.enabled);
 
   // When collaboration is active, local editorState is left undefined so Lexical
@@ -119,28 +134,37 @@ export default function Editor({
   );
 
   return (
-    <CollabProvider config={collabConfig}>
-      <LexicalCollaboration>
-        <CommentsProvider>
-          <VersionHistoryProvider>
-            <LexicalComposer initialConfig={initialConfig}>
-              <AIProvider config={aiConfig}>
-                <UploadProvider config={uploadConfig}>
-                  <SharedHistoryContext>
-                    <ToolbarContext>
-                      <Core
-                        toolbarConfig={toolbarConfig}
-                        content={content}
-                        showCollaboratorsBar={showCollaboratorsBar}
-                      />
-                    </ToolbarContext>
-                  </SharedHistoryContext>
-                </UploadProvider>
-              </AIProvider>
-            </LexicalComposer>
-          </VersionHistoryProvider>
-        </CommentsProvider>
-      </LexicalCollaboration>
-    </CollabProvider>
+    <QueryProvider>
+      <CollabProvider config={collabConfig}>
+        <LexicalCollaboration>
+          <CommentsProvider>
+            <VersionHistoryProvider>
+              <LexicalComposer initialConfig={initialConfig}>
+                <AIProvider config={aiConfig}>
+                  <UploadProvider config={uploadConfig}>
+                    <SharedHistoryContext>
+                      <ToolbarContext>
+                        <Core
+                          toolbarConfig={toolbarConfig}
+                          content={content}
+                          showCollaboratorsBar={showCollaboratorsBar}
+                          className={className}
+                          editorClassName={editorClassName}
+                          onChange={onChange}
+                          onUpdate={onUpdate}
+                          onEditorReady={onEditorReady}
+                        >
+                          {children}
+                        </Core>
+                      </ToolbarContext>
+                    </SharedHistoryContext>
+                  </UploadProvider>
+                </AIProvider>
+              </LexicalComposer>
+            </VersionHistoryProvider>
+          </CommentsProvider>
+        </LexicalCollaboration>
+      </CollabProvider>
+    </QueryProvider>
   );
 }

@@ -48,18 +48,21 @@ export default function KatexRenderer({
         width="0"
         height="0"
         alt=""
+        style={{ display: 'inline' }}
       />
       <span
         role="button"
         tabIndex={-1}
         onDoubleClick={onDoubleClick}
         ref={katexElementRef}
+        className={inline ? 'inline-block align-baseline' : 'block'}
       />
       <img
         src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
         width="0"
         height="0"
         alt=""
+        style={{ display: 'inline' }}
       />
     </>
   );

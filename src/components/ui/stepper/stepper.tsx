@@ -12,10 +12,12 @@ export default function Stepper({
   nodeKey: NodeKey,
 }) {
   const [editor] = useLexicalComposerContext();
+  const isEditable = editor.isEditable();
 
   
   
   function SetSteps(steps:StepsType){
+    if (!isEditable) return;
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if ($isStepperNode(node)) {

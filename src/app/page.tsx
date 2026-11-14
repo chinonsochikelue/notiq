@@ -524,10 +524,9 @@ export default function NotiqLanding() {
                 <GitBranch className="mr-2 h-5 w-5" />
                 Fork on GitHub
               </Button>
-              <Button variant="outline" size="lg" className="border-2 border-slate-300 dark:border-slate-600">
               <Redirect href="https://notiq-editor.vercel.app">
                 <Button variant="outline" size="lg" className="border-2 border-slate-300 dark:border-slate-600 cursor-pointer">
-                Read Docs
+                  Read Docs
                 </Button>
               </Redirect>
             </div>

@@ -2,23 +2,10 @@
 
 import React from "react";
 import { Extension } from "../extension";
-import dynamic from "next/dynamic";
 import { OPEN_AI_COMMAND_BAR_COMMAND } from "../../components/editor/plugins/AICommandBarPlugin";
-
-const InlineCopilotPlugin = dynamic(
-  () => import("../../components/editor/plugins/InlineCopilotPlugin"),
-  { ssr: false }
-);
-
-const CollaborationPlugin = dynamic(
-  () => import("../../components/editor/plugins/CollaborationPlugin"),
-  { ssr: false }
-);
-
-const AICommandBarPlugin = dynamic(
-  () => import("../../components/editor/plugins/AICommandBarPlugin"),
-  { ssr: false }
-);
+import InlineCopilotPlugin from "../../components/editor/plugins/InlineCopilotPlugin";
+import CollaborationPlugin from "../../components/editor/plugins/CollaborationPlugin";
+import AICommandBarPlugin from "../../components/editor/plugins/AICommandBarPlugin";
 
 export const AICommandBar = Extension.create({
   name: "aiCommandBar",

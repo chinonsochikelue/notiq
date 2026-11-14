@@ -1,17 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
+  $createParagraphNode,
+  $getNodeByKey,
+  $getRoot,
   $getSelection,
   $isRangeSelection,
-  $createParagraphNode,
-  $createTextNode,
+  $parseSerializedNode,
   COMMAND_PRIORITY_CRITICAL,
   createCommand,
   KEY_DOWN_COMMAND,
   type LexicalCommand,
+  type LexicalNode,
+  type SerializedLexicalNode,
 } from "lexical";
 import {
   Sparkles,
@@ -20,13 +24,36 @@ import {
   X,
   RotateCcw,
   CornerDownLeft,
-  ChevronDown,
+  ChevronRight,
   Wand2,
   Languages,
-  ArrowDownToLine,
+  FileText,
+  ListChecks,
+  Lightbulb,
+  Table2,
+  PenLine,
+  MessageSquare,
+  GitCompareArrows,
+  Square,
+  SlidersHorizontal,
+  Brain,
+  Globe,
+  Image as ImageIcon,
+  Shapes,
 } from "lucide-react";
-import { Button } from "../../../ui/button";
-import { computeWordDiff, type DiffPart } from "../../utils/diffUtils";
+import { computeWordDiff } from "../../utils/diffUtils";
+import { useAI } from "../../../providers/AIContext";
+import {
+  WRITING_STYLE_PRESETS,
+  type WritingStylePresetId,
+} from "../../../../hooks/instructions-messages";
+import editorNodes from "../../nodes";
+import {
+  extractSurroundingContext,
+  hydrateSerializedAINodes,
+  serializeMarkdownToNodes,
+  stripAIStyleFromSubtree,
+} from "../../utils/aiStream";
 import { cn } from "../../../../lib/utils";
 
 export const OPEN_AI_COMMAND_BAR_COMMAND: LexicalCommand<{
@@ -34,12 +61,219 @@ export const OPEN_AI_COMMAND_BAR_COMMAND: LexicalCommand<{
   action?: string;
 } | void> = createCommand("OPEN_AI_COMMAND_BAR_COMMAND");
 
-const QUICK_ACTIONS = [
-  { id: "ImproveWriting", label: "Improve Writing", icon: Wand2 },
-  { id: "FixSpellingGrammar", label: "Fix Grammar & Spelling", icon: Check },
-  { id: "MakeShort", label: "Make Shorter", icon: Sparkles },
-  { id: "MakeLong", label: "Make Longer", icon: Sparkles },
-  { id: "SimplifyLanguage", label: "Simplify", icon: Sparkles },
+type AIPhase = "closed" | "prompt" | "streaming" | "review";
+
+export interface ResearchSource {
+  title: string;
+  url: string;
+}
+
+/**
+ * Splits `<thinking>...</thinking>` reasoning blocks and `<!--SOURCES:[...]-->`
+ * metadata out of a streaming AI response so they never pollute the editor canvas.
+ */
+export function extractThinkingAndSources(raw: string): {
+  thinking: string;
+  sources: ResearchSource[];
+  content: string;
+} {
+  let text = raw;
+  let thinking = "";
+  const sources: ResearchSource[] = [];
+
+  const closedThinkMatch = text.match(/<thinking>([\s\S]*?)<\/thinking>/i);
+  if (closedThinkMatch) {
+    thinking = closedThinkMatch[1].trim();
+    text = text.replace(/<thinking>[\s\S]*?<\/thinking>\s*/i, "");
+  } else {
+    const openIdx = text.search(/<thinking>/i);
+    if (openIdx !== -1) {
+      thinking = text.slice(openIdx + "<thinking>".length).trim();
+      text = text.slice(0, openIdx);
+    }
+  }
+
+  const sourcesMatch = text.match(/<!--SOURCES:([\s\S]*?)-->/);
+  if (sourcesMatch) {
+    try {
+      const parsed = JSON.parse(sourcesMatch[1]);
+      if (Array.isArray(parsed)) {
+        for (const item of parsed) {
+          if (item && typeof item.url === "string" && typeof item.title === "string") {
+            sources.push({ title: item.title, url: item.url });
+          }
+        }
+      }
+    } catch {
+      // Ignore malformed/partial sources JSON while streaming
+    }
+    text = text.replace(/\n?<!--SOURCES:[\s\S]*?-->/g, "");
+  } else {
+    const partialIdx = text.indexOf("<!--SOURCES:");
+    if (partialIdx !== -1) {
+      text = text.slice(0, partialIdx);
+    }
+  }
+
+  return {
+    thinking,
+    sources,
+    content: text.trimStart(),
+  };
+}
+
+interface AIPreset {
+  id: string;
+  action: string;
+  label: string;
+  keywords: string[];
+  prompt?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  hasSubmenu?: "tone" | "language";
+  think?: boolean;
+  research?: boolean;
+}
+
+const SELECTION_PRESETS: AIPreset[] = [
+  {
+    id: "improve",
+    action: "ImproveWriting",
+    label: "Improve writing",
+    keywords: ["improve", "polish", "rewrite", "better"],
+    icon: Wand2,
+  },
+  {
+    id: "grammar",
+    action: "FixSpellingGrammar",
+    label: "Fix grammar & spelling",
+    keywords: ["fix", "grammar", "spelling", "proofread"],
+    icon: Check,
+  },
+  {
+    id: "shorter",
+    action: "MakeShort",
+    label: "Make shorter",
+    keywords: ["shorter", "concise", "trim", "condense"],
+    icon: Sparkles,
+  },
+  {
+    id: "longer",
+    action: "MakeLong",
+    label: "Make longer",
+    keywords: ["longer", "expand", "elaborate", "detail"],
+    icon: Sparkles,
+  },
+  {
+    id: "simplify",
+    action: "SimplifyLanguage",
+    label: "Simplify language",
+    keywords: ["simplify", "clear", "easy", "plain"],
+    icon: SlidersHorizontal,
+  },
+  {
+    id: "explain",
+    action: "default",
+    label: "Explain",
+    keywords: ["explain", "clarify", "what", "meaning"],
+    prompt: "Explain the selected text clearly with key takeaways.",
+    icon: MessageSquare,
+  },
+  {
+    id: "tone",
+    action: "Tone",
+    label: "Change tone",
+    keywords: ["tone", "professional", "casual", "friendly", "academic"],
+    icon: Wand2,
+    hasSubmenu: "tone",
+  },
+  {
+    id: "translate",
+    action: "Translate",
+    label: "Translate",
+    keywords: ["translate", "language", "spanish", "french", "german"],
+    icon: Languages,
+    hasSubmenu: "language",
+  },
+];
+
+const CURSOR_PRESETS: AIPreset[] = [
+  {
+    id: "continue",
+    action: "autoComplete",
+    label: "Continue writing",
+    keywords: ["continue", "write", "complete", "next"],
+    icon: PenLine,
+  },
+  {
+    id: "research-write",
+    action: "default",
+    label: "Research & write",
+    keywords: ["research", "search", "web", "sources", "facts", "investigate"],
+    prompt: "Research this topic and write a well-structured, fact-grounded section with key takeaways.",
+    icon: Globe,
+    think: true,
+    research: true,
+  },
+  {
+    id: "draw-diagram",
+    action: "default",
+    label: "Draw diagram (Excalidraw)",
+    keywords: ["diagram", "flowchart", "architecture", "draw", "excalidraw", "chart"],
+    prompt: "Draw an interactive Excalidraw architecture or workflow diagram for this topic.",
+    icon: Shapes,
+    think: true,
+  },
+  {
+    id: "add-visuals",
+    action: "default",
+    label: "Insert images & visuals",
+    keywords: ["image", "inline", "visual", "picture", "illustration"],
+    prompt: "Create a visual overview with both a block image and an inline image for this topic.",
+    icon: ImageIcon,
+    think: true,
+  },
+  {
+    id: "summary",
+    action: "Summarize",
+    label: "Add a summary",
+    keywords: ["summary", "summarize", "tldr", "recap"],
+    prompt: "Summarize the document into crisp, structured key points.",
+    icon: FileText,
+  },
+  {
+    id: "md-sample",
+    action: "default",
+    label: "Generate Markdown sample",
+    keywords: ["markdown", "sample", "demo", "template", "mdx"],
+    prompt:
+      "Generate a rich Markdown showcase with headings, a blockquote, a task list, a code block, inline math $E = mc^2$, and a comparison table.",
+    icon: Sparkles,
+  },
+  {
+    id: "outline",
+    action: "Steps",
+    label: "Write an outline",
+    keywords: ["outline", "steps", "roadmap", "structure"],
+    prompt: "Create a structured step-by-step outline for this topic.",
+    icon: ListChecks,
+  },
+  {
+    id: "brainstorm",
+    action: "default",
+    label: "Brainstorm ideas",
+    keywords: ["brainstorm", "ideas", "creative", "suggest"],
+    prompt: "Brainstorm 5 creative, actionable ideas related to this document.",
+    icon: Lightbulb,
+  },
+  {
+    id: "table",
+    action: "default",
+    label: "Create comparison table",
+    keywords: ["table", "compare", "comparison", "matrix"],
+    prompt: "Create a clean Markdown comparison table summarizing the key options.",
+    icon: Table2,
+  },
 ];
 
 const TONES = ["Professional", "Casual", "Direct", "Academic", "Friendly"];
@@ -47,45 +281,464 @@ const LANGUAGES = ["Spanish", "French", "German", "Japanese", "Chinese", "Arabic
 
 export default function AICommandBarPlugin() {
   const [editor] = useLexicalComposerContext();
-  const [isOpen, setIsOpen] = useState(false);
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+  const { apiEndpoint, writingStyle: configWritingStyle, styleGuide: configStyleGuide } = useAI();
 
+  const [writingStyle, setWritingStyle] = useState<WritingStylePresetId>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("notiq_ai_writing_style");
+      if (saved && saved in WRITING_STYLE_PRESETS) {
+        return saved as WritingStylePresetId;
+      }
+    }
+    return (configWritingStyle && configWritingStyle in WRITING_STYLE_PRESETS
+      ? configWritingStyle
+      : "balanced") as WritingStylePresetId;
+  });
+  const [customStyleGuide, setCustomStyleGuide] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("notiq_ai_style_guide") || configStyleGuide || "";
+    }
+    return configStyleGuide || "";
+  });
+  const [showStyleEditor, setShowStyleEditor] = useState(false);
+
+  const [phase, setPhase] = useState<AIPhase>("closed");
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const [prompt, setPrompt] = useState("");
+  const [followUpPrompt, setFollowUpPrompt] = useState("");
   const [selectedText, setSelectedText] = useState("");
   const [streamedText, setStreamedText] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [activeAction, setActiveAction] = useState<string | null>(null);
-
-  const [showToneMenu, setShowToneMenu] = useState(false);
-  const [showLangMenu, setShowLangMenu] = useState(false);
+  const [showDiff, setShowDiff] = useState(false);
+  const [thinkEnabled, setThinkEnabled] = useState(true);
+  const [researchEnabled, setResearchEnabled] = useState(false);
+  const [showTrace, setShowTrace] = useState(false);
+  const [activeLabel, setActiveLabel] = useState("Writing...");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [activeSubmenu, setActiveSubmenu] = useState<"tone" | "language" | null>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const followUpRef = useRef<HTMLInputElement | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Track generated nodes and anchor snapshot in the editor
+  const generatedKeysRef = useRef<string[]>([]);
+  const anchorAfterKeyRef = useRef<string | null>(null);
+  const replacedBlockSnapshotRef = useRef<{
+    replacedEmpty: boolean;
+    originalText: string;
+    originalNodes: SerializedLexicalNode[];
+  } | null>(null);
+  const lastRequestRef = useRef<{
+    action: string;
+    context: string;
+    question?: string;
+    label?: string;
+  } | null>(null);
+
+  const presets = useMemo(
+    () => (selectedText.trim().length > 0 ? SELECTION_PRESETS : CURSOR_PRESETS),
+    [selectedText]
+  );
+
+  const parsedStream = useMemo(
+    () => extractThinkingAndSources(streamedText),
+    [streamedText]
+  );
+
+  const canShowDiff =
+    phase === "review" &&
+    selectedText.trim().length > 0 &&
+    parsedStream.content.trim().length > 0;
+
+  const diffParts = useMemo(() => {
+    if (!canShowDiff || !showDiff) return [];
+    return computeWordDiff(selectedText, parsedStream.content);
+  }, [canShowDiff, showDiff, selectedText, parsedStream.content]);
+
+  const filteredPresets = useMemo(() => {
+    const q = prompt.trim().toLowerCase();
+    if (!q) return presets;
+    return presets.filter(
+      (p) =>
+        p.label.toLowerCase().includes(q) ||
+        p.keywords.some((kw) => kw.includes(q))
+    );
+  }, [presets, prompt]);
+
+  useEffect(() => {
+    setHighlightedIndex(0);
+  }, [prompt, phase]);
+
+  const wordCount = useMemo(() => {
+    const trimmed = streamedText.trim();
+    return trimmed ? trimmed.split(/\s+/).length : 0;
+  }, [streamedText]);
+
+  const scrollLastGeneratedIntoView = useCallback(() => {
+    const keys = generatedKeysRef.current;
+    if (keys.length === 0) return;
+    const el = editor.getElementByKey(keys[keys.length - 1]);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight - 110 || rect.top < 80) {
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  }, [editor]);
+
+  const applyStreamedMarkdownToEditor = useCallback(
+    (markdown: string, showCaret: boolean) => {
+      const serialized = serializeMarkdownToNodes(markdown, editorNodes);
+
+      editor.update(
+        () => {
+          const root = $getRoot();
+          const newNodes = hydrateSerializedAINodes(serialized, { showCaret });
+          const existingKeys = generatedKeysRef.current;
+
+          if (existingKeys.length > 0) {
+            const firstExisting = $getNodeByKey(existingKeys[0]);
+            if (firstExisting && firstExisting.isAttached()) {
+              const insertIndex = firstExisting.getIndexWithinParent();
+              for (const key of existingKeys) {
+                const oldNode = $getNodeByKey(key);
+                if (oldNode && oldNode.isAttached()) {
+                  oldNode.remove();
+                }
+              }
+              root.splice(insertIndex, 0, newNodes);
+              generatedKeysRef.current = newNodes.map((n) => n.getKey());
+              return;
+            }
+          }
+
+          // First insertion into document
+          const anchorKey = anchorAfterKeyRef.current;
+          const anchorNode = anchorKey ? $getNodeByKey(anchorKey) : null;
+
+          if (anchorNode && anchorNode.isAttached()) {
+            const isEmptyAnchor =
+              replacedBlockSnapshotRef.current?.replacedEmpty &&
+              anchorNode.getTextContent().trim() === "";
+            const anchorIndex = anchorNode.getIndexWithinParent();
+            if (isEmptyAnchor) {
+              anchorNode.remove();
+              root.splice(anchorIndex, 0, newNodes);
+            } else {
+              root.splice(anchorIndex + 1, 0, newNodes);
+            }
+          } else {
+            root.append(...newNodes);
+          }
+
+          generatedKeysRef.current = newNodes.map((n) => n.getKey());
+        },
+        { discrete: true, tag: "notiq-ai-stream" }
+      );
+    },
+    [editor]
+  );
+
+  const captureAnchorFromSelection = useCallback(() => {
+    let targetText = "";
+    let docContext = "";
+
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      docContext = root.getTextContent();
+
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        targetText = selection.getTextContent();
+        const anchorNode = selection.anchor.getNode();
+        const topElement =
+          anchorNode.getKey() === "root"
+            ? root.getLastChild()
+            : anchorNode.getTopLevelElementOrThrow();
+
+        if (topElement) {
+          anchorAfterKeyRef.current = topElement.getKey();
+          const isEmpty = topElement.getTextContent().trim() === "";
+          replacedBlockSnapshotRef.current = {
+            replacedEmpty: isEmpty,
+            originalText: targetText,
+            originalNodes: [topElement.exportJSON()],
+          };
+        } else {
+          anchorAfterKeyRef.current = null;
+          replacedBlockSnapshotRef.current = null;
+        }
+      } else {
+        const last = root.getLastChild();
+        anchorAfterKeyRef.current = last ? last.getKey() : null;
+        replacedBlockSnapshotRef.current = last
+          ? {
+              replacedEmpty: last.getTextContent().trim() === "",
+              originalText: "",
+              originalNodes: [last.exportJSON()],
+            }
+          : null;
+      }
+    });
+
+    return { targetText, docContext };
+  }, [editor]);
+
+  const resetSessionState = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    generatedKeysRef.current = [];
+    anchorAfterKeyRef.current = null;
+    replacedBlockSnapshotRef.current = null;
+    setPhase("closed");
+    setCoords(null);
+    setPrompt("");
+    setFollowUpPrompt("");
+    setSelectedText("");
+    setStreamedText("");
+    setShowDiff(false);
+    setShowTrace(false);
+    setErrorMsg(null);
+    setActiveSubmenu(null);
+  }, []);
+
+  const handleDiscard = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    const keys = [...generatedKeysRef.current];
+    const snapshot = replacedBlockSnapshotRef.current;
+
+    if (keys.length > 0) {
+      editor.update(
+        () => {
+          const firstNode = $getNodeByKey(keys[0]);
+          if (firstNode && snapshot?.replacedEmpty && snapshot.originalNodes.length > 0) {
+            try {
+              const restored = $parseSerializedNode(snapshot.originalNodes[0]);
+              firstNode.insertBefore(restored);
+            } catch {
+              firstNode.insertBefore($createParagraphNode());
+            }
+          }
+          for (const key of keys) {
+            const node = $getNodeByKey(key);
+            if (node) node.remove();
+          }
+        },
+        { discrete: true }
+      );
+    }
+
+    resetSessionState();
+    editor.focus();
+  }, [editor, resetSessionState]);
+
+  const handleAccept = useCallback(() => {
+    const keys = [...generatedKeysRef.current];
+    if (keys.length > 0) {
+      editor.update(
+        () => {
+          for (const key of keys) {
+            const node = $getNodeByKey(key);
+            if (node) {
+              stripAIStyleFromSubtree(node);
+            }
+          }
+          const last = $getNodeByKey(keys[keys.length - 1]);
+          if (last && "selectEnd" in last && typeof (last as any).selectEnd === "function") {
+            (last as any).selectEnd();
+          }
+        },
+        { discrete: true }
+      );
+    }
+    resetSessionState();
+    editor.focus();
+  }, [editor, resetSessionState]);
+
+  const runAction = useCallback(
+    async (
+      action: string,
+      contextText: string,
+      customQuestion?: string,
+      label?: string,
+      options?: { think?: boolean; research?: boolean }
+    ) => {
+      const useThink = options?.think ?? thinkEnabled;
+      const useResearch = options?.research ?? researchEnabled;
+      setErrorMsg(null);
+      setActiveSubmenu(null);
+      setActiveLabel(
+        label || (useResearch ? "Researching & writing..." : useThink ? "Thinking & writing..." : "Writing...")
+      );
+      setPhase("streaming");
+      setStreamedText("");
+      setShowDiff(false);
+      setShowTrace(false);
+    setShowTrace(false);
+      lastRequestRef.current = {
+        action,
+        context: contextText,
+        question: customQuestion,
+        label,
+      };
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      let accumulated = "";
+      let renderTimer: ReturnType<typeof setTimeout> | null = null;
+
+      const scheduleRender = (final = false) => {
+        if (final) {
+          if (renderTimer !== null) {
+            clearTimeout(renderTimer);
+            renderTimer = null;
+          }
+          const parsed = extractThinkingAndSources(accumulated);
+          if (parsed.content.trim()) {
+            applyStreamedMarkdownToEditor(parsed.content, false);
+            scrollLastGeneratedIntoView();
+          }
+          return;
+        }
+        if (renderTimer !== null) return;
+        renderTimer = setTimeout(() => {
+          renderTimer = null;
+          if (!controller.signal.aborted) {
+            const parsed = extractThinkingAndSources(accumulated);
+            if (parsed.content.trim()) {
+              applyStreamedMarkdownToEditor(parsed.content, true);
+              scrollLastGeneratedIntoView();
+            }
+          }
+        }, 80);
+      };
+
+      try {
+        const savedProvider =
+          typeof window !== "undefined"
+            ? localStorage.getItem("notiq_ai_provider")
+            : undefined;
+        const savedKey =
+          typeof window !== "undefined"
+            ? localStorage.getItem("notiq_ai_api_key")
+            : undefined;
+
+        const response = await fetch(apiEndpoint || "/api/ai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action,
+            context: contextText || "",
+            prompt: customQuestion || contextText || "",
+            userQuestion: customQuestion || "",
+            writingStyle,
+            styleGuide: customStyleGuide.trim() || undefined,
+            think: useThink,
+            research: useResearch,
+            modelProvider:
+              savedProvider && savedProvider !== "auto" ? savedProvider : undefined,
+            apiKey: savedKey?.trim() || undefined,
+          }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok || !response.body) {
+          const errText = await response.text().catch(() => "");
+          throw new Error(errText || `AI service returned ${response.status}`);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          accumulated += chunk;
+          setStreamedText(accumulated);
+          scheduleRender(false);
+        }
+
+        scheduleRender(true);
+        setPhase("review");
+      } catch (err: any) {
+        if (err?.name === "AbortError") {
+          // User stopped mid-stream: finalize what we have so they can Accept or Discard
+          if (accumulated.trim()) {
+            applyStreamedMarkdownToEditor(accumulated, false);
+            setPhase("review");
+          } else {
+            handleDiscard();
+          }
+          return;
+        }
+        console.error("[Notiq AI Command Bar Error]:", err);
+        setErrorMsg(err?.message || "Failed to contact AI service.");
+        if (accumulated.trim()) {
+          applyStreamedMarkdownToEditor(accumulated, false);
+          setPhase("review");
+        } else {
+          setPhase("prompt");
+        }
+      } finally {
+        abortControllerRef.current = null;
+      }
+    },
+    [
+      apiEndpoint,
+      applyStreamedMarkdownToEditor,
+      handleDiscard,
+      scrollLastGeneratedIntoView,
+    ]
+  );
+
+  const handleStopStreaming = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    const last = lastRequestRef.current;
+    if (!last) return;
+    runAction(last.action, last.context, last.question, last.label);
+  }, [runAction]);
 
   const openBar = useCallback(
     (payload?: { initialPrompt?: string; action?: string } | void) => {
-      let targetText = "";
+      // Reset any prior unaccepted session cleanly
+      if (generatedKeysRef.current.length > 0) {
+        handleAccept();
+      }
 
-      editor.getEditorState().read(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          targetText = selection.getTextContent();
-        }
-      });
+      const { targetText, docContext } = captureAnchorFromSelection();
 
-      // Calculate anchor coords based on current selection
       const domSelection = window.getSelection();
-      let top = 120;
-      let left = window.innerWidth / 2 - 280;
+      let top = 140;
+      let left = Math.max(20, window.innerWidth / 2 - 260);
 
       if (domSelection && domSelection.rangeCount > 0) {
         const rect = domSelection.getRangeAt(0).getBoundingClientRect();
         if (rect.width > 0 || rect.height > 0) {
-          left = Math.max(20, Math.min(window.innerWidth - 580, rect.left + rect.width / 2 - 280));
-          top = rect.bottom + 12;
-          if (top + 280 > window.innerHeight) {
-            top = Math.max(20, rect.top - 280);
+          left = Math.max(
+            16,
+            Math.min(window.innerWidth - 540, rect.left)
+          );
+          top = rect.bottom + 10;
+          if (top + 320 > window.innerHeight) {
+            top = Math.max(20, rect.top - 300);
           }
         }
       }
@@ -94,154 +747,64 @@ export default function AICommandBarPlugin() {
       setSelectedText(targetText);
       setPrompt(payload?.initialPrompt || "");
       setStreamedText("");
-      setIsGenerating(false);
-      setActiveAction(payload?.action || null);
-      setIsOpen(true);
+    setShowDiff(false);
+    setShowTrace(false);
+      setErrorMsg(null);
+      setActiveSubmenu(null);
+      setPhase("prompt");
 
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 50);
+      }, 40);
 
       if (payload?.action) {
-        runAction(payload.action, targetText, payload.initialPrompt);
+        runAction(
+          payload.action,
+          targetText || docContext,
+          payload.initialPrompt,
+          payload.action
+        );
       }
     },
-    [editor]
+    [captureAnchorFromSelection, handleAccept, runAction]
   );
 
-  const closeBar = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-    setIsOpen(false);
-    setCoords(null);
-    setPrompt("");
-    setSelectedText("");
-    setStreamedText("");
-    setIsGenerating(false);
-    setActiveAction(null);
-    setShowToneMenu(false);
-    setShowLangMenu(false);
-  }, []);
-
-  const runAction = async (action: string, contextText: string, customQuestion?: string) => {
-    setIsGenerating(true);
-    setStreamedText("");
-    setActiveAction(action);
-
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    try {
-      const response = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action,
-          context: contextText || "",
-          userQuestion: customQuestion || prompt,
-        }),
-        signal: controller.signal,
-      });
-
-      if (!response.ok || !response.body) {
-        throw new Error("Failed to contact AI service");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let accumulated = "";
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        accumulated += chunk;
-        setStreamedText(accumulated);
-      }
-    } catch (err: any) {
-      if (err.name !== "AbortError") {
-        console.error("[Notiq AI Command Bar Error]:", err);
-        setStreamedText("An error occurred while generating response.");
-      }
-    } finally {
-      setIsGenerating(false);
-      abortControllerRef.current = null;
-    }
-  };
-
-  const handleAccept = () => {
-    if (!streamedText) return;
-
-    editor.update(
-      () => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          selection.insertRawText(streamedText);
-        } else {
-          // If no active selection, append or insert at caret
-          const root = editor.getRootElement();
-          if (root) {
-            const p = $createParagraphNode();
-            p.append($createTextNode(streamedText));
-            // append to selection or root
-            selection?.insertNodes([p]);
-          }
-        }
-      },
-      { discrete: true }
-    );
-
-    closeBar();
-  };
-
-  const handleInsertBelow = () => {
-    if (!streamedText) return;
-
-    editor.update(
-      () => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          const anchor = selection.anchor.getNode();
-          const topElement =
-            anchor.getKey() === "root"
-              ? anchor
-              : anchor.getTopLevelElementOrThrow();
-
-          const p = $createParagraphNode();
-          p.append($createTextNode(streamedText));
-          topElement.insertAfter(p);
-          p.select();
-        }
-      },
-      { discrete: true }
-    );
-
-    closeBar();
-  };
-
-  // Keyboard shortcut: Cmd+K / Ctrl+K
+  // Keyboard shortcuts: Cmd/Ctrl+K, Esc, Cmd+Enter
   useEffect(() => {
     return editor.registerCommand(
       KEY_DOWN_COMMAND,
       (event: KeyboardEvent) => {
         if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
           event.preventDefault();
-          if (isOpen) {
-            closeBar();
-          } else {
+          if (phase === "closed") {
             openBar();
+          } else if (phase === "prompt") {
+            resetSessionState();
           }
           return true;
         }
 
-        if (event.key === "Escape" && isOpen) {
+        if (event.key === "Escape") {
+          if (phase === "streaming") {
+            event.preventDefault();
+            handleStopStreaming();
+            return true;
+          }
+          if (phase === "prompt") {
+            event.preventDefault();
+            resetSessionState();
+            return true;
+          }
+          if (phase === "review") {
+            event.preventDefault();
+            handleDiscard();
+            return true;
+          }
+        }
+
+        if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && phase === "review") {
           event.preventDefault();
-          closeBar();
+          handleAccept();
           return true;
         }
 
@@ -249,283 +812,586 @@ export default function AICommandBarPlugin() {
       },
       COMMAND_PRIORITY_CRITICAL
     );
-  }, [editor, isOpen, openBar, closeBar]);
+  }, [
+    editor,
+    phase,
+    openBar,
+    resetSessionState,
+    handleStopStreaming,
+    handleDiscard,
+    handleAccept,
+  ]);
 
-  // Command registration
+  // Global Esc listener while focus is inside floating UI inputs
+  useEffect(() => {
+    if (phase === "closed") return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (phase === "streaming") handleStopStreaming();
+        else if (phase === "review") handleDiscard();
+        else resetSessionState();
+      } else if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && phase === "review") {
+        e.preventDefault();
+        handleAccept();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [phase, handleStopStreaming, handleDiscard, handleAccept, resetSessionState]);
+
   useEffect(() => {
     return editor.registerCommand(
       OPEN_AI_COMMAND_BAR_COMMAND,
       (payload) => {
-        openBar(payload || undefined);
+        openBar(payload);
         return true;
       },
       COMMAND_PRIORITY_CRITICAL
     );
   }, [editor, openBar]);
 
-  if (!isOpen || !coords) return null;
+  // Click outside in prompt phase closes the popover
+  useEffect(() => {
+    if (phase !== "prompt") return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        resetSessionState();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [phase, resetSessionState]);
 
-  const diffParts: DiffPart[] =
-    selectedText && streamedText
-      ? computeWordDiff(selectedText, streamedText)
-      : [];
+  const executePreset = (preset: AIPreset) => {
+    if (preset.hasSubmenu) {
+      setActiveSubmenu(activeSubmenu === preset.hasSubmenu ? null : preset.hasSubmenu);
+      return;
+    }
+
+    let docContext = selectedText;
+    if (!docContext) {
+      docContext = extractSurroundingContext(editor);
+    }
+
+    runAction(
+      preset.action,
+      docContext,
+      preset.prompt,
+      `${preset.label}...`,
+      { think: preset.think, research: preset.research }
+    );
+  };
+
+  const handlePromptSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const trimmed = prompt.trim();
+
+    if (!trimmed && filteredPresets[highlightedIndex]) {
+      executePreset(filteredPresets[highlightedIndex]);
+      return;
+    }
+
+    if (trimmed) {
+      let docContext = selectedText;
+      if (!docContext) {
+        docContext = extractSurroundingContext(editor);
+      }
+      runAction("default", docContext, trimmed, "Writing...");
+    }
+  };
+
+  const handlePromptKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      if (filteredPresets.length > 0) {
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev + 1) % filteredPresets.length);
+      }
+    } else if (e.key === "ArrowUp") {
+      if (filteredPresets.length > 0) {
+        e.preventDefault();
+        setHighlightedIndex(
+          (prev) => (prev - 1 + filteredPresets.length) % filteredPresets.length
+        );
+      }
+    } else if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      // If user typed a matching query and highlighted a preset, or typed a custom prompt:
+      const trimmed = prompt.trim();
+      if (!trimmed && filteredPresets[highlightedIndex]) {
+        executePreset(filteredPresets[highlightedIndex]);
+      } else {
+        handlePromptSubmit();
+      }
+    }
+  };
+
+  const handleFollowUpSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = followUpPrompt.trim();
+    if (!trimmed) return;
+    setFollowUpPrompt("");
+    runAction("default", streamedText || selectedText, trimmed, "Refining...");
+  };
+
+  if (phase === "closed" || typeof document === "undefined") {
+    return null;
+  }
 
   return createPortal(
-    <div
-      ref={containerRef}
-      style={{
-        position: "fixed",
-        top: `${coords.top}px`,
-        left: `${coords.left}px`,
-        zIndex: 60,
-      }}
-      className="w-[560px] max-w-[calc(100vw-32px)] rounded-xl border border-border/80 bg-popover/95 text-popover-foreground shadow-2xl backdrop-blur-xl animate-in fade-in-0 zoom-in-95 duration-150 overflow-hidden"
-      onMouseDown={(e) => e.stopPropagation()}
-    >
-      {/* Top Input Bar */}
-      <div className="flex items-center gap-2 p-3 border-b border-border/60 bg-muted/20">
-        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
-          <Sparkles className="w-4 h-4" />
-        </div>
-
-        <input
-          ref={inputRef}
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              if (prompt.trim()) {
-                runAction("default", selectedText, prompt);
-              }
-            } else if (e.key === "Escape") {
-              closeBar();
-            }
+    <>
+      {/* 1. Floating Prompt Popover (Prompt Phase) */}
+      {phase === "prompt" && coords && (
+        <div
+          ref={containerRef}
+          style={{
+            top: `${coords.top}px`,
+            left: `${coords.left}px`,
           }}
-          placeholder={
-            selectedText
-              ? `Ask AI to edit selection ("${selectedText.slice(0, 24)}...")...`
-              : "Ask AI to write, generate, or continue..."
-          }
-          className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/60"
-        />
-
-        {isGenerating ? (
-          <Button size="sm" variant="ghost" disabled className="h-8 px-2 text-xs">
-            <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
-            Generating...
-          </Button>
-        ) : (
-          <Button
-            size="sm"
-            variant="default"
-            disabled={!prompt.trim() && !activeAction}
-            onClick={() => runAction("default", selectedText, prompt)}
-            className="h-8 px-3 text-xs font-medium"
-          >
-            <span>Submit</span>
-            <CornerDownLeft className="w-3 h-3 ml-1.5 opacity-60" />
-          </Button>
-        )}
-
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={closeBar}
-          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+          className="fixed z-50 w-[520px] max-w-[calc(100vw-2rem)] rounded-2xl border border-zinc-200/90 dark:border-zinc-800/90 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl shadow-2xl shadow-violet-500/10 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
         >
-          <X className="w-4 h-4" />
-        </Button>
-      </div>
-
-      {/* Streamed Result & Diff View */}
-      {streamedText && (
-        <div className="p-4 border-b border-border/60 max-h-[300px] overflow-y-auto space-y-3 bg-background/50">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {selectedText ? "Diff Preview (Original vs. AI)" : "AI Output"}
-            </span>
-            {isGenerating && (
-              <span className="text-xs text-primary flex items-center gap-1 font-medium">
-                <Loader2 className="w-3 h-3 animate-spin" />
-                Streaming response...
-              </span>
+          {/* Prompt Input Row */}
+          <form
+            onSubmit={handlePromptSubmit}
+            className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-zinc-100 dark:border-zinc-800/80"
+          >
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400">
+              <Sparkles className="h-3.5 w-3.5" />
+            </div>
+            <input
+              ref={inputRef}
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handlePromptKeyDown}
+              placeholder={
+                selectedText
+                  ? "Ask AI to edit selection..."
+                  : "Ask AI anything..."
+              }
+              className="flex-1 bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
+            />
+            {prompt.trim() ? (
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1 rounded-lg bg-violet-600 hover:bg-violet-500 px-2.5 py-1 text-xs font-medium text-white shadow-sm transition-colors"
+              >
+                <span>Ask</span>
+                <CornerDownLeft className="h-3 w-3" />
+              </button>
+            ) : (
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-1.5 py-0.5 text-[10px] font-medium text-zinc-400">
+                ⌘K
+              </kbd>
             )}
+          </form>
+
+          {/* Think & Research Mode Toggles */}
+          <div className="flex items-center gap-1.5 px-3.5 py-1.5 border-b border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 text-[11px]">
+            <button
+              type="button"
+              onClick={() => setThinkEnabled((v) => !v)}
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium transition-colors ${
+                thinkEnabled
+                  ? "bg-violet-600/15 text-violet-700 dark:text-violet-300 border border-violet-500/30"
+                  : "text-zinc-500 hover:bg-zinc-200/60 dark:hover:bg-zinc-800 border border-transparent"
+              }`}
+              title="Reason step-by-step before writing"
+            >
+              <Brain className="h-3 w-3" />
+              <span>Think</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setResearchEnabled((v) => !v)}
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium transition-colors ${
+                researchEnabled
+                  ? "bg-sky-600/15 text-sky-700 dark:text-sky-300 border border-sky-500/30"
+                  : "text-zinc-500 hover:bg-zinc-200/60 dark:hover:bg-zinc-800 border border-transparent"
+              }`}
+              title="Search & cite live web sources while writing"
+            >
+              <Globe className="h-3 w-3" />
+              <span>Research</span>
+            </button>
+            <span className="ml-auto text-[10px] text-zinc-400 hidden sm:inline">
+              Images · Inline visuals · Excalidraw diagrams
+            </span>
           </div>
 
-          {selectedText ? (
-            <div className="text-sm leading-relaxed p-3 rounded-lg border border-border/50 bg-muted/30 font-sans">
-              {diffParts.map((part, index) => {
-                if (part.type === "removed") {
-                  return (
-                    <span
-                      key={index}
-                      className="bg-red-500/15 text-red-600 dark:text-red-400 line-through rounded px-1 py-0.5 mx-0.5"
-                    >
-                      {part.text}
-                    </span>
-                  );
-                }
-                if (part.type === "added") {
-                  return (
-                    <span
-                      key={index}
-                      className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-medium rounded px-1 py-0.5 mx-0.5"
-                    >
-                      {part.text}
-                    </span>
-                  );
-                }
-                return <span key={index}>{part.text}</span>;
-              })}
-            </div>
-          ) : (
-            <div className="text-sm leading-relaxed p-3 rounded-lg border border-border/50 bg-muted/30 font-sans whitespace-pre-wrap">
-              {streamedText}
+          {/* Error Banner if previous call failed */}
+          {errorMsg && (
+            <div className="px-3.5 py-2 text-xs text-rose-600 dark:text-rose-400 bg-rose-50/80 dark:bg-rose-950/30 border-b border-rose-200/60 dark:border-rose-900/50">
+              {errorMsg}
             </div>
           )}
 
-          {/* Action Resolution Buttons */}
-          <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="default"
-                onClick={handleAccept}
-                className="h-8 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs px-3"
-              >
-                <Check className="w-3.5 h-3.5 mr-1" />
-                <span>Replace Selection</span>
-                <kbd className="ml-1.5 px-1 py-0.2 bg-emerald-700/60 rounded text-[10px]">
-                  ↵
-                </kbd>
-              </Button>
+          {/* Filtered Presets List (auto-collapses cleanly when no presets match) */}
+          {filteredPresets.length > 0 && (
+            <div className="max-h-72 overflow-y-auto p-1.5 space-y-0.5">
+              {filteredPresets.map((preset, idx) => {
+                const Icon = preset.icon;
+                const isActive = idx === highlightedIndex;
+                return (
+                  <div key={preset.id}>
+                    <button
+                      type="button"
+                      onMouseEnter={() => setHighlightedIndex(idx)}
+                      onClick={() => executePreset(preset)}
+                      className={cn(
+                        "w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-[13px] transition-colors text-left",
+                        isActive
+                          ? "bg-violet-500/10 text-violet-950 dark:text-violet-100"
+                          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80"
+                      )}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Icon
+                          className={cn(
+                            "h-4 w-4",
+                            isActive
+                              ? "text-violet-600 dark:text-violet-400"
+                              : "text-zinc-400 dark:text-zinc-500"
+                          )}
+                        />
+                        <span className="font-medium">{preset.label}</span>
+                      </span>
+                      {preset.hasSubmenu && (
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400" />
+                      )}
+                    </button>
 
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleInsertBelow}
-                className="h-8 text-xs font-medium px-3"
+                    {/* Inline Tone / Language Pills */}
+                    {preset.hasSubmenu === "tone" && activeSubmenu === "tone" && (
+                      <div className="flex flex-wrap gap-1.5 px-3 py-2 ml-6">
+                        {TONES.map((tone) => (
+                          <button
+                            key={tone}
+                            type="button"
+                            onClick={() =>
+                              runAction(
+                                "Tone",
+                                selectedText,
+                                `Rewrite in a ${tone} tone.`,
+                                `Applying ${tone} tone...`
+                              )
+                            }
+                            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 hover:border-violet-400 hover:bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-200 transition-colors"
+                          >
+                            {tone}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {preset.hasSubmenu === "language" && activeSubmenu === "language" && (
+                      <div className="flex flex-wrap gap-1.5 px-3 py-2 ml-6">
+                        {LANGUAGES.map((lang) => (
+                          <button
+                            key={lang}
+                            type="button"
+                            onClick={() =>
+                              runAction(
+                                "Translate",
+                                selectedText,
+                                `Translate to ${lang}.`,
+                                `Translating to ${lang}...`
+                              )
+                            }
+                            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 hover:border-violet-400 hover:bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-200 transition-colors"
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Writing Style & Custom Voice Footer */}
+          <div className="border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/50 px-3 py-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+                <span className="text-[11px] font-medium text-zinc-400 mr-1 shrink-0">
+                  Voice:
+                </span>
+                {(Object.keys(WRITING_STYLE_PRESETS) as WritingStylePresetId[]).map(
+                  (styleKey) => {
+                    const active = writingStyle === styleKey;
+                    return (
+                      <button
+                        key={styleKey}
+                        type="button"
+                        onClick={() => {
+                          setWritingStyle(styleKey);
+                          if (typeof window !== "undefined") {
+                            localStorage.setItem("notiq_ai_writing_style", styleKey);
+                          }
+                        }}
+                        className={cn(
+                          "rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors shrink-0",
+                          active
+                            ? "bg-violet-600 text-white shadow-sm"
+                            : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200/70 dark:hover:bg-zinc-800"
+                        )}
+                      >
+                        {WRITING_STYLE_PRESETS[styleKey].label}
+                      </button>
+                    );
+                  }
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowStyleEditor((v) => !v)}
+                className={cn(
+                  "text-[11px] font-medium px-2 py-0.5 rounded-md transition-colors shrink-0",
+                  customStyleGuide.trim() || showStyleEditor
+                    ? "text-violet-600 dark:text-violet-400 bg-violet-500/10"
+                    : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                )}
+                title="Train AI with custom style rules"
               >
-                <ArrowDownToLine className="w-3.5 h-3.5 mr-1.5" />
-                Insert Below
-              </Button>
+                {showStyleEditor ? "Done" : customStyleGuide.trim() ? "Rules ✓" : "+ Rules"}
+              </button>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() =>
-                  runAction(activeAction || "default", selectedText, prompt)
-                }
-                className="h-8 text-xs text-muted-foreground hover:text-foreground"
-              >
-                <RotateCcw className="w-3.5 h-3.5 mr-1" />
-                Retry
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={closeBar}
-                className="h-8 text-xs text-muted-foreground hover:text-destructive"
-              >
-                Discard
-              </Button>
-            </div>
+            {showStyleEditor && (
+              <div className="mt-1.5 pb-1">
+                <input
+                  type="text"
+                  value={customStyleGuide}
+                  onChange={(e) => {
+                    setCustomStyleGuide(e.target.value);
+                    if (typeof window !== "undefined") {
+                      localStorage.setItem("notiq_ai_style_guide", e.target.value);
+                    }
+                  }}
+                  placeholder="Custom voice rules (e.g. active voice, concise, no jargon)..."
+                  className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2.5 py-1 text-xs text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 focus:outline-none focus:border-violet-400"
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Quick Action Pills & Submenus */}
-      <div className="p-3 bg-muted/10 space-y-2">
-        <div className="flex flex-wrap items-center gap-1.5">
-          {QUICK_ACTIONS.map((action) => {
-            const Icon = action.icon;
-            return (
-              <button
-                key={action.id}
-                onClick={() => runAction(action.id, selectedText)}
-                className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md border border-border/60 bg-background/80 hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
-              >
-                <Icon className="w-3.5 h-3.5 text-primary" />
-                <span>{action.label}</span>
-              </button>
-            );
-          })}
-
-          {/* Tone Submenu */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setShowToneMenu(!showToneMenu);
-                setShowLangMenu(false);
-              }}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-md border border-border/60 bg-background/80 hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
-            >
-              <span>Change Tone</span>
-              <ChevronDown className="w-3 h-3 opacity-60" />
-            </button>
-            {showToneMenu && (
-              <div className="absolute left-0 bottom-full mb-1 w-36 rounded-lg border border-border bg-popover shadow-xl py-1 z-50 animate-in fade-in-0 zoom-in-95">
-                {TONES.map((tone) => (
-                  <button
-                    key={tone}
-                    onClick={() => {
-                      setShowToneMenu(false);
-                      runAction(
-                        "default",
-                        selectedText,
-                        `Rewrite the text in a ${tone.toLowerCase()} tone.`
-                      );
-                    }}
-                    className="w-full text-left px-3 py-1.5 text-xs text-popover-foreground hover:bg-muted transition-colors"
-                  >
-                    {tone}
-                  </button>
-                ))}
+      {/* 2. Floating Streaming Status Pill: "Thinking & writing... | Stop [Esc]" */}
+      {phase === "streaming" && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 max-w-[calc(100vw-2rem)]">
+          {parsedStream.thinking && (
+            <div className="w-[min(34rem,calc(100vw-2rem))] max-h-32 overflow-y-auto rounded-2xl border border-violet-200/80 dark:border-violet-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl px-3.5 py-2.5 text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-300 shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-150">
+              <div className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+                <Brain className="h-3 w-3 animate-pulse" />
+                <span>AI Thinking</span>
               </div>
-            )}
-          </div>
+              <div className="whitespace-pre-wrap">{parsedStream.thinking}</div>
+            </div>
+          )}
 
-          {/* Translate Submenu */}
-          <div className="relative">
+          <div className="flex items-center gap-3 rounded-full border border-violet-200/80 dark:border-violet-800/60 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl px-4 py-2 shadow-xl shadow-violet-500/15 animate-in fade-in slide-in-from-bottom-2 duration-150">
+            <div className="flex items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-200">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-violet-600 dark:text-violet-400" />
+              <span>{activeLabel}</span>
+              {wordCount > 0 && (
+                <span className="text-[11px] text-zinc-400 tabular-nums">
+                  {wordCount}w
+                </span>
+              )}
+            </div>
+            <div className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800" />
             <button
-              onClick={() => {
-                setShowLangMenu(!showLangMenu);
-                setShowToneMenu(false);
-              }}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-md border border-border/60 bg-background/80 hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
+              type="button"
+              onClick={handleStopStreaming}
+              className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-200 transition-colors"
             >
-              <Languages className="w-3 h-3 text-primary" />
-              <span>Translate</span>
-              <ChevronDown className="w-3 h-3 opacity-60" />
+              <Square className="h-2.5 w-2.5 fill-current" />
+              <span>Stop</span>
+              <kbd className="rounded bg-white/80 dark:bg-zinc-900 px-1 py-0.5 text-[10px] text-zinc-400 border border-zinc-200/80 dark:border-zinc-700">
+                Esc
+              </kbd>
             </button>
-            {showLangMenu && (
-              <div className="absolute left-0 bottom-full mb-1 w-36 rounded-lg border border-border bg-popover shadow-xl py-1 z-50 animate-in fade-in-0 zoom-in-95">
-                {LANGUAGES.map((lang) => (
-                  <button
-                    key={lang}
-                    onClick={() => {
-                      setShowLangMenu(false);
-                      runAction(
-                        "default",
-                        selectedText,
-                        `Translate the text accurately into ${lang}.`
-                      );
-                    }}
-                    className="w-full text-left px-3 py-1.5 text-xs text-popover-foreground hover:bg-muted transition-colors"
-                  >
-                    {lang}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         </div>
-      </div>
-    </div>,
+      )}
+
+      {/* 3. Post-Stream Review Bar: Accept / Follow-up / Diff / Retry / Discard */}
+      {phase === "review" && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 max-w-[calc(100vw-2rem)]">
+          {showTrace && (parsedStream.thinking || parsedStream.sources.length > 0) && (
+            <div className="w-[min(40rem,calc(100vw-2rem))] max-h-52 overflow-y-auto rounded-2xl border border-violet-200/90 dark:border-violet-800/70 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl p-3 text-xs leading-relaxed shadow-2xl shadow-violet-500/15 animate-in fade-in slide-in-from-bottom-2 duration-150 space-y-2.5">
+              {parsedStream.thinking && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+                    <span className="inline-flex items-center gap-1">
+                      <Brain className="h-3 w-3" />
+                      AI Reasoning
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowTrace(false)}
+                      className="rounded px-1.5 py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"
+                    >
+                      Hide
+                    </button>
+                  </div>
+                  <div className="whitespace-pre-wrap text-zinc-600 dark:text-zinc-300">
+                    {parsedStream.thinking}
+                  </div>
+                </div>
+              )}
+              {parsedStream.sources.length > 0 && (
+                <div>
+                  <div className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">
+                    <Globe className="h-3 w-3" />
+                    Research Sources ({parsedStream.sources.length})
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {parsedStream.sources.map((src, i) => (
+                      <a
+                        key={i}
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2 py-0.5 text-[11px] font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-500/20 transition-colors"
+                      >
+                        <span className="truncate max-w-[14rem]">{src.title}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {showDiff && diffParts.length > 0 && (
+            <div className="w-[min(40rem,calc(100vw-2rem))] max-h-48 overflow-y-auto rounded-2xl border border-violet-200/90 dark:border-violet-800/70 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl p-3 text-xs leading-relaxed shadow-2xl shadow-violet-500/15 animate-in fade-in slide-in-from-bottom-2 duration-150">
+              <div className="mb-1.5 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+                <span>Inline Diff (Original vs. AI)</span>
+                <button
+                  type="button"
+                  onClick={() => setShowDiff(false)}
+                  className="rounded px-1.5 py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"
+                >
+                  Hide
+                </button>
+              </div>
+              <div className="whitespace-pre-wrap break-words text-zinc-700 dark:text-zinc-200">
+                {diffParts.map((part, idx) => {
+                  if (part.type === "added") {
+                    return (
+                      <ins
+                        key={idx}
+                        className="rounded bg-emerald-500/15 px-0.5 text-emerald-700 dark:text-emerald-300 no-underline"
+                      >
+                        {part.text}
+                      </ins>
+                    );
+                  }
+                  if (part.type === "removed") {
+                    return (
+                      <del
+                        key={idx}
+                        className="rounded bg-rose-500/15 px-0.5 text-rose-600 dark:text-rose-400 line-through"
+                      >
+                        {part.text}
+                      </del>
+                    );
+                  }
+                  return <span key={idx}>{part.text}</span>;
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-violet-200/90 dark:border-violet-800/70 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl p-1.5 pl-3 shadow-2xl shadow-violet-500/15 animate-in fade-in slide-in-from-bottom-2 duration-150">
+            <Sparkles className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400 shrink-0" />
+
+            <form onSubmit={handleFollowUpSubmit} className="flex items-center">
+              <input
+                ref={followUpRef}
+                type="text"
+                value={followUpPrompt}
+                onChange={(e) => setFollowUpPrompt(e.target.value)}
+                placeholder="Refine (e.g. shorter, add table)..."
+                className="w-44 sm:w-56 bg-transparent text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
+              />
+            </form>
+
+            <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
+
+            {(parsedStream.thinking || parsedStream.sources.length > 0) && (
+              <button
+                type="button"
+                onClick={() => setShowTrace((prev) => !prev)}
+                className={`inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                  showTrace
+                    ? "bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300"
+                    : "text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+                }`}
+                title="View AI thinking & research sources"
+              >
+                <Brain className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">
+                  {parsedStream.sources.length > 0
+                    ? `Sources (${parsedStream.sources.length})`
+                    : "Thoughts"}
+                </span>
+              </button>
+            )}
+
+            {canShowDiff && (
+              <button
+                type="button"
+                onClick={() => setShowDiff((prev) => !prev)}
+                className={`inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                  showDiff
+                    ? "bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300"
+                    : "text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+                }`}
+                title="Compare original vs. AI rewrite"
+              >
+                <GitCompareArrows className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Diff</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleRetry}
+              className="inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+              title="Regenerate"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Retry</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDiscard}
+              className="inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 transition-colors"
+              title="Discard (Esc)"
+            >
+              <X className="h-3.5 w-3.5" />
+              <span>Discard</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleAccept}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-colors"
+              title="Accept (⌘Enter)"
+            >
+              <Check className="h-3.5 w-3.5" />
+              <span>Accept</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </>,
     document.body
   );
 }

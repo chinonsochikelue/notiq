@@ -183,7 +183,11 @@ export default function ExcalidrawComponent({
     appState = {},
   } = useMemo(() => {
     try {
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        return { elements: parsed, files: {}, appState: {} };
+      }
+      return parsed || { elements: [], files: {}, appState: {} };
     } catch {
       return { elements: [], files: {}, appState: {} };
     }

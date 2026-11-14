@@ -1313,3 +1313,23 @@ select {
   background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* AI In-Canvas Streaming Caret & Highlight */
+@keyframes notiq-ai-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.82);
+  }
+}
+
+.notiq-ai-caret {
+  display: inline-block;
+  animation: notiq-ai-pulse 1s ease-in-out infinite;
+  color: #7c3aed;
+  margin-left: 3px;
+  vertical-align: middle;
+}

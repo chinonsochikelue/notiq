@@ -179,12 +179,18 @@ export class ExcalidrawNode extends DecoratorNode<JSX.Element> {
 
   decorate(editor: LexicalEditor, config: EditorConfig): JSX.Element {
     return (
-      <ExcalidrawComponent
-        nodeKey={this.getKey()}
-        data={this.__data}
-        width={this.__width}
-        height={this.__height}
-      />
+      <React.Suspense
+        fallback={
+          <div className="my-4 h-36 w-full max-w-md animate-pulse rounded-2xl border border-border/50 bg-muted/40" />
+        }
+      >
+        <ExcalidrawComponent
+          nodeKey={this.getKey()}
+          data={this.__data}
+          width={this.__width}
+          height={this.__height}
+        />
+      </React.Suspense>
     );
   }
 }

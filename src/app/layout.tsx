@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 import { ThemeProvider } from "../components/providers/theme-provider";
 import { EdgeStoreProvider } from "../lib/edgestore";
 import QueryProvider from "../components/providers/QueryProvider";
@@ -296,7 +298,9 @@ export default function RootLayout({
             }),
           }}
         />
-        <script
+        <Script
+          id="client-error-listener"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if (typeof window !== 'undefined') {
@@ -321,8 +325,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <EdgeStoreProvider>
-        <body className="font-sans antialiased w-full min-h-screen dark:text-white text-slate-800 dark:bg-[#020b19] bg-white">
+      <body suppressHydrationWarning className="font-sans antialiased w-full min-h-screen dark:text-white text-slate-800 dark:bg-[#020b19] bg-white">
+        <EdgeStoreProvider>
           <QueryProvider>
             <ThemeProvider
               attribute="class"
@@ -336,8 +340,8 @@ export default function RootLayout({
               <Toaster />
             </ThemeProvider>
           </QueryProvider>
-        </body>
-      </EdgeStoreProvider>
+        </EdgeStoreProvider>
+      </body>
     </html>
   );
 }

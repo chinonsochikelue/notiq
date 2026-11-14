@@ -125,7 +125,12 @@ export default function MobileToolbar({
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [bottomOffset, setBottomOffset] = useState(0);
   const [isSpeechActive, setIsSpeechActive] = useState(false);
+  const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    setHasSpeechSupport(SUPPORT_SPEECH_RECOGNITION);
+  }, []);
   const [insertCategory, setInsertCategory] = useState<"all" | "media" | "blocks">("all");
   const [modal, showModal] = useModal();
   const targetEditor = activeEditor || editor;
@@ -532,7 +537,7 @@ export default function MobileToolbar({
             </div>
 
             <div className="flex items-center gap-1.5">
-              {SUPPORT_SPEECH_RECOGNITION && (
+              {hasSpeechSupport && (
                 <button
                   type="button"
                   onClick={toggleSpeech}

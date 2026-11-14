@@ -216,8 +216,7 @@ export default function Color({
           <Button
             style={{
               ...style,
-              color: theme === "dark" && color === "#000" ? "white" :
-                theme !== "dark" && color === "#fff" ? "black" : color,
+              color: color && color !== "#000" && color !== "#fff" && color !== "rgb(0, 0, 0)" ? color : undefined,
             }}
             variant="ghost"
             className={cn(
@@ -236,7 +235,7 @@ export default function Color({
               {/* Color indicator bar */}
               <div
                 className="w-3 h-1 rounded-sm border border-border/50 ml-1"
-                style={{ backgroundColor: color || (theme === "dark" ? "white" : "black") }}
+                style={{ backgroundColor: color || "currentColor" }}
               />
             </div>
           </Button>

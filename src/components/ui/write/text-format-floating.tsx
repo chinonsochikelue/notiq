@@ -226,7 +226,7 @@ export default function TextFormatFloatingToolbar({
             h-[30px] p-1 px-2 max-sm:p-2 max-sm:h-[295px] max-sm:w-[32px] max-sm:overflow-y-auto
             border dark:border-zinc-800 dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 border-zinc-200 bg-white/90 
             inline-flex flex-row max-sm:flex-col items-center shadow-md absolute top-0 left-0 text-sm rounded-[6px]
-            md:relative md:transform-none
+            z-50 pointer-events-auto
         `}
     >
       <AiButton editor={editor} />

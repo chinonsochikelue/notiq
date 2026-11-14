@@ -15,6 +15,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import KatexRenderer from './KatexRenderer';
 import { Button } from "../button";
+import { handleEquationInputChange } from './equationTypography';
 
 type Props = {
   initialEquation?: string;
@@ -47,17 +48,13 @@ export default function KatexEquationAlterer({
       <div className="KatexEquationAlterer_centerRow">
         {inline ? (
           <input
-            onChange={(event) => {
-              setEquation(event.target.value);
-            }}
+            onChange={(event) => handleEquationInputChange(event.target, setEquation)}
             value={equation}
             className="KatexEquationAlterer_textArea"
           />
         ) : (
           <textarea
-            onChange={(event) => {
-              setEquation(event.target.value);
-            }}
+            onChange={(event) => handleEquationInputChange(event.target, setEquation)}
             value={equation}
             className="KatexEquationAlterer_textArea"
           />

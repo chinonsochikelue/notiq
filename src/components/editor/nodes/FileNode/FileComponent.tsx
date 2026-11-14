@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from "react";
 import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { $getNodeByKey, type ElementFormatType, type NodeKey } from "lexical";
 import {
   FileText,
@@ -106,6 +107,7 @@ export default function FileComponent({
   extension: initialExtension,
 }: FileComponentProps) {
   const [editor] = useLexicalComposerContext();
+  const isEditable = useLexicalEditable();
   const [title, setTitle] = useState(initialTitle || "Untitled File");
   const [isEditing, setIsEditing] = useState(false);
 
@@ -164,9 +166,11 @@ export default function FileComponent({
               />
             ) : (
               <p
-                onDoubleClick={() => setIsEditing(true)}
-                className="truncate text-sm font-medium text-foreground hover:text-primary transition-colors cursor-pointer"
-                title="Double click to rename"
+                onDoubleClick={() => {
+                  if (isEditable) setIsEditing(true);
+                }}
+                className={cn("truncate text-sm font-medium text-foreground transition-colors", isEditable ? "hover:text-primary cursor-pointer" : "cursor-default")}
+                title={isEditable ? "Double click to rename" : undefined}
               >
                 {title}
               </p>
@@ -205,14 +209,16 @@ export default function FileComponent({
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
 
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-            title="Remove attachment"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+          {isEditable && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+              title="Remove attachment"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
     </BlockWithAlignableContents>

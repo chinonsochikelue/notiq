@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { $getNodeByKey, LexicalEditor, NodeKey, ParagraphNode, TextNode } from "lexical";
 import { LinkNode } from "@lexical/link";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -8,6 +8,7 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { cn } from "../../../../lib/utils";
 import {
   Lightbulb,
   AlertTriangle,
@@ -136,6 +137,29 @@ export default function HintComponent({
 }) {
   const [editor] = useLexicalComposerContext();
   const [isPopoverOpen, setPopoverOpen] = useState(false);
+  const isEditable = editor.isEditable();
+
+  // Keep nested editor editable state in sync with parent editor
+  useEffect(() => {
+    if (captionEditor && typeof captionEditor.setEditable === "function") {
+      captionEditor.setEditable(isEditable);
+    }
+  }, [captionEditor, isEditable]);
+
+  // Propagate nested caption changes up to parent editor so onUpdate / getJSON stay up to date
+  useEffect(() => {
+    if (!captionEditor) return;
+    return captionEditor.registerUpdateListener(({ dirtyElements, dirtyLeaves }) => {
+      if (dirtyElements.size === 0 && dirtyLeaves.size === 0) return;
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+        if ($isHintNode(node)) {
+          // Touch node so parent editor marks itself dirty and dispatches onUpdate
+          node.getWritable();
+        }
+      });
+    });
+  }, [captionEditor, editor, nodeKey]);
 
   const normalizedKey = VARIANT_KEY_MAP[type] || "tip";
   const config = CALLOUT_VARIANTS[normalizedKey] || CALLOUT_VARIANTS.tip;
@@ -277,12 +301,17 @@ export default function HintComponent({
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className="w-full border-0 resize-none cursor-text block relative outline-none select-text whitespace-pre-wrap break-words text-sm sm:text-[15px] leading-relaxed"
-                aria-placeholder="Write a callout note..."
-                placeholder={
-                  <div className="text-sm sm:text-[15px] text-zinc-400/80 dark:text-zinc-500/80 overflow-hidden absolute top-0 left-0 select-none whitespace-nowrap text-ellipsis pointer-events-none">
-                    Write a callout note...
-                  </div>
+                className={cn(
+                  "w-full border-0 resize-none block relative outline-none select-text whitespace-pre-wrap break-words text-sm sm:text-[15px] leading-relaxed",
+                  isEditable ? "cursor-text" : "cursor-default select-text"
+                )}
+                aria-placeholder={isEditable ? "Write a callout note..." : ""}
+                placeholder={(isEditable: boolean) =>
+                  isEditable ? (
+                    <div className="text-sm sm:text-[15px] text-zinc-400/80 dark:text-zinc-500/80 overflow-hidden absolute top-0 left-0 select-none whitespace-nowrap text-ellipsis pointer-events-none">
+                      Write a callout note...
+                    </div>
+                  ) : null
                 }
               />
             }

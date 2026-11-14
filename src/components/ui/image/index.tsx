@@ -85,6 +85,11 @@ export default function ImageComponent({
   const activeEditorRef = useRef<LexicalEditor | null>(null);
   const [isLoadError, setIsLoadError] = useState<boolean>(false);
   const isEditable = useLexicalEditable();
+  useEffect(() => {
+    if (caption && typeof caption.setEditable === "function") {
+      caption.setEditable(isEditable);
+    }
+  }, [caption, isEditable]);
   const [MediaType, setMediaType] = useState<"IMAGE" | "VIDEO">("IMAGE");
 
   const $onDelete = useCallback(
@@ -158,8 +163,8 @@ export default function ImageComponent({
     (payload: MouseEvent) => {
       const event = payload;
 
-      if (isResizing) {
-        return true;
+      if (!isEditable || isResizing) {
+        return false;
       }
       if (event.target === MediaRef.current) {
         if (event.shiftKey) {
@@ -307,7 +312,7 @@ export default function ImageComponent({
 
   const { historyState } = useSharedHistoryContext();
 
-  const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
+  const draggable = isSelected && $isNodeSelection(selection) && !isResizing && isEditable;
   const isFocused = (isSelected || isResizing) && isEditable;
 
   return (
@@ -365,7 +370,8 @@ export default function ImageComponent({
               <RichTextPlugin
                 contentEditable={
                   <ContentEditable
-                    aria-placeholder="Enter a caption..."
+                    readOnly={!isEditable}
+                    aria-placeholder={isEditable ? "Enter a caption..." : ""}
                     placeholder={() => (
                       <span
                         className="

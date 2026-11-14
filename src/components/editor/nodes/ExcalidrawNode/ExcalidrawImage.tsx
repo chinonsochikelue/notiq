@@ -13,7 +13,6 @@ import type {
 import type { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
 import type { JSX } from 'react';
 
-import { exportToSvg } from '@excalidraw/excalidraw';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
@@ -94,14 +93,18 @@ export default function ExcalidrawImage({
   height = 'inherit',
 }: Props): JSX.Element {
   const [Svg, setSvg] = useState<SVGElement | null>(null);
+  const [exportFailed, setExportFailed] = useState(false);
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
 
   useEffect(() => {
     let isCancelled = false;
+    setExportFailed(false);
 
     const setContent = async () => {
       try {
+        if (typeof window === 'undefined') return;
+        const { exportToSvg } = await import('@excalidraw/excalidraw');
         const svg: SVGElement = await exportToSvg({
           appState: {
             ...appState,
@@ -110,6 +113,7 @@ export default function ExcalidrawImage({
           },
           elements,
           files,
+          skipInliningFonts: true,
         });
 
         if (isCancelled) return;
@@ -125,6 +129,9 @@ export default function ExcalidrawImage({
         setSvg(svg);
       } catch (err) {
         console.error('Failed to export Excalidraw preview SVG', err);
+        if (!isCancelled) {
+          setExportFailed(true);
+        }
       }
     };
 
@@ -145,6 +152,25 @@ export default function ExcalidrawImage({
   }
   if (height !== 'inherit') {
     containerStyle.height = `${height}px`;
+  }
+
+  if (exportFailed) {
+    return (
+      <div
+        ref={(node) => {
+          if (node && imageContainerRef) {
+            imageContainerRef.current = node;
+          }
+        }}
+        className={
+          rootClassName ??
+          'relative flex items-center justify-center overflow-hidden min-h-[140px] min-w-[260px] px-4 py-3 text-xs text-muted-foreground'
+        }
+        style={containerStyle}
+      >
+        <span>Excalidraw preview unavailable · Double-click to open</span>
+      </div>
+    );
   }
 
   return (

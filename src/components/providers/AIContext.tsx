@@ -10,6 +10,14 @@ export interface AIConfig {
      * The API endpoint for AI completions. Defaults to "/api/ai".
      */
     apiEndpoint?: string;
+    /**
+     * Default writing style preset ("balanced" | "technical" | "editorial" | "executive" | "academic").
+     */
+    writingStyle?: string;
+    /**
+     * Custom brand voice / style guide instructions injected into AI prompts.
+     */
+    styleGuide?: string;
 }
 
 const AIContext = createContext<AIConfig>({
@@ -33,6 +41,8 @@ export const AIProvider = ({
 }) => {
     const value = React.useMemo(() => ({
         apiEndpoint: config?.apiEndpoint || "/api/ai",
+        writingStyle: config?.writingStyle,
+        styleGuide: config?.styleGuide,
     }), [config]);
 
     return (

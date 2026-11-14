@@ -131,6 +131,10 @@ export class EquationNode extends DecoratorNode<JSX.Element> {
     return this.__inline !== prevNode.__inline;
   }
 
+  isInline(): boolean {
+    return this.__inline;
+  }
+
   getTextContent(): string {
     return this.__equation;
   }

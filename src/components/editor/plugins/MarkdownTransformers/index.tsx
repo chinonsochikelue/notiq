@@ -47,6 +47,11 @@ import {
   $isImageNode,
   ImageNode,
 } from "../../nodes/ImageNode";
+import {
+  $createEquationNode,
+  $isEquationNode,
+  EquationNode,
+} from "../../nodes/EquationNode/EquationNode";
 
 export const HR: ElementTransformer = {
   dependencies: [HorizontalRuleNode],
@@ -95,7 +100,45 @@ export const IMAGE: TextMatchTransformer = {
 
 
 
-// export const EQUATION: TextMatchTransformer = {
+export const BLOCK_EQUATION: TextMatchTransformer = {
+  dependencies: [EquationNode],
+  export: (node) => {
+    if (!$isEquationNode(node) || node.__inline) {
+      return null;
+    }
+    return `$$${node.getEquation()}$$`;
+  },
+  importRegExp: /\$\$([^$\n]+?)\$\$/,
+  regExp: /\$\$([^$\n]+?)\$\$$/,
+  replace: (textNode, match) => {
+    const equation = match[1]?.trim();
+    if (!equation) return;
+    const equationNode = $createEquationNode(equation, false);
+    textNode.replace(equationNode);
+  },
+  trigger: "$",
+  type: "text-match",
+};
+
+export const EQUATION: TextMatchTransformer = {
+  dependencies: [EquationNode],
+  export: (node) => {
+    if (!$isEquationNode(node)) {
+      return null;
+    }
+    return `$${node.getEquation()}$`;
+  },
+  importRegExp: /(?<!\$)\$(?!\s)([^$\n]*?\S)\$/,
+  regExp: /(?<!\$)\$(?!\s)([^$\n]*?\S)\$$/,
+  replace: (textNode, match) => {
+    const equation = match[1]?.trim();
+    if (!equation) return;
+    const equationNode = $createEquationNode(equation, true);
+    textNode.replace(equationNode);
+  },
+  trigger: "$",
+  type: "text-match",
+};
 //   dependencies: [EquationNode],
 //   export: (node) => {
 //     if (!$isEquationNode(node)) {
@@ -295,6 +338,8 @@ export const PLAYGROUND_TRANSFORMERS: Array<Transformer> = [
   TABLE,
   HR,
   IMAGE,
+  BLOCK_EQUATION,
+  EQUATION,
   // TWEET,
   CHECK_LIST,
   ...ELEMENT_TRANSFORMERS,

@@ -2,10 +2,13 @@ import {
   createCommand,
   createEditor,
   DecoratorNode,
+  DOMExportOutput,
   LexicalCommand,
   LexicalEditor,
   LexicalNode,
   NodeKey,
+  ParagraphNode,
+  TextNode,
   SerializedEditor,
   SerializedLexicalNode,
   Spread,
@@ -13,6 +16,8 @@ import {
   $isRangeSelection,
   COMMAND_PRIORITY_LOW,
 } from "lexical";
+import { LinkNode } from "@lexical/link";
+import { $generateHtmlFromNodes } from "@lexical/html";
 import React, { Suspense, useEffect } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
@@ -55,11 +60,15 @@ export class Hint extends DecoratorNode<React.ReactElement> {
     this.__variant = variant;
 
     let initialEditor: LexicalEditor | undefined;
-    if (typeof emojiOrCaption === "string") {
-      this.__emoji = emojiOrCaption;
+    if (caption) {
       initialEditor = caption;
-    } else {
+      if (typeof emojiOrCaption === "string") {
+        this.__emoji = emojiOrCaption;
+      }
+    } else if (emojiOrCaption && typeof emojiOrCaption !== "string") {
       initialEditor = emojiOrCaption;
+    } else if (typeof emojiOrCaption === "string") {
+      this.__emoji = emojiOrCaption;
     }
 
     if (!initialEditor) {
@@ -95,7 +104,9 @@ export class Hint extends DecoratorNode<React.ReactElement> {
         },
       };
 
-      const newEditor = createEditor();
+      const newEditor = createEditor({
+        nodes: [ParagraphNode, TextNode, LinkNode],
+      });
       const parsedEditorState = newEditor.parseEditorState(JSON.stringify(initialEditorState));
       newEditor.setEditorState(parsedEditorState);
 
@@ -114,11 +125,12 @@ export class Hint extends DecoratorNode<React.ReactElement> {
   }
 
   static importJSON(serializedNode: SerializedHint): Hint {
-    return new Hint(
+    const hint = new Hint(
       serializedNode.variant || "tip",
       serializedNode.emoji,
       undefined
-    ).updateFromJSON(serializedNode);
+    );
+    return hint.updateFromJSON(serializedNode);
   }
 
   setVariant(variant: HintType): this {
@@ -139,16 +151,36 @@ export class Hint extends DecoratorNode<React.ReactElement> {
     return element;
   }
 
+  exportDOM(editor: LexicalEditor): DOMExportOutput {
+    const element = document.createElement("div");
+    element.className = `notiq-callout notiq-callout-${this.__variant || "tip"}`;
+    element.setAttribute("data-callout-type", this.__variant || "tip");
+    if (this.__emoji) {
+      element.setAttribute("data-callout-emoji", this.__emoji);
+    }
+    let html = "";
+    try {
+      this.__caption.getEditorState().read(() => {
+        html = $generateHtmlFromNodes(this.__caption, null);
+      });
+    } catch {
+      html = "";
+    }
+    element.innerHTML = html;
+    return { element };
+  }
+
   updateFromJSON(serializedNode: SerializedHint): this {
     super.updateFromJSON(serializedNode);
     this.__variant = serializedNode.variant || "tip";
     this.__emoji = serializedNode.emoji;
     const nestedEditor = this.__caption;
     if (serializedNode.caption?.editorState) {
-      const editorState = nestedEditor.parseEditorState(serializedNode.caption.editorState);
-      if (!editorState.isEmpty()) {
-        nestedEditor.setEditorState(editorState);
-      }
+      const raw = serializedNode.caption.editorState;
+      const editorState = nestedEditor.parseEditorState(
+        typeof raw === "string" ? raw : JSON.stringify(raw)
+      );
+      nestedEditor.setEditorState(editorState);
     }
     return this;
   }

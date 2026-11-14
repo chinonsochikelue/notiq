@@ -201,22 +201,16 @@ function getBaseOptions(
   return [
     // 1. AI Actions
     new ComponentPickerOption("Ask AI Assistant", {
-      icon: <Sparkles className="h-4 w-4 text-purple-500" />,
+      icon: <Sparkles className="h-4 w-4 text-violet-500" />,
       keywords: ["ai", "assistant", "generate", "write", "gpt", "gemini", "smart", "summarize", "prompt"],
       desc: "Generate content, outline, brainstorm, or write with AI",
       keyboardShortcut: "⌘K",
       category: "ai",
-      onSelect: () =>
-        showModal(
-          "Notiq AI Assistant",
-          "Ask AI to write, generate, expand, or format content directly into your document.",
-          (onClose) => (
-            <React.Suspense fallback={<Skeleton className="mx-2 w-[400px] h-[300px]" />}>
-              <AIDialog editor={editor} onClose={onClose} />
-            </React.Suspense>
-          ),
-          true
-        ),
+      onSelect: () => {
+        import("../AICommandBarPlugin").then(({ OPEN_AI_COMMAND_BAR_COMMAND }) => {
+          editor.dispatchCommand(OPEN_AI_COMMAND_BAR_COMMAND, undefined);
+        });
+      },
     }),
 
     // 2. Basic Blocks
@@ -748,6 +742,7 @@ export default function SlashCommand(): React.JSX.Element {
         onSelectOption={onSelectOption}
         triggerFn={checkForTriggerMatch}
         options={options}
+        anchorClassName="z-[9999] pointer-events-auto"
         menuRenderFn={(
           anchorElementRef,
           { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }
@@ -761,7 +756,7 @@ export default function SlashCommand(): React.JSX.Element {
           return ReactDOM.createPortal(
             <div
               id="slash-command-menu"
-              className="z-[100] relative max-w-[360px] w-88 max-h-[420px] rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 text-zinc-900 dark:text-zinc-100 shadow-2xl backdrop-blur-xl overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95 duration-100"
+              className="z-[100] relative max-w-[360px] w-80 sm:w-[360px] max-h-[420px] rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 text-zinc-900 dark:text-zinc-100 shadow-2xl backdrop-blur-xl overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95 duration-100"
             >
               {/* Header / Search indicator */}
               <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/60 select-none">

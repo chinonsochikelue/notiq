@@ -310,6 +310,12 @@ export default function InlineImageComponent({
   }, [clearSelection, editor, isSelected, nodeKey, $onEnter, $onEscape, setSelected])
 
   const draggable = isSelected && $isNodeSelection(selection)
+  useEffect(() => {
+    if (caption && typeof caption.setEditable === "function") {
+      caption.setEditable(isEditable);
+    }
+  }, [caption, isEditable]);
+
   const isFocused = isSelected && isEditable
 
   return (
@@ -349,7 +355,7 @@ export default function InlineImageComponent({
               <RichTextPlugin
                 contentEditable={
                   <LexicalContentEditable
-                    placeholder="Enter a caption..."
+                    placeholder={isEditable ? "Enter a caption..." : ""}
                     placeholderClassName="text-xs text-muted-foreground absolute bottom-2.5 left-2.5 pointer-events-none select-none whitespace-nowrap inline-block overflow-hidden text-ellipsis"
                     className="min-h-5 border-0 resize-none cursor-text block relative outline-none p-2.5 select-text text-sm leading-relaxed w-full whitespace-pre-wrap break-words"
                   />

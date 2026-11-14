@@ -13,8 +13,6 @@ export default defineConfig({
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
-    "next/dynamic",
-    "next/dynamic.js",
     "next/link",
     "next-themes",
     "react",
