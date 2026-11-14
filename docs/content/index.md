@@ -48,10 +48,10 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
   :::u-button
   ---
   size: sm
-  to: /docs/comparisons/notiq-vs-tiptap
+  to: /docs/core-concepts/headless-ui
   variant: outline
   ---
-  Why Notiq beats Tiptap →
+  v1.2.0: 100% Headless + AI Excalidraw & Research →
   :::
 ::
 
@@ -138,7 +138,42 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
     Generative [AI Copilot]{.text-primary}
 
     #description
-    Inline streaming completions, tone rewriting, summarization, and contextual prompt actions with pluggable LLM adapters.
+    Inline streaming completions, Think Mode reasoning traces, live web research citations, and automatic Excalidraw diagram hydration.
+    ::::
+
+    ::::u-page-card
+    ---
+    spotlight: true
+    class: col-span-2
+    to: /docs/core-concepts/headless-ui
+    ---
+      :::::tabs
+        ::::::tabs-item{.mt-4 icon="i-lucide-paintbrush" label="Headless Blocks & Menus"}
+```tsx
+BlocksKit.configure({
+  headless: true,
+  slashMenu: { render: (menu) => <MySlashMenu {...menu} /> },
+  handles: { render: (handle) => <MyDragHandle {...handle} /> },
+  renderers: { hint: MyCallout, excalidraw: MyDiagram, poll: MyPoll },
+})
+```
+        ::::::
+        ::::::tabs-item{.mt-4 icon="i-lucide-bot" label="Headless AI & Research"}
+```tsx
+AICopilot.configure({
+  headless: true,
+  render: ({ suggestion, accept }) => <GhostText text={suggestion} onAccept={accept} />,
+  commandBar: { headless: true, render: (ai) => <MyAICommandBar {...ai} /> },
+})
+```
+        ::::::
+      :::::
+
+    #title
+    100% [Headless & Custom UI]{.text-primary}
+
+    #description
+    Bring your own Radix, shadcn, or custom components. Override slash menus, block drag handles, AI command bars, and rich decorator nodes without losing engine logic.
     ::::
 
     ::::u-page-card
