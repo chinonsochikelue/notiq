@@ -1,5 +1,8 @@
+import React from "react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { createNotiqEditor } from "../editor";
+import { NotiqContent } from "../react/NotiqContent";
 import { StarterKit } from "../extensions/nodes-and-marks";
 import { AICommandBar, AICopilot } from "../extensions/copilot-and-collab";
 import {
@@ -125,5 +128,31 @@ describe("AI Command Bar Extension", () => {
     expect(match?.[1]).toBe("right");
     expect(match?.[2]).toBe("Logo");
     expect(match?.[3]).toBe("https://example.com/logo.png");
+  });
+
+  it("supports headless mode and custom renderers for AICopilot and AICommandBar", () => {
+    const headlessEditor = createNotiqEditor({
+      extensions: [
+        StarterKit,
+        AICopilot.configure({ headless: true }),
+      ],
+    });
+    expect(headlessEditor.commands.openAICommandBar).toBeDefined();
+
+    const { container } = render(React.createElement(NotiqContent, { editor: headlessEditor }));
+    expect(container.textContent).not.toContain("Copilot on");
+    expect(container.textContent).not.toContain("Copilot off");
+
+    const customEditor = createNotiqEditor({
+      extensions: [
+        StarterKit,
+        AICommandBar.configure({
+          render: (state) =>
+            React.createElement("div", { "data-testid": "custom-ai-bar" }, state.phase),
+        }),
+      ],
+    });
+    render(React.createElement(NotiqContent, { editor: customEditor }));
+    expect(screen.getByTestId("custom-ai-bar").textContent).toBe("closed");
   });
 });

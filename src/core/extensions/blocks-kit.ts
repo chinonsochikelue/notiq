@@ -1,4 +1,20 @@
+import React from "react";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { Extension } from "../extension";
+import {
+  setEditorNodeRenderers,
+  clearEditorNodeRenderers,
+  type NotiqNodeRenderers,
+} from "../react/node-renderers";
+import SlashCommand, {
+  type SlashCommandPluginProps,
+  type SlashCommandRenderProps,
+} from "../../components/editor/plugins/SlashCommand";
+import DraggableBlockPlugin, {
+  type DraggableBlockPluginProps,
+  type DraggableBlockRenderProps,
+  type DraggableBlockTurnIntoType,
+} from "../../components/editor/plugins/DraggableBlockPlugin";
 import { $getSelection, $isRangeSelection, $insertNodes } from "lexical";
 import { ExcalidrawNode, $createExcalidrawNode } from "../../components/editor/nodes/ExcalidrawNode";
 import { FigmaNode, $createFigmaNode } from "../../components/editor/nodes/FigmaNode/FigmaNode";
@@ -247,20 +263,142 @@ export const ColumnsLayout = Extension.create({
   }),
 });
 
-export const BlocksKit = Extension.create({
+export type {
+  SlashCommandPluginProps,
+  SlashCommandRenderProps,
+  DraggableBlockPluginProps,
+  DraggableBlockRenderProps,
+  DraggableBlockTurnIntoType,
+  NotiqNodeRenderers,
+};
+
+export type SlashMenuOptions = SlashCommandPluginProps;
+export type BlockHandleOptions = DraggableBlockPluginProps;
+
+export const SlashMenu = Extension.create<SlashMenuOptions>({
+  name: "slashMenu",
+  defaultOptions: {
+    headless: false,
+  },
+  plugins: ({ options }) => {
+    const BoundSlashMenu: React.FC = () =>
+      React.createElement(
+        SlashCommand as React.ComponentType<SlashCommandPluginProps>,
+        {
+          headless: options.headless,
+          render: options.render,
+          onStateChange: options.onStateChange,
+        }
+      );
+    BoundSlashMenu.displayName = "NotiqSlashMenu";
+    return [BoundSlashMenu];
+  },
+});
+
+export const BlockHandle = Extension.create<BlockHandleOptions>({
+  name: "blockHandle",
+  defaultOptions: {
+    headless: false,
+  },
+  plugins: ({ options }) => {
+    const BoundBlockHandle: React.FC = () =>
+      React.createElement(
+        DraggableBlockPlugin as React.ComponentType<DraggableBlockPluginProps>,
+        {
+          anchorElem: options.anchorElem,
+          className: options.className,
+          headless: options.headless,
+          render: options.render,
+          renderTargetLine: options.renderTargetLine,
+          onStateChange: options.onStateChange,
+        }
+      );
+    BoundBlockHandle.displayName = "NotiqBlockHandle";
+    return [BoundBlockHandle];
+  },
+});
+
+export interface BlocksKitOptions {
+  /** When true, suppresses default UI for SlashMenu and BlockHandle. */
+  headless?: boolean;
+  /** Configure or disable the SlashMenu extension. */
+  slashMenu?: boolean | SlashMenuOptions;
+  /** Configure or disable the BlockHandle (DraggableBlockPlugin) extension. */
+  handles?: boolean | BlockHandleOptions;
+  /** Custom React renderers for rich decorator nodes (hint, excalidraw, poll, image, inlineImage). */
+  renderers?: NotiqNodeRenderers;
+}
+
+export const NodeRenderers = Extension.create<{ renderers: NotiqNodeRenderers }>({
+  name: "nodeRenderers",
+  defaultOptions: {
+    renderers: {},
+  },
+  plugins: ({ options }) => {
+    const BoundNodeRenderersPlugin: React.FC = () => {
+      const [editor] = useLexicalComposerContext();
+      React.useEffect(() => {
+        setEditorNodeRenderers(editor, options.renderers);
+        return () => {
+          clearEditorNodeRenderers(editor);
+        };
+      }, [editor]);
+      return null;
+    };
+    BoundNodeRenderersPlugin.displayName = "NotiqNodeRenderers";
+    return [BoundNodeRenderersPlugin];
+  },
+});
+
+export const BlocksKit = Extension.create<BlocksKitOptions>({
   name: "blocksKit",
-  addExtensions: () => [
-    Excalidraw,
-    Figma,
-    Equation,
-    HintBlock,
-    Stepper,
-    Poll,
-    Image,
-    Tweet,
-    YouTube,
-    Audio,
-    File,
-    ColumnsLayout,
-  ],
+  defaultOptions: {
+    headless: false,
+    slashMenu: true,
+    handles: true,
+  },
+  addExtensions: ({ options }) => {
+    const extensions = [
+      Excalidraw,
+      Figma,
+      Equation,
+      HintBlock,
+      Stepper,
+      Poll,
+      Image,
+      Tweet,
+      YouTube,
+      Audio,
+      File,
+      ColumnsLayout,
+    ];
+
+    if (options.renderers) {
+      extensions.push(NodeRenderers.configure({ renderers: options.renderers }));
+    }
+
+    if (options.slashMenu !== false) {
+      const slashOpts =
+        typeof options.slashMenu === "object" ? options.slashMenu : {};
+      extensions.push(
+        SlashMenu.configure({
+          headless: options.headless,
+          ...slashOpts,
+        })
+      );
+    }
+
+    if (options.handles !== false) {
+      const handleOpts =
+        typeof options.handles === "object" ? options.handles : {};
+      extensions.push(
+        BlockHandle.configure({
+          headless: options.headless,
+          ...handleOpts,
+        })
+      );
+    }
+
+    return extensions;
+  },
 });

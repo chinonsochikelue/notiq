@@ -7,6 +7,10 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { cn } from "../../lib/utils";
+import {
+  NotiqNodeRendererProvider,
+  type NotiqNodeRenderers,
+} from "./node-renderers";
 
 export interface NotiqContentProps {
   editor?: NotiqEditor | null;
@@ -14,6 +18,8 @@ export interface NotiqContentProps {
   containerClassName?: string;
   placeholder?: React.ReactNode | string;
   renderPlugins?: boolean;
+  /** Custom React renderers for rich decorator nodes (hint, excalidraw, poll, image, inlineImage). */
+  renderers?: NotiqNodeRenderers;
   children?: React.ReactNode;
 }
 
@@ -92,6 +98,7 @@ export function NotiqContent({
   containerClassName,
   placeholder,
   renderPlugins,
+  renderers,
   children,
 }: NotiqContentProps) {
   const context = useContext(NotiqContext);
@@ -101,33 +108,35 @@ export function NotiqContent({
     return null;
   }
 
+  const content = (
+    <InnerContent
+      editor={activeEditor}
+      className={className}
+      containerClassName={containerClassName}
+      placeholder={placeholder}
+      renderPlugins={renderPlugins}
+    >
+      {children}
+    </InnerContent>
+  );
+
+  const wrappedContent = renderers ? (
+    <NotiqNodeRendererProvider renderers={renderers}>
+      {content}
+    </NotiqNodeRendererProvider>
+  ) : (
+    content
+  );
+
   // If already inside NotiqProvider, render InnerContent directly
   if (context.editor === activeEditor) {
-    return (
-      <InnerContent
-        editor={activeEditor}
-        className={className}
-        containerClassName={containerClassName}
-        placeholder={placeholder}
-        renderPlugins={renderPlugins}
-      >
-        {children}
-      </InnerContent>
-    );
+    return wrappedContent;
   }
 
   // Otherwise, wrap in NotiqProvider automatically
   return (
     <NotiqProvider editor={activeEditor}>
-      <InnerContent
-        editor={activeEditor}
-        className={className}
-        containerClassName={containerClassName}
-        placeholder={placeholder}
-        renderPlugins={renderPlugins}
-      >
-        {children}
-      </InnerContent>
+      {wrappedContent}
     </NotiqProvider>
   );
 }

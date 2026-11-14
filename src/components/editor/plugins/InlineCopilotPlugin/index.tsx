@@ -20,6 +20,23 @@ export interface CaretCoordinates {
   isNextLine: boolean;
 }
 
+export interface InlineCopilotRenderProps {
+  isEnabled: boolean;
+  isLoading: boolean;
+  suggestion: string | null;
+  caretCoords: CaretCoordinates | null;
+  accept: () => void;
+  reject: () => void;
+  toggleEnabled: () => void;
+}
+
+export interface InlineCopilotPluginProps {
+  enabledDefault?: boolean;
+  headless?: boolean;
+  render?: (state: InlineCopilotRenderProps) => React.ReactNode;
+  onStateChange?: (state: InlineCopilotRenderProps) => void;
+}
+
 /**
  * Pure helper function to compute safe, non-overflowing positioning for AI copilot ghost text.
  */
@@ -81,9 +98,10 @@ export function computeCopilotPositioning({
 
 export default function InlineCopilotPlugin({
   enabledDefault = true,
-}: {
-  enabledDefault?: boolean;
-}) {
+  headless = false,
+  render,
+  onStateChange,
+}: InlineCopilotPluginProps) {
   const [editor] = useLexicalComposerContext();
   const [isEnabled, setIsEnabled] = useState<boolean>(enabledDefault);
 
@@ -408,6 +426,28 @@ export default function InlineCopilotPlugin({
       COMMAND_PRIORITY_CRITICAL
     );
   }, [editor, suggestion, clearSuggestion, acceptSuggestion, toggleEnabled]);
+
+  const copilotState: InlineCopilotRenderProps = {
+    isEnabled,
+    isLoading,
+    suggestion,
+    caretCoords,
+    accept: acceptSuggestion,
+    reject: clearSuggestion,
+    toggleEnabled,
+  };
+
+  useEffect(() => {
+    onStateChange?.(copilotState);
+  }, [isEnabled, isLoading, suggestion, caretCoords]);
+
+  if (render) {
+    return <>{render(copilotState)}</>;
+  }
+
+  if (headless) {
+    return null;
+  }
 
   return (
     <>

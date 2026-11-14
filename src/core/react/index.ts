@@ -8,4 +8,5 @@ export { NotiqContent as EditorContent } from "./NotiqContent";
 export * from "./BubbleMenu";
 export * from "./FloatingMenu";
 export * from "./NotiqEditor";
+export * from "./node-renderers";
 

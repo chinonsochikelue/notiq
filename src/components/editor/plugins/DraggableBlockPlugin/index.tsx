@@ -56,13 +56,49 @@ import { cn } from "../../../../lib/utils";
 
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = "draggable-block-menu";
 
+export type DraggableBlockTurnIntoType =
+  | "h1"
+  | "h2"
+  | "h3"
+  | "quote"
+  | "code"
+  | "bullet"
+  | "number";
+
+export interface DraggableBlockRenderProps {
+  menuRef: React.RefObject<HTMLDivElement | null>;
+  targetLineRef: React.RefObject<HTMLDivElement | null>;
+  isMenuOpen: boolean;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  insertBelow: () => void;
+  turnInto: (type: DraggableBlockTurnIntoType) => void;
+  splitColumns: (columns: 2 | 3) => void;
+  duplicate: () => void;
+  remove: () => void;
+  askAI: () => void;
+}
+
+export interface DraggableBlockPluginProps {
+  anchorElem?: HTMLElement;
+  className?: string;
+  /** When true, suppresses the default React/Tailwind/Radix handle & menu UI. */
+  headless?: boolean;
+  /** Custom renderer for the block handle/menu. Receives refs and block action helpers. */
+  render?: (state: DraggableBlockRenderProps) => React.ReactNode;
+  /** Custom renderer for the drop indicator target line. */
+  renderTargetLine?: (targetLineRef: React.RefObject<HTMLDivElement | null>) => React.ReactNode;
+  /** Callback fired when handle menu state changes. */
+  onStateChange?: (state: DraggableBlockRenderProps) => void;
+}
+
 export default function DraggableBlockPlugin({
   anchorElem = typeof document !== "undefined" ? document.body : undefined,
   className,
-}: {
-  anchorElem?: HTMLElement;
-  className?: string;
-}): JSX.Element | null {
+  headless = false,
+  render,
+  renderTargetLine,
+  onStateChange,
+}: DraggableBlockPluginProps = {}): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const targetLineRef = useRef<HTMLDivElement | null>(null);
@@ -232,7 +268,48 @@ export default function DraggableBlockPlugin({
     return !!element.closest(`.${DRAGGABLE_BLOCK_MENU_CLASSNAME}`);
   };
 
+  const renderState: DraggableBlockRenderProps = {
+    menuRef,
+    targetLineRef,
+    isMenuOpen,
+    setIsMenuOpen,
+    insertBelow: handleInsertBelow,
+    turnInto: handleTurnInto,
+    splitColumns: handleSplitColumns,
+    duplicate: handleDuplicate,
+    remove: handleDelete,
+    askAI: handleAskAI,
+  };
+
+  React.useEffect(() => {
+    onStateChange?.(renderState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMenuOpen, onStateChange]);
+
   if (!anchorElem) return null;
+
+  if (headless && !render) {
+    return null;
+  }
+
+  if (render) {
+    return (
+      <DraggableBlockPlugin_EXPERIMENTAL
+        anchorElem={anchorElem}
+        menuRef={menuRef}
+        targetLineRef={targetLineRef}
+        menuComponent={<>{render(renderState)}</>}
+        targetLineComponent={
+          renderTargetLine ? (
+            <>{renderTargetLine(targetLineRef)}</>
+          ) : (
+            <div ref={targetLineRef} />
+          )
+        }
+        isOnMenu={isOnMenu}
+      />
+    );
+  }
 
   return (
     <DraggableBlockPlugin_EXPERIMENTAL

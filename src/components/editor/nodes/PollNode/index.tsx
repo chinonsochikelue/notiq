@@ -9,6 +9,7 @@ import {
   Spread,
 } from "lexical";
 import * as React from "react";
+import { NodeRendererSlot } from "../../../../core/react/node-renderers";
 import { Suspense } from "react";
 
 export type Options = ReadonlyArray<Option>;
@@ -182,13 +183,23 @@ export class PollNode extends DecoratorNode<React.JSX.Element> {
 
   decorate(): React.JSX.Element {
     return (
-      <Suspense fallback={null}>
-        <PollComponent
-          question={this.__question}
-          options={this.__options}
-          nodeKey={this.__key}
-        />
-      </Suspense>
+      <NodeRendererSlot
+        nodeType="poll"
+        rendererProps={{
+          question: this.__question,
+          options: this.__options,
+          nodeKey: this.__key,
+        }}
+        fallback={
+          <Suspense fallback={null}>
+            <PollComponent
+              question={this.__question}
+              options={this.__options}
+              nodeKey={this.__key}
+            />
+          </Suspense>
+        }
+      />
     );
   }
 }

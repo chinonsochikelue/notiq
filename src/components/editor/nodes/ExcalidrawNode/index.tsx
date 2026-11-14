@@ -19,6 +19,7 @@ import type {
 } from 'lexical';
 import type {JSX} from 'react';
 
+import { NodeRendererSlot } from "../../../../core/react/node-renderers";
 import {DecoratorNode} from 'lexical';
 import * as React from 'react';
 
@@ -179,18 +180,29 @@ export class ExcalidrawNode extends DecoratorNode<JSX.Element> {
 
   decorate(editor: LexicalEditor, config: EditorConfig): JSX.Element {
     return (
-      <React.Suspense
+      <NodeRendererSlot
+        nodeType="excalidraw"
+        rendererProps={{
+          nodeKey: this.getKey(),
+          data: this.__data,
+          width: this.__width,
+          height: this.__height,
+        }}
         fallback={
-          <div className="my-4 h-36 w-full max-w-md animate-pulse rounded-2xl border border-border/50 bg-muted/40" />
+          <React.Suspense
+            fallback={
+              <div className="my-4 h-36 w-full max-w-md animate-pulse rounded-2xl border border-border/50 bg-muted/40" />
+            }
+          >
+            <ExcalidrawComponent
+              nodeKey={this.getKey()}
+              data={this.__data}
+              width={this.__width}
+              height={this.__height}
+            />
+          </React.Suspense>
         }
-      >
-        <ExcalidrawComponent
-          nodeKey={this.getKey()}
-          data={this.__data}
-          width={this.__width}
-          height={this.__height}
-        />
-      </React.Suspense>
+      />
     );
   }
 }

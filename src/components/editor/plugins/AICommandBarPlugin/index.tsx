@@ -279,9 +279,61 @@ const CURSOR_PRESETS: AIPreset[] = [
 const TONES = ["Professional", "Casual", "Direct", "Academic", "Friendly"];
 const LANGUAGES = ["Spanish", "French", "German", "Japanese", "Chinese", "Arabic"];
 
-export default function AICommandBarPlugin() {
+export interface AICommandBarRenderProps {
+  phase: AIPhase;
+  coords: { top: number; left: number } | null;
+  prompt: string;
+  setPrompt: (value: string) => void;
+  followUpPrompt: string;
+  setFollowUpPrompt: (value: string) => void;
+  selectedText: string;
+  streamedText: string;
+  thinking: string;
+  sources: ResearchSource[];
+  content: string;
+  thinkEnabled: boolean;
+  setThinkEnabled: (value: boolean) => void;
+  researchEnabled: boolean;
+  setResearchEnabled: (value: boolean) => void;
+  activeLabel: string;
+  errorMsg: string | null;
+  presets: AIPreset[];
+  open: (payload?: { initialPrompt?: string; action?: string }) => void;
+  close: () => void;
+  runAction: (
+    action: string,
+    contextText: string,
+    customQuestion?: string,
+    label?: string,
+    options?: { think?: boolean; research?: boolean }
+  ) => Promise<void>;
+  executePreset: (preset: AIPreset) => void;
+  accept: () => void;
+  discard: () => void;
+  retry: () => void;
+  stopStreaming: () => void;
+}
+
+export interface AICommandBarPluginProps {
+  headless?: boolean;
+  apiEndpoint?: string;
+  render?: (state: AICommandBarRenderProps) => React.ReactNode;
+  onStateChange?: (state: AICommandBarRenderProps) => void;
+}
+
+export default function AICommandBarPlugin({
+  headless = false,
+  apiEndpoint: propApiEndpoint,
+  render,
+  onStateChange,
+}: AICommandBarPluginProps = {}) {
   const [editor] = useLexicalComposerContext();
-  const { apiEndpoint, writingStyle: configWritingStyle, styleGuide: configStyleGuide } = useAI();
+  const {
+    apiEndpoint: contextApiEndpoint,
+    writingStyle: configWritingStyle,
+    styleGuide: configStyleGuide,
+  } = useAI();
+  const apiEndpoint = propApiEndpoint || contextApiEndpoint;
 
   const [writingStyle, setWritingStyle] = useState<WritingStylePresetId>(() => {
     if (typeof window !== "undefined") {
@@ -934,7 +986,55 @@ export default function AICommandBarPlugin() {
     runAction("default", streamedText || selectedText, trimmed, "Refining...");
   };
 
-  if (phase === "closed" || typeof document === "undefined") {
+  const commandBarState: AICommandBarRenderProps = {
+    phase,
+    coords,
+    prompt,
+    setPrompt,
+    followUpPrompt,
+    setFollowUpPrompt,
+    selectedText,
+    streamedText,
+    thinking: parsedStream.thinking,
+    sources: parsedStream.sources,
+    content: parsedStream.content,
+    thinkEnabled,
+    setThinkEnabled,
+    researchEnabled,
+    setResearchEnabled,
+    activeLabel,
+    errorMsg,
+    presets,
+    open: openBar,
+    close: resetSessionState,
+    runAction,
+    executePreset,
+    accept: handleAccept,
+    discard: handleDiscard,
+    retry: handleRetry,
+    stopStreaming: handleStopStreaming,
+  };
+
+  useEffect(() => {
+    onStateChange?.(commandBarState);
+  }, [
+    phase,
+    coords,
+    prompt,
+    followUpPrompt,
+    selectedText,
+    streamedText,
+    thinkEnabled,
+    researchEnabled,
+    activeLabel,
+    errorMsg,
+  ]);
+
+  if (render) {
+    return <>{render(commandBarState)}</>;
+  }
+
+  if (headless || phase === "closed" || typeof document === "undefined") {
     return null;
   }
 

@@ -689,11 +689,43 @@ function getBaseOptions(
   ];
 }
 
-export default function SlashCommand(): React.JSX.Element {
+export interface SlashCommandRenderProps {
+  isOpen: boolean;
+  anchorElement: HTMLElement | null;
+  options: ComponentPickerOption[];
+  selectedIndex: number | null;
+  queryString: string | null;
+  selectOptionAndCleanUp: (option: ComponentPickerOption) => void;
+  setHighlightedIndex: (index: number) => void;
+}
+
+export interface SlashCommandPluginProps {
+  /** When true, suppresses the default React/Tailwind portal UI. */
+  headless?: boolean;
+  /** Custom renderer for the slash command menu. Receives full menu state & actions. */
+  render?: (state: SlashCommandRenderProps) => React.ReactNode;
+  /** Callback fired when the menu state changes (useful for external headless UIs). */
+  onStateChange?: (state: SlashCommandRenderProps) => void;
+}
+
+export default function SlashCommand({
+  headless = false,
+  render,
+  onStateChange,
+}: SlashCommandPluginProps = {}): React.JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [Modal, showModal] = useModal();
   const [queryString, setQueryString] = useState<string | null>(null);
   const activeItemRef = useRef<HTMLDivElement | null>(null);
+  const latestStateRef = useRef<SlashCommandRenderProps>({
+    isOpen: false,
+    anchorElement: null,
+    options: [],
+    selectedIndex: null,
+    queryString: null,
+    selectOptionAndCleanUp: () => {},
+    setHighlightedIndex: () => {},
+  });
 
   const checkForTriggerMatch = useBasicTypeaheadTriggerMatch("/", {
     minLength: 0,
@@ -735,6 +767,23 @@ export default function SlashCommand(): React.JSX.Element {
     [editor]
   );
 
+  React.useEffect(() => {
+    if (!onStateChange) return;
+    if (queryString === null) {
+      const closedState: SlashCommandRenderProps = {
+        ...latestStateRef.current,
+        isOpen: false,
+        anchorElement: null,
+        queryString: null,
+        selectedIndex: null,
+      };
+      latestStateRef.current = closedState;
+      onStateChange(closedState);
+    } else {
+      onStateChange(latestStateRef.current);
+    }
+  }, [onStateChange, queryString, options]);
+
   return (
     <>
       <LexicalTypeaheadMenuPlugin<ComponentPickerOption>
@@ -747,7 +796,29 @@ export default function SlashCommand(): React.JSX.Element {
           anchorElementRef,
           { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }
         ) => {
+          const isOpen = Boolean(anchorElementRef.current && options.length > 0);
+          latestStateRef.current = {
+            isOpen,
+            anchorElement: anchorElementRef.current,
+            options,
+            selectedIndex,
+            queryString,
+            selectOptionAndCleanUp,
+            setHighlightedIndex,
+          };
+
           if (!anchorElementRef.current || !options.length) {
+            return null;
+          }
+
+          if (render) {
+            const custom = render(latestStateRef.current);
+            return custom != null
+              ? ReactDOM.createPortal(<>{custom}</>, anchorElementRef.current)
+              : null;
+          }
+
+          if (headless) {
             return null;
           }
 
@@ -851,7 +922,7 @@ export default function SlashCommand(): React.JSX.Element {
           );
         }}
       />
-      {Modal}
+      {!headless && Modal}
     </>
   );
 }

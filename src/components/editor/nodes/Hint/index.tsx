@@ -1,3 +1,4 @@
+import { NodeRendererSlot } from "../../../../core/react/node-renderers";
 import {
   createCommand,
   createEditor,
@@ -201,14 +202,25 @@ export class Hint extends DecoratorNode<React.ReactElement> {
 
   decorate(): React.ReactElement {
     return (
-      <Suspense fallback={null}>
-        <HintComponent
-          type={this.__variant}
-          emoji={this.__emoji}
-          captionEditor={this.__caption}
-          nodeKey={this.getKey()}
-        />
-      </Suspense>
+      <NodeRendererSlot
+        nodeType="hint"
+        rendererProps={{
+          type: this.__variant,
+          emoji: this.__emoji,
+          captionEditor: this.__caption,
+          nodeKey: this.getKey(),
+        }}
+        fallback={
+          <Suspense fallback={null}>
+            <HintComponent
+              type={this.__variant}
+              emoji={this.__emoji}
+              captionEditor={this.__caption}
+              nodeKey={this.getKey()}
+            />
+          </Suspense>
+        }
+      />
     );
   }
 }

@@ -30,12 +30,12 @@ export class Extension<Options = any, Storage = any> {
 
   static create<Options = any, Storage = any>(
     config: ExtensionConfig<Options, Storage> & {
-      addExtensions?: () => Extension[];
+      addExtensions?: (context: { options: Options }) => Extension[];
     }
   ): Extension<Options, Storage> {
     const ext = new Extension<Options, Storage>(config);
     if (config.addExtensions) {
-      ext.subExtensions = config.addExtensions();
+      ext.subExtensions = config.addExtensions({ options: ext.options });
     }
     return ext;
   }
@@ -45,7 +45,12 @@ export class Extension<Options = any, Storage = any> {
       ...this.options,
       ...options,
     });
-    nextExt.subExtensions = this.subExtensions.map((sub) => sub.configure());
+    const addExtensions = (
+      this.config as { addExtensions?: (context: { options: Options }) => Extension[] }
+    ).addExtensions;
+    nextExt.subExtensions = addExtensions
+      ? addExtensions({ options: nextExt.options })
+      : this.subExtensions.map((sub) => sub.configure());
     return nextExt;
   }
 

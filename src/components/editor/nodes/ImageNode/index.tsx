@@ -11,6 +11,7 @@ import type {
   SerializedLexicalNode,
   Spread,
 } from "lexical";
+import { NodeRendererSlot } from "../../../../core/react/node-renderers";
 import type { JSX } from "react";
 
 import { $applyNodeReplacement, createEditor, DecoratorNode } from "lexical";
@@ -266,27 +267,46 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 
   decorate(): JSX.Element {
     return (
-      <Suspense fallback={null}>
-        <div
-          style={{
-            textAlign: this.__alignment as React.CSSProperties["textAlign"],
-          }}
-        >
-          <ImageComponent
-            src={this.__src}
-            altText={this.__altText}
-            width={this.__width}
-            height={this.__height}
-            maxWidth={this.__maxWidth}
-            nodeKey={this.getKey()}
-            showCaption={this.__showCaption}
-            caption={this.__caption}
-            captionsEnabled={this.__captionsEnabled}
-            resizable={true}
-            rounded={this.__rounded}
-          />
-        </div>
-      </Suspense>
+      <NodeRendererSlot
+        nodeType="image"
+        rendererProps={{
+          src: this.__src,
+          altText: this.__altText,
+          width: this.__width,
+          height: this.__height,
+          maxWidth: this.__maxWidth,
+          nodeKey: this.getKey(),
+          showCaption: this.__showCaption,
+          caption: this.__caption,
+          captionsEnabled: this.__captionsEnabled,
+          resizable: true,
+          rounded: this.__rounded,
+          alignment: this.__alignment,
+        }}
+        fallback={
+          <Suspense fallback={null}>
+            <div
+              style={{
+                textAlign: this.__alignment as React.CSSProperties["textAlign"],
+              }}
+            >
+              <ImageComponent
+                src={this.__src}
+                altText={this.__altText}
+                width={this.__width}
+                height={this.__height}
+                maxWidth={this.__maxWidth}
+                nodeKey={this.getKey()}
+                showCaption={this.__showCaption}
+                caption={this.__caption}
+                captionsEnabled={this.__captionsEnabled}
+                resizable={true}
+                rounded={this.__rounded}
+              />
+            </div>
+          </Suspense>
+        }
+      />
     );
   }
 }

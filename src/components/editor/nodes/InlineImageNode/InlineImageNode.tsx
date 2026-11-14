@@ -31,6 +31,7 @@ import {
   DecoratorNode,
   isHTMLElement,
 } from 'lexical';
+import { NodeRendererSlot } from "../../../../core/react/node-renderers";
 import * as React from 'react';
 
 const InlineImageComponent = React.lazy(() => import('./InlineImageComponent'));
@@ -264,15 +265,30 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
 
   decorate(): JSX.Element {
     return (
-      <InlineImageComponent
-        src={this.__src}
-        altText={this.__altText}
-        width={this.__width}
-        height={this.__height}
-        nodeKey={this.getKey()}
-        showCaption={this.__showCaption}
-        caption={this.__caption}
-        position={this.__position}
+      <NodeRendererSlot
+        nodeType="inlineImage"
+        rendererProps={{
+          src: this.__src,
+          altText: this.__altText,
+          width: this.__width,
+          height: this.__height,
+          nodeKey: this.getKey(),
+          showCaption: this.__showCaption,
+          caption: this.__caption,
+          position: this.__position,
+        }}
+        fallback={
+          <InlineImageComponent
+            src={this.__src}
+            altText={this.__altText}
+            width={this.__width}
+            height={this.__height}
+            nodeKey={this.getKey()}
+            showCaption={this.__showCaption}
+            caption={this.__caption}
+            position={this.__position}
+          />
+        }
       />
     );
   }
