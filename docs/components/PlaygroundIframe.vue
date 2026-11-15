@@ -219,7 +219,7 @@ const activeView = ref<'editor' | 'canvas' | 'ast'>('editor')
 const iframeLoading = ref(true)
 const astCopied = ref(false)
 const iframeRef = ref<HTMLIFrameElement | null>(null)
-const playgroundSrc = ref('http://localhost:3000/Playground')
+const playgroundSrc = ref('https://playground.collabchron.com.ng/')
 
 let safetyTimer: any = null
 
@@ -240,7 +240,7 @@ function reloadIframe() {
 onMounted(() => {
   if (typeof window !== 'undefined') {
     const host = window.location.hostname || 'localhost'
-    playgroundSrc.value = `http://${host}:3000/Playground`
+    playgroundSrc.value = `https://playground.collabchron.com.ng/?host=${host}`
   }
 
   // Fast check: if iframe already loaded before Vue hydration

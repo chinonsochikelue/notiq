@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://notiq-editor.vercel.app/",
+    url: "https://playground.collabchron.com.ng/",
     title: "Notiq - Open Source AI-Powered Rich Text Editor",
     description: "Powerful AI-enhanced rich text editor built with Lexical, Next.js, and TypeScript. Features GPT-4 integration, 40+ content blocks, and advanced formatting capabilities.",
     siteName: "Notiq",
@@ -125,10 +125,10 @@ export const metadata: Metadata = {
 
 
   alternates: {
-    canonical: "https://notiq-editor.vercel.app/",
+    canonical: "https://playground.collabchron.com.ng/",
     languages: {
-      "en-US": "https://notiq-editor.vercel.app/en-US",
-      "x-default": "https://notiq-editor.vercel.app/",
+      "en-US": "https://playground.collabchron.com.ng/en-US",
+      "x-default": "https://playground.collabchron.com.ng/",
     },
   },
 
