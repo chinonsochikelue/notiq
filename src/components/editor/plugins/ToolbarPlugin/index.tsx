@@ -668,7 +668,7 @@ export default function ToolbarPlugin({
     <>
       <nav
         className={cn(
-          "sticky top-3 z-40 w-full hidden md:flex justify-center px-4 transition-all duration-300 pointer-events-none",
+          "sticky top-28 z-40 w-full hidden md:flex justify-center px-4 transition-all duration-300 pointer-events-none",
           customClassName
         )}
       >

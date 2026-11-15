@@ -76,7 +76,7 @@ import MarkdownPastePlugin from "./plugins/MarkdownPastePlugin"
 
 function EditorPlaceholder() {
   return (
-    <div className="pointer-events-none select-none absolute top-4 md:top-12 left-4 md:left-12 z-10 text-muted-foreground/60 text-sm md:text-base flex items-center gap-1.5 md:gap-2">
+    <div className="pointer-events-none select-none absolute top-10.5 md:top-18 left-4 md:left-12 z-10 text-muted-foreground/60 text-sm md:text-base flex items-center gap-1.5 md:gap-2">
       <span>Type</span>
       <kbd className="px-1.5 py-0.5 text-xs font-mono rounded bg-muted border border-border text-muted-foreground">
         /
