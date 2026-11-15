@@ -1012,7 +1012,7 @@ export default function PlaygroundPage() {
                 <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
                   <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
                     <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-                      <Link href="/" className="flex items-center gap-1.5 sm:gap-2">
+                      <Link href="https://collabchron.com.ng/" className="flex items-center gap-1.5 sm:gap-2">
                         <div className="relative">
                           <div>
                             <img
