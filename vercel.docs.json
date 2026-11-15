@@ -1,4 +1,0 @@
-{
-    "buildCommand": "cd docs && bun install && bun run build",
-    "outputDirectory": "docs/.next"
-}
