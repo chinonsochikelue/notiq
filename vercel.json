@@ -1,5 +1,5 @@
 {
-  "framework": null,
-  "buildCommand": "cd docs && ./node_modules/.bin/nuxt build",
-  "outputDirectory": "docs/.vercel/output"
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "outputDirectory": ".next"
 }
