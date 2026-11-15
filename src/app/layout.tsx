@@ -9,6 +9,7 @@ import { Toaster } from "sonner";
 
 // Enhanced SEO Metadata
 export const metadata: Metadata = {
+  metadataBase: new URL("https://playground.collabchron.com.ng"),
   // Primary SEO
   title: {
     default: "Notiq - Open Source AI-Powered Rich Text Editor | Built with Lexical & Next.js",
@@ -86,7 +87,7 @@ export const metadata: Metadata = {
     creator: "@_fluantix",
     title: "Notiq - Open Source AI-Powered Rich Text Editor",
     description: "Build beautiful documents with AI assistance. Features 40+ content blocks, GPT-4 integration, and real-time analytics.",
-    images: ["/twitter-card.png"],
+    images: ["/og-image.png"],
   },
 
   // Additional metadata

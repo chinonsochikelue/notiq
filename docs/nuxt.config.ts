@@ -10,6 +10,11 @@ export default defineNuxtConfig({
   },
   site: {
     name: 'Notiq',
+    url: 'https://www.collabchron.com.ng',
+    description: 'High-performance headless block editor, AI copilot, and infinite spatial canvas framework built on Lexical.',
+  },
+  llms: {
+    domain: 'https://www.collabchron.com.ng',
   },
   routeRules: {
     '/docs': { redirect: { to: '/docs/introduction', statusCode: 301 } },
@@ -34,9 +39,12 @@ export default defineNuxtConfig({
       ],
       meta: [
         { name: 'description', content: 'High-performance headless block editor and infinite spatial canvas framework built on Lexical runtime.' },
-        { property: 'og:image', content: '/og-image.jpg' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: 'Notiq' },
+        { property: 'og:url', content: 'https://www.collabchron.com.ng/' },
+        { property: 'og:image', content: 'https://www.collabchron.com.ng/og-image.jpg' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:image', content: '/og-image.jpg' },
+        { name: 'twitter:image', content: 'https://www.collabchron.com.ng/og-image.jpg' },
       ],
     },
   },
