@@ -1,96 +1,43 @@
-# Fumadocs Starter
+# Notiq Documentation (`www.collabchron.com.ng`)
 
-This is a starter template for building documentation using [Fumadocs](https://fumadocs.vercel.app), integrated with OpenAPI and designed to work seamlessly with the Vercel AI SDK.
+Official documentation site for [**Notiq**](https://www.collabchron.com.ng) — the Next-Gen Headless Rich Text & Spatial Canvas Framework built on Meta's Lexical runtime.
 
-It is powered by [Next.js](https://nextjs.org) and was generated using [Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+- **Live Docs**: [https://www.collabchron.com.ng](https://www.collabchron.com.ng)
+- **Live Playground**: [https://playground.collabchron.com.ng](https://playground.collabchron.com.ng)
+- **npm Package**: [`@collabchron/notiq`](https://www.npmjs.com/package/@collabchron/notiq)
 
-## Prerequisites
+## Stack
 
-* Node 22+
-* A package manager
-* Git
-* Optional if you plan to use AI right away:
-  * An OpenAI compatible API key for Vercel AI SDK
+- **Nuxt 4** + **Docus** (`docus`)
+- **@nuxt/content** (Markdown / MDC documentation in `content/docs/`)
+- **Shiki v4** (`shikiEngine: 'javascript'`)
 
-## 1) Install dependencies
+## Local Development
 
-Clone your repo and install packages with your preferred manager.
-
-
-**bun**
-
-```bash
-bun install
-```
-
-**pnpm**
+Install dependencies from the **repository root** (`docs` is part of the `pnpm` workspace):
 
 ```bash
 pnpm install
 ```
 
-## 2) Environment variables
-
-Create a `.env.local` in the project root.
-
-If using Vercel AI SDK:
+Start the docs dev server on port `3001`:
 
 ```bash
-# Choose one provider, example for OpenAI compatible endpoints
-OPENAI_API_KEY=sk-...
-# Or for Azure/OpenRouter/etc, set the provider vars your app expects
-```
-
-If you are not enabling AI, just set a dummy value, like `sk-123`.
-
-## 3) Development
-
-Start the dev server:
-
-**bun**
-
-```bash
-bun dev
-```
-
-**pnpm**
-
-```bash
+cd docs
 pnpm dev
 ```
 
-Then open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3001](http://localhost:3001).
 
-## 4) Build and preview
-
-**Build**
+## Production Build
 
 ```bash
-bun run build
-# or: pnpm run build
+cd docs
+npm run build
 ```
 
-**Preview**
+## Deployment (Vercel)
 
-```bash
-bun start
-# or: pnpm start
-```
-
-## Optional features
-
-* **MCP Server**: If you plan to extend workflows with MCP, install and configure your MCP server, then wire it in your app code or an API route as documented in your chosen server.
-
-## What's Inside
-
-* **Fumadocs** - Fast, flexible documentation powered by MDX.
-* **OpenAPI** - OpenAPI support for API Documentation
-* **AI SDK** - Supports the Vercel AI SDK for advanced AI chat features.
-* **MCP-Ready** - Easily extend with an optional MCP Server for more advanced workflows.
-* **Twoslash** - Embed live, type-checked code examples with rich editor features such as errors, completions, and hovers.
-
-## Learn More
-
-* [Next.js Documentation](https://nextjs.org/docs)
-* [Learn Next.js](https://nextjs.org/learn)
-* [Fumadocs](https://fumadocs.vercel.app)
+- Set **Root Directory** to `docs` in Vercel Project Settings.
+- [`docs/vercel.json`](./vercel.json) configures `"framework": "nuxtjs"` and `"buildCommand": "nuxt build"`.
+- Domain & LLMs SEO configuration lives in [`docs/nuxt.config.ts`](./nuxt.config.ts) (`site.url` and `llms.domain` set to `https://www.collabchron.com.ng`).

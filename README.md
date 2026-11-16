@@ -11,8 +11,9 @@
     <em>Built on Meta's modern Lexical engine, styled with Tailwind CSS, and designed to exceed Tiptap with native AI diffing, Notion-style block drag handles, multi-column snapping, and infinite whiteboard canvas.</em>
   </p>
   <p>
-    <a href="https://notiq-editor.vercel.app">Documentation</a> •
-    <a href="https://notiq-editor.vercel.app/docs">Live Demo</a> •
+    <a href="https://www.collabchron.com.ng">Documentation</a> •
+    <a href="https://playground.collabchron.com.ng">Live Playground</a> •
+    <a href="https://www.npmjs.com/package/@collabchron/notiq">npm (v1.2.0)</a> •
     <a href="https://github.com/chinonsochikelue/notiq/issues">Report Bug</a>
   </p>
 </div>
@@ -24,9 +25,9 @@
 | Capability | Notiq | Tiptap | Raw Lexical | Novel / BlockNote |
 | :--- | :---: | :---: | :---: | :---: |
 | **Underlying Engine** | Modern Lexical (Meta) | ProseMirror (2015) | Lexical (Meta) | ProseMirror |
-| **Headless Extension API** | ✅ `editor.chain()...` | ✅ `editor.chain()...` | ❌ Complex boilerplate | ⚠️ Limited |
-| **Drop-in Battery-Included UI** | ✅ `<Editor />` | ❌ DIY | ❌ DIY | ⚠️ Rigid Opinionated |
-| **Inline AI Command Bar (`⌘K`)** | ✅ Built-in with Live Streaming Diff | ❌ Paid / DIY | ❌ DIY | ⚠️ Basic Streaming |
+| **Headless Extension API** | ✅ `headless: true`, custom `render` & `renderers` | ✅ `editor.chain()...` | ❌ Complex boilerplate | ⚠️ Limited |
+| **Drop-in Battery-Included UI** | ✅ `<Editor />` & `<NotiqEditor />` | ❌ DIY | ❌ DIY | ⚠️ Rigid Opinionated |
+| **Inline AI Command Bar (`⌘K`)** | ✅ Think Mode, Web Research & Excalidraw Hydration | ❌ Paid / DIY | ❌ DIY | ⚠️ Basic Streaming |
 | **Notion Block Drag Handles** | ✅ Gutter Handle (`⠿`) + Quick Add (`+`) + Turn Into | ⚠️ Extension required | ❌ DIY | ⚠️ Basic |
 | **Multi-Column Snapping** | ✅ 2 & 3 Column Layouts Built-in | ⚠️ Complex setup | ❌ DIY | ❌ |
 | **Document-to-Canvas Hybrid** | ✅ Infinite Spatial Whiteboard Mode | ❌ | ❌ | ❌ |
@@ -51,16 +52,27 @@
 
 ## ✨ Core Highlights
 
-### ⚡ 1. Headless Framework Architecture (Tiptap-Compatible API)
-Use Notiq completely headless with an extensible plugin architecture, chained commands, and full control over markup:
+### ⚡ 1. 100% Headless Architecture & Custom Node Renderers (`v1.2.0`)
+Use Notiq completely headless—supply your own UI for slash menus, block drag handles, AI command bars, inline ghost text, and rich decorator nodes (`hint`, `excalidraw`, `poll`, `image`, `inlineImage`):
 ```tsx
-import { useEditor, EditorContent, StarterKit, AIKit, BubbleMenu } from "@collabchron/notiq";
+import { StarterKit, BlocksKit, AICopilot } from "@collabchron/notiq";
+import { useNotiq, NotiqContent, BubbleMenu } from "@collabchron/notiq/react";
 
 export default function CustomEditor() {
-  const editor = useEditor({
+  const editor = useNotiq({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
-      AIKit.configure({ apiEndpoint: "/api/ai" }),
+      BlocksKit.configure({
+        headless: true,
+        slashMenu: { render: (menu) => <MySlashMenu {...menu} /> },
+        handles: { render: (handle) => <MyBlockHandle {...handle} /> },
+        renderers: { hint: MyCallout, poll: MyPoll },
+      }),
+      AICopilot.configure({
+        headless: true,
+        apiEndpoint: "/api/ai",
+        commandBar: { headless: true, render: (ai) => <MyAICommandBar {...ai} /> },
+      }),
     ],
     content: "<p>Hello world from Notiq!</p>",
   });
@@ -68,17 +80,18 @@ export default function CustomEditor() {
   return (
     <div>
       <BubbleMenu editor={editor} showAskAI={true} />
-      <EditorContent editor={editor} />
+      <NotiqContent editor={editor} />
     </div>
   );
 }
 ```
 
-### 🤖 2. Inline AI Command Bar (`Cmd+K` / `Ctrl+K`)
-Select text or hover over any block and trigger `⌘K` to open the Cursor/Novel-style AI Command Bar:
-- **Streaming Diff Engine**: Live tokenized LCS diff algorithm showing red strikethrough for removals and green highlight for additions.
-- **Quick Action Pills**: Fix Grammar, Improve Writing, Make Longer/Shorter, Change Tone, Translate.
-- **Resolution Options**: *Replace Selection*, *Insert Below*, *Retry*, or *Discard*.
+### 🤖 2. AI Copilot, Think Mode, Web Research & Excalidraw Hydration (`Cmd+K` / `Ctrl+K`)
+Select text or hover over any block and trigger `⌘K` to open the AI Command Bar:
+- **Think Mode**: Streams `<thinking>...</thinking>` into a collapsible **AI Reasoning** drawer without cluttering the document.
+- **Topic-Aware Web Research**: Queries Wikipedia & DuckDuckGo in parallel with relevance filtering and surfaces clickable **Research Sources** pills.
+- **Rich Block Hydration**: Streams Markdown into native Lexical nodes—including interactive **Excalidraw** diagrams, **Hint** callouts, **Tables**, **KaTeX Math**, and **Images**.
+- **Review & Refine**: Accept (`Cmd/Ctrl+Enter`), Discard (`Esc`), or refine in place.
 
 ### ⠿ 3. Notion-Style Block Drag Handles & Multi-Columns
 - **Gutter Handle (`⠿`)**: Hover over any block to drag-and-drop reorder.
