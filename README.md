@@ -3,8 +3,15 @@
   <h1>Notiq</h1>
 
 [![Tests](https://github.com/chinonsochikelue/notiq/actions/workflows/tests.yml/badge.svg)](https://github.com/chinonsochikelue/notiq/actions/workflows/tests.yml)
+[![CI](https://github.com/chinonsochikelue/notiq/actions/workflows/ci.yml/badge.svg)](https://github.com/chinonsochikelue/notiq/actions/workflows/ci.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e6fe4b9f635b46ccb38e5852fac10343)](https://app.codacy.com/gh/chinonsochikelue/notiq/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-![npm](https://img.shields.io/npm/dt/@collabchron/notiq)
+[![npm version](https://img.shields.io/npm/v/@collabchron/notiq?color=cb3837&logo=npm)](https://www.npmjs.com/package/@collabchron/notiq)
+[![npm downloads](https://img.shields.io/npm/dt/@collabchron/notiq?logo=npm)](https://www.npmjs.com/package/@collabchron/notiq)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Docs](https://img.shields.io/badge/Docs-collabchron.com.ng-000000?logo=vercel)](https://www.collabchron.com.ng)
+[![Playground](https://img.shields.io/badge/Playground-Live-10b981?logo=nextdotjs)](https://playground.collabchron.com.ng)
+[![GitHub stars](https://img.shields.io/github/stars/chinonsochikelue/notiq?style=social)](https://github.com/chinonsochikelue/notiq/stargazers)
 
   <p>
     <strong>The Next-Generation Rich Text & Spatial Content Framework for React and Next.js.</strong><br/>
