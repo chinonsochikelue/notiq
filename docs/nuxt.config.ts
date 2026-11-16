@@ -12,6 +12,16 @@ export default defineNuxtConfig({
     name: 'Notiq',
     url: 'https://www.collabchron.com.ng',
     description: 'High-performance headless block editor, AI copilot, and infinite spatial canvas framework built on Lexical.',
+    defaultLocale: 'en',
+  },
+  robots: {
+    sitemap: 'https://www.collabchron.com.ng/sitemap.xml',
+    groups: [
+      {
+        userAgent: '*',
+        allow: '/',
+      },
+    ],
   },
   llms: {
     domain: 'https://www.collabchron.com.ng',
@@ -33,18 +43,23 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-18',
   app: {
     head: {
-      title: 'Notiq — Next-Gen Headless Rich Text & Spatial Canvas Framework',
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/icons/icon-192.png' },
+        { rel: 'apple-touch-icon', sizes: '192x192', href: '/icons/icon-192.png' },
+        { rel: 'manifest', href: '/manifest.json' },
       ],
       meta: [
-        { name: 'description', content: 'High-performance headless block editor and infinite spatial canvas framework built on Lexical runtime.' },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'Notiq' },
-        { property: 'og:url', content: 'https://www.collabchron.com.ng/' },
-        { property: 'og:image', content: 'https://www.collabchron.com.ng/og-image.jpg' },
+        { name: 'theme-color', content: '#10b981' },
+        { name: 'author', content: 'Chinonso Chikelue (fluantiX)' },
+        {
+          name: 'keywords',
+          content: 'Notiq, Lexical, React rich text editor, headless editor, Notion-style editor, spatial canvas, Excalidraw, Yjs collaboration, AI copilot, TypeScript, Next.js',
+        },
+        { property: 'og:locale', content: 'en_US' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:image', content: 'https://www.collabchron.com.ng/og-image.jpg' },
+        { name: 'twitter:site', content: '@notiq_editor' },
+        { name: 'twitter:creator', content: '@notiq_editor' },
       ],
     },
   },

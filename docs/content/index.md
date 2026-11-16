@@ -2,6 +2,7 @@
 seo:
   title: Notiq — Next-Gen Headless Rich Text & Spatial Canvas
   description: Build high-performance Notion-style editors and limitless visual workspaces. Powered by Lexical runtime, chainable transactions, Yjs collaboration, and generative AI.
+  ogImage: https://www.collabchron.com.ng/og-image.jpg
 ---
 
 ::u-page-hero

@@ -1,11 +1,12 @@
 {
-  "name": "Notiq - AI-Powered Rich Text Editor",
-  "short_name": "Notiq",
-  "description": "Open-source AI-enhanced rich text editor built with Lexical, Next.js, and TypeScript",
+  "id": "/",
+  "name": "Notiq Docs — Headless Rich Text & Spatial Canvas Framework",
+  "short_name": "Notiq Docs",
+  "description": "High-performance headless block editor, AI copilot, and infinite spatial canvas framework built on Lexical.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020b19",
-  "theme_color": "#2563eb",
+  "background_color": "#09090b",
+  "theme_color": "#10b981",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
@@ -34,28 +35,16 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
   "related_applications": [

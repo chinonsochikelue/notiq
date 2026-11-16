@@ -1,4 +1,27 @@
 export default defineAppConfig({
+  seo: {
+    title: 'Notiq',
+    titleTemplate: '%s — Notiq Docs',
+    description: 'High-performance headless block editor, AI copilot, and infinite spatial canvas framework built on Lexical.',
+    schema: {
+      type: 'SoftwareApplication',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Web',
+      price: 0,
+      priceCurrency: 'USD',
+      sameAs: [
+        'https://github.com/chinonsochikelue/notiq',
+        'https://www.npmjs.com/package/@collabchron/notiq',
+        'https://playground.collabchron.com.ng',
+        'https://x.com/notiq_editor',
+      ],
+      organization: {
+        name: 'CollabChron',
+        url: 'https://www.collabchron.com.ng',
+        logo: 'https://www.collabchron.com.ng/logo.png',
+      },
+    },
+  },
   search: {
     fts: true,
   },
