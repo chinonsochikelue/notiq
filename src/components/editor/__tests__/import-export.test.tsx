@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   detectContentFormat,
   importContentToEditor,
@@ -105,8 +105,12 @@ describe("importJSONToEditor", () => {
     const editor = createEditor({
       nodes: [ParagraphNode, TextNode],
     });
-
-    expect(() => importJSONToEditor(editor, "{ invalid_json: ")).toThrow();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(() => importJSONToEditor(editor, "{ invalid_json: ")).toThrow();
+    } finally {
+      errorSpy.mockRestore();
+    }
   });
 });
 

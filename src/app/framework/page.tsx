@@ -431,28 +431,28 @@ export default function FrameworkPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Top Navigation */}
       <header className="border-b border-border/80 sticky top-0 z-40 bg-background/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <Link href="/" className="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight shrink-0">
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-transparent bg-clip-text">
                 Notiq
               </span>
-              <Badge variant="secondary" className="text-xs font-mono font-normal">
+              <Badge variant="secondary" className="hidden sm:inline-flex text-xs font-mono font-normal">
                 Framework
               </Badge>
             </Link>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
             <Link
               href="/"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Playground
             </Link>
             <Link
               href="/collaboration"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Collaborate
             </Link>
@@ -467,7 +467,7 @@ export default function FrameworkPage() {
             <Link
               href="https://github.com/chinonsochikelue/notiq"
               target="_blank"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              className="hidden sm:flex text-sm text-muted-foreground hover:text-foreground transition-colors items-center gap-1"
             >
               <span>GitHub</span>
               <ExternalLink className="w-3.5 h-3.5" />

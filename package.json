@@ -71,7 +71,7 @@
     "collab:server": "node server/collab-server.mjs",
     "build": "pnpm install --no-frozen-lockfile && next build",
     "build:lib": "tsup && npm run build:css && tsc -p tsconfig.lib.json && node scripts/post-build-lib.js",
-    "build:css": "tailwindcss -i src/styles/notiq.css -o dist/styles/notiq.css --minify && pwsh -Command \"Copy-Item -Path node_modules/katex/dist/fonts -Destination dist/styles -Recurse -Force\"",
+    "build:css": "tailwindcss -i src/styles/notiq.css -o dist/styles/notiq.css --minify && node -e \"require('node:fs').cpSync('node_modules/katex/dist/fonts', 'dist/styles/fonts', { recursive: true, force: true })\"",
     "start": "next start",
     "lint": "next lint",
     "lint:css": "node scripts/check-css-layers.js",

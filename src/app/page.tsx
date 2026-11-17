@@ -966,16 +966,16 @@ export default function PlaygroundPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
-            <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
-              <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+              <div className="flex items-center space-x-2 shrink-0">
                 <Link href="https://collabchron.com.ng/" className="flex items-center gap-1.5 sm:gap-2">
                   <div className="relative">
                     <div>
                       <img
                         src="/logo.png"
-                        className="flex h-8 w-8 sm:h-10 sm:w-10"
+                        className="flex h-7 w-7 sm:h-9 sm:w-9"
                         alt="Notiq Logo"
                       />
                     </div>
@@ -989,39 +989,42 @@ export default function PlaygroundPage() {
                 </Link>
               </div>
 
-              <div className="hidden md:block h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+              <div className="hidden lg:block h-5 w-px bg-slate-300 dark:bg-slate-700"></div>
 
-              <div className="hidden md:flex items-center space-x-3">
+              <div className="hidden lg:flex items-center space-x-3">
                 <input
                   type="text"
                   value={documentTitle}
                   onChange={(e) => setDocumentTitle(e.target.value)}
-                  className="bg-transparent text-slate-900 dark:text-white font-medium text-lg border-none outline-none focus:bg-slate-100 dark:focus:bg-slate-800 px-2 py-1 rounded transition-colors"
+                  className="w-44 xl:w-56 truncate bg-transparent text-slate-900 dark:text-white font-medium text-base border-none outline-none focus:bg-slate-100 dark:focus:bg-slate-800 px-2 py-1 rounded transition-colors"
                   placeholder="Document title..."
                 />
               </div>
             </div>
 
             {/* Stats and Actions */}
-            <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
               <Link
                 href="/framework"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
+                aria-label="Framework"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
               >
                 <Blocks className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-indigo-500" />
                 <span className="hidden sm:inline">Framework</span>
               </Link>
               <Link
                 href="/collaboration"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
+                aria-label="Collaborate"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
               >
                 <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-500" />
-                <span>Collaborate</span>
+                <span className="hidden xs:inline sm:inline">Collaborate</span>
               </Link>
               <Link
                 href="https://www.collabchron.com.ng"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Docs"
                 className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
               >
                 <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500" />
