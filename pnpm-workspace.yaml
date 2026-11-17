@@ -13,3 +13,5 @@ allowBuilds:
   protobufjs: set this to true or false
   sharp: set this to true or false
   vue-demi: set this to true or false
+minimumReleaseAgeExclude:
+  - '@collabchron/notiq@1.2.1'
