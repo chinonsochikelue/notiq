@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ModeToggle } from "../components/theme/ModeToggle";
 import Editor from "../components/editor";
+import { Users } from "lucide-react";
 
 export default function PlaygroundPage() {
   const [aiAssistantActive] = useState(false);
@@ -1003,6 +1004,13 @@ export default function PlaygroundPage() {
 
             {/* Stats and Actions */}
             <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+              <Link
+                href="/collaboration"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
+              >
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-500" />
+                <span>Collaborate</span>
+              </Link>
               <ModeToggle />
             </div>
           </div>
