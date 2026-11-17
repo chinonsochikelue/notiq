@@ -5,11 +5,15 @@ import React, { useEffect, useState, useMemo, lazy, Suspense, useCallback, useRe
 import {
   $getSelection,
   $isRangeSelection,
+  CAN_REDO_COMMAND,
+  CAN_UNDO_COMMAND,
+  COMMAND_PRIORITY_LOW,
   FORMAT_TEXT_COMMAND,
   FORMAT_ELEMENT_COMMAND,
   REDO_COMMAND,
   UNDO_COMMAND,
 } from "lexical";
+import { mergeRegister } from "@lexical/utils";
 import {
   Bold,
   Italic,
@@ -134,6 +138,47 @@ export default function MobileToolbar({
   const [insertCategory, setInsertCategory] = useState<"all" | "media" | "blocks">("all");
   const [modal, showModal] = useModal();
   const targetEditor = activeEditor || editor;
+  const [localCanUndo, setLocalCanUndo] = useState<boolean>(Boolean(toolbarState?.canUndo));
+  const [localCanRedo, setLocalCanRedo] = useState<boolean>(Boolean(toolbarState?.canRedo));
+
+  useEffect(() => {
+    setLocalCanUndo(Boolean(toolbarState?.canUndo));
+  }, [toolbarState?.canUndo]);
+
+  useEffect(() => {
+    setLocalCanRedo(Boolean(toolbarState?.canRedo));
+  }, [toolbarState?.canRedo]);
+
+  // Listen directly on both root and active editors so mobile Undo/Redo state is always active and accurate
+  useEffect(() => {
+    const editors = Array.from(new Set([editor, targetEditor].filter(Boolean)));
+    const unregisters = editors.map((ed) =>
+      mergeRegister(
+        ed.registerCommand<boolean>(
+          CAN_UNDO_COMMAND,
+          (payload) => {
+            setLocalCanUndo(payload);
+            return false;
+          },
+          COMMAND_PRIORITY_LOW
+        ),
+        ed.registerCommand<boolean>(
+          CAN_REDO_COMMAND,
+          (payload) => {
+            setLocalCanRedo(payload);
+            return false;
+          },
+          COMMAND_PRIORITY_LOW
+        )
+      )
+    );
+    return () => {
+      unregisters.forEach((fn) => fn());
+    };
+  }, [editor, targetEditor]);
+
+  const canUndo = Boolean(toolbarState?.canUndo || localCanUndo);
+  const canRedo = Boolean(toolbarState?.canRedo || localCanRedo);
 
   // Auto-expand dock when editor receives focus or virtual keyboard opens
   useEffect(() => {
@@ -475,11 +520,16 @@ export default function MobileToolbar({
       >
         <div
           className={cn(
-            "w-full bg-background/95 dark:bg-zinc-950/95 backdrop-blur-2xl border-t border-border/80 shadow-2xl pointer-events-auto rounded-t-2xl",
+            "w-full bg-background/95 dark:bg-zinc-950/95 backdrop-blur-2xl border-t border-border/70 shadow-[0_-12px_36px_-10px_rgba(0,0,0,0.22)] pointer-events-auto rounded-t-2xl",
             "pb-[max(0.5rem,env(safe-area-inset-bottom))]",
             toolbarConfig?.mobileClassName
           )}
           onMouseDown={(e) => {
+            if (e.target instanceof Element && e.target.tagName !== "INPUT") {
+              e.preventDefault();
+            }
+          }}
+          onPointerDown={(e) => {
             if (e.target instanceof Element && e.target.tagName !== "INPUT") {
               e.preventDefault();
             }
@@ -566,43 +616,24 @@ export default function MobileToolbar({
             </div>
           </div>
 
-          {/* Tab 1: Format Mode Strip with Scroll Affordance Hints */}
+          {/* Tab 1: Format Mode Strip with Pinned Undo/Redo & Scroll Affordance Hints */}
           {activeTab === "format" && (
-            <div className="relative w-full">
-              {/* Left scroll affordance gradient */}
-              <div
-                className={cn(
-                  "pointer-events-none absolute left-0 top-0 bottom-0 w-5 bg-gradient-to-r from-background to-transparent z-10 transition-opacity duration-200",
-                  canScrollLeft ? "opacity-100" : "opacity-0"
-                )}
-              />
-
-              {/* Right scroll affordance gradient */}
-              <div
-                className={cn(
-                  "pointer-events-none absolute right-0 top-0 bottom-0 w-5 bg-gradient-to-l from-background to-transparent z-10 transition-opacity duration-200",
-                  canScrollRight ? "opacity-100" : "opacity-0"
-                )}
-              />
-
-              <div
-                ref={scrollContainerRef}
-                onScroll={checkScrollAffordance}
-                className="flex items-center gap-1.5 px-3 py-2 overflow-x-auto no-scrollbar scroll-smooth w-full"
-              >
-                {/* Undo / Redo */}
+            <div className="flex items-center w-full pl-2.5">
+              {/* Pinned Undo / Redo so they are always one tap away */}
+              <div className="flex items-center gap-1 pr-2 mr-1 border-r border-border/60 shrink-0">
                 <button
                   type="button"
-                  disabled={!toolbarState.canUndo}
+                  disabled={!canUndo}
+                  onPointerDown={(e) => e.preventDefault()}
                   onClick={(e) => {
                     e.preventDefault();
                     targetEditor.dispatchCommand(UNDO_COMMAND, undefined);
                   }}
                   className={cn(
-                    "flex items-center justify-center min-w-[36px] h-9 rounded-xl transition-all touch-manipulation",
-                    toolbarState.canUndo
-                      ? "text-foreground hover:bg-muted active:scale-95"
-                      : "text-muted-foreground/30 cursor-not-allowed"
+                    "flex items-center justify-center w-9 h-9 rounded-xl transition-all touch-manipulation",
+                    canUndo
+                      ? "bg-muted/60 text-foreground border border-border/50 hover:bg-muted active:scale-95 shadow-2xs"
+                      : "text-muted-foreground/35 opacity-50 cursor-not-allowed"
                   )}
                   aria-label="Undo"
                 >
@@ -611,23 +642,46 @@ export default function MobileToolbar({
 
                 <button
                   type="button"
-                  disabled={!toolbarState.canRedo}
+                  disabled={!canRedo}
+                  onPointerDown={(e) => e.preventDefault()}
                   onClick={(e) => {
                     e.preventDefault();
                     targetEditor.dispatchCommand(REDO_COMMAND, undefined);
                   }}
                   className={cn(
-                    "flex items-center justify-center min-w-[36px] h-9 rounded-xl transition-all touch-manipulation",
-                    toolbarState.canRedo
-                      ? "text-foreground hover:bg-muted active:scale-95"
-                      : "text-muted-foreground/30 cursor-not-allowed"
+                    "flex items-center justify-center w-9 h-9 rounded-xl transition-all touch-manipulation",
+                    canRedo
+                      ? "bg-muted/60 text-foreground border border-border/50 hover:bg-muted active:scale-95 shadow-2xs"
+                      : "text-muted-foreground/35 opacity-50 cursor-not-allowed"
                   )}
                   aria-label="Redo"
                 >
                   <Redo2 className="w-4 h-4" />
                 </button>
+              </div>
 
-                <div className="w-px h-5 bg-border/60 mx-0.5 flex-shrink-0" />
+              <div className="relative flex-1 min-w-0">
+                {/* Left scroll affordance gradient */}
+                <div
+                  className={cn(
+                    "pointer-events-none absolute left-0 top-0 bottom-0 w-5 bg-gradient-to-r from-background to-transparent z-10 transition-opacity duration-200",
+                    canScrollLeft ? "opacity-100" : "opacity-0"
+                  )}
+                />
+
+                {/* Right scroll affordance gradient */}
+                <div
+                  className={cn(
+                    "pointer-events-none absolute right-0 top-0 bottom-0 w-5 bg-gradient-to-l from-background to-transparent z-10 transition-opacity duration-200",
+                    canScrollRight ? "opacity-100" : "opacity-0"
+                  )}
+                />
+
+                <div
+                  ref={scrollContainerRef}
+                  onScroll={checkScrollAffordance}
+                  className="flex items-center gap-1.5 px-2 py-2 overflow-x-auto no-scrollbar scroll-smooth w-full [&::-webkit-scrollbar]:hidden"
+                >
 
                 {/* Inline Formatting */}
                 <button
@@ -945,6 +999,7 @@ export default function MobileToolbar({
                 >
                   <ArrowDownUp className="w-4 h-4" />
                 </button>
+                </div>
               </div>
             </div>
           )}

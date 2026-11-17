@@ -1301,3 +1301,12 @@ select {
   margin-left: 3px;
   vertical-align: middle;
 }
+
+/* Hide scrollbars cleanly while keeping touch/wheel horizontal scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

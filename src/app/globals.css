@@ -278,3 +278,12 @@ input[type="number"]::-webkit-outer-spin-button {
   animation: notiqPulseHighlight 2.5s ease-out forwards;
   border-radius: 4px;
 }
+
+/* Hide scrollbars cleanly while keeping touch/wheel horizontal scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
