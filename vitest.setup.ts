@@ -10,3 +10,10 @@ if (typeof globalThis.WritableStream === "undefined") {
 if (typeof globalThis.TransformStream === "undefined") {
   Object.assign(globalThis, { TransformStream });
 }
+if (typeof globalThis.ResizeObserver === "undefined") {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
