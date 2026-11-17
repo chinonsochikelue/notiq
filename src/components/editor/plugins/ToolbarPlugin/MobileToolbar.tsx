@@ -69,6 +69,7 @@ import { INSERT_EXCALIDRAW_COMMAND } from "../ExcalidrawPlugin";
 import { SPEECH_TO_TEXT_COMMAND, SUPPORT_SPEECH_RECOGNITION } from "../SpeechToTextPlugin";
 import { INSERT_COMMENT_COMMAND } from "../CommentsPlugin";
 import { ToolbarConfig } from "../../index";
+import { useSharedHistoryContext } from "../../../providers/SharedHistoryContext";
 import useModal from "../../../ui/models/use-model";
 import { Skeleton } from "../../../ui/skeleton";
 import { AutoEmbedDialog, YoutubeEmbedConfig } from "../AutoEmbedPlugin";
@@ -138,6 +139,7 @@ export default function MobileToolbar({
   const [insertCategory, setInsertCategory] = useState<"all" | "media" | "blocks">("all");
   const [modal, showModal] = useModal();
   const targetEditor = activeEditor || editor;
+  const { historyState } = useSharedHistoryContext();
   const [localCanUndo, setLocalCanUndo] = useState<boolean>(Boolean(toolbarState?.canUndo));
   const [localCanRedo, setLocalCanRedo] = useState<boolean>(Boolean(toolbarState?.canRedo));
 
@@ -169,13 +171,21 @@ export default function MobileToolbar({
             return false;
           },
           COMMAND_PRIORITY_LOW
-        )
+        ),
+        ed.registerUpdateListener(() => {
+          if (historyState) {
+            setLocalCanUndo(
+              historyState.current !== null || historyState.undoStack.length > 0
+            );
+            setLocalCanRedo(historyState.redoStack.length > 0);
+          }
+        })
       )
     );
     return () => {
       unregisters.forEach((fn) => fn());
     };
-  }, [editor, targetEditor]);
+  }, [editor, targetEditor, historyState]);
 
   const canUndo = Boolean(toolbarState?.canUndo || localCanUndo);
   const canRedo = Boolean(toolbarState?.canRedo || localCanRedo);

@@ -5,33 +5,43 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: github.event_base_ref == 'refs/heads/main' || github.event_base_ref == 'refs/heads/master'
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
-          version: 9
-          
+          version: 10
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-          
+
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
-        
+
+      - name: Run Tests
+        run: pnpm test
+
       - name: Build Library
         run: pnpm build:lib
-        
-      - name: Publish to NPM
+
+      - name: Publish to npm
         run: pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true

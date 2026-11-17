@@ -9,6 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     pool: "vmThreads",
     globals: true,
+    exclude: ["**/node_modules/**", "**/dist/**", "e2e/**", "docs/**", "examples/**"],
     setupFiles: "./vitest.setup.ts",
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
