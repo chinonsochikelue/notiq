@@ -27,6 +27,7 @@ import nodes from "./nodes";
 import { AIProvider, type AIConfig } from "../providers/AIContext";
 import { UploadProvider, type UploadConfig } from "../providers/UploadContext";
 import QueryProvider from "../providers/QueryProvider";
+import { normalizeInitialEditorState } from "./utils/importUtils";
 
 export {
   CollaboratorsBar,
@@ -119,11 +120,7 @@ export default function Editor({
       theme,
       editorState: isCollabActive
         ? undefined
-        : typeof content === "string"
-        ? content
-        : typeof content === "object" && content !== null
-        ? JSON.stringify(content)
-        : undefined,
+        : normalizeInitialEditorState(content),
       nodes: [...nodes],
       onError: (error: Error) => {
         throw error;

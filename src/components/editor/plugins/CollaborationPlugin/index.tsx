@@ -19,6 +19,7 @@ import { WebsocketProvider } from "y-websocket";
 import { IndexeddbPersistence } from "y-indexeddb";
 import { Doc } from "yjs";
 import type { InitialEditorStateType } from "@lexical/react/LexicalComposer";
+import { normalizeInitialEditorState } from "../../utils/importUtils";
 
 // Properties that contain nested LexicalEditor instances, DOM references, or complex non-serializable objects
 // MUST be excluded from Yjs attribute reflection to avoid infinite recursive markDirty loops and call stack exhaustion.
@@ -142,20 +143,11 @@ export default function CollaborationPluginWrapper({
     [username, cursorColor, avatar]
   );
 
-  // Normalize initialEditorState so that plain objects are converted to strings for editor.parseEditorState()
-  const normalizedInitialEditorState = useMemo(() => {
-    if (!initialEditorState) return undefined;
-    if (typeof initialEditorState === "string") return initialEditorState;
-    if (typeof initialEditorState === "function") return initialEditorState;
-    if (typeof (initialEditorState as any).isEmpty === "function") {
-      return initialEditorState;
-    }
-    try {
-      return JSON.stringify(initialEditorState);
-    } catch {
-      return undefined;
-    }
-  }, [initialEditorState]);
+  // Normalize initialEditorState so Markdown strings and plain JSON objects work cleanly
+  const normalizedInitialEditorState = useMemo(
+    () => normalizeInitialEditorState(initialEditorState),
+    [initialEditorState]
+  );
 
   const syncUsers = useCallback(
     (ws: WebsocketProvider) => {

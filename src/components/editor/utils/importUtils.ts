@@ -9,7 +9,45 @@ import {
 } from "lexical";
 import { $convertFromMarkdownString } from "@lexical/markdown";
 import { $generateNodesFromDOM } from "@lexical/html";
+import type { InitialEditorStateType } from "@lexical/react/LexicalComposer";
 import { NOTIQ_TRANSFORMERS } from "./markdownTransformers";
+
+/**
+ * Normalizes initial editor content (Lexical JSON string/object, Markdown string,
+ * EditorState, or initializer function) into a valid Lexical `InitialEditorStateType`.
+ */
+export function normalizeInitialEditorState(
+  content: unknown
+): InitialEditorStateType | undefined {
+  if (!content) return undefined;
+  if (typeof content === "function") return content as InitialEditorStateType;
+  if (typeof content === "string") {
+    const trimmed = content.trim();
+    if (!trimmed) return undefined;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === "object" && "root" in parsed) {
+        return trimmed;
+      }
+    } catch {
+      // Not serialized Lexical JSON — treat as Markdown
+    }
+    return () => {
+      $convertFromMarkdownString(content, NOTIQ_TRANSFORMERS);
+    };
+  }
+  if (typeof content === "object") {
+    if (typeof (content as { isEmpty?: unknown }).isEmpty === "function") {
+      return content as InitialEditorStateType;
+    }
+    try {
+      return JSON.stringify(content);
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+}
 
 export type ImportFormat = "markdown" | "json" | "html" | "text";
 export type ImportMode = "replace" | "append" | "insert";

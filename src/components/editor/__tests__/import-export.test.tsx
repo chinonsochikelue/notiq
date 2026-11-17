@@ -4,6 +4,7 @@ import {
   importContentToEditor,
   importJSONToEditor,
   importPlainTextToEditor,
+  normalizeInitialEditorState,
 } from "../utils/importUtils";
 import { createEditor, ParagraphNode, TextNode, $getRoot, LineBreakNode } from "lexical";
 import { HeadingNode } from "@lexical/rich-text";
@@ -106,5 +107,22 @@ describe("importJSONToEditor", () => {
     });
 
     expect(() => importJSONToEditor(editor, "{ invalid_json: ")).toThrow();
+  });
+});
+
+describe("normalizeInitialEditorState", () => {
+  it("returns serialized Lexical JSON strings as-is", () => {
+    const json = JSON.stringify({ root: { children: [], type: "root", version: 1 } });
+    expect(normalizeInitialEditorState(json)).toBe(json);
+  });
+
+  it("converts Markdown strings into a Lexical initializer function", () => {
+    const normalized = normalizeInitialEditorState("# Battery-Included Notiq Editor\n\nHello");
+    expect(typeof normalized).toBe("function");
+  });
+
+  it("serializes plain Lexical JSON objects", () => {
+    const obj = { root: { children: [], type: "root", version: 1 } };
+    expect(normalizeInitialEditorState(obj)).toBe(JSON.stringify(obj));
   });
 });
