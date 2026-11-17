@@ -10,7 +10,7 @@ import React, {
   useRef,
   ReactNode,
 } from "react";
-import { useCollab } from "./CollabContext";
+import { useOptionalCollab } from "./CollabContext";
 import { toast } from "sonner";
 import type { SerializedEditorState } from "lexical";
 
@@ -55,7 +55,11 @@ export const useVersionHistory = (): VersionHistoryContextType => {
 };
 
 const VersionHistoryProviderInternal = ({ children }: { children: ReactNode }) => {
-  const { provider, username, cursorColor, avatar } = useCollab();
+  const collab = useOptionalCollab();
+  const provider = collab?.provider ?? null;
+  const username = collab?.username ?? "Anonymous";
+  const cursorColor = collab?.cursorColor ?? "#6366f1";
+  const avatar = collab?.avatar;
   const [versions, setVersions] = useState<DocumentVersion[]>([]);
   const [previewVersion, setPreviewVersion] = useState<DocumentVersion | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

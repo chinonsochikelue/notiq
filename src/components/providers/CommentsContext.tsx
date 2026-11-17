@@ -9,7 +9,7 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
-import { useCollab } from "./CollabContext";
+import { useOptionalCollab } from "./CollabContext";
 import * as Y from "yjs";
 import { toast } from "sonner";
 
@@ -69,7 +69,11 @@ export const useComments = (): CommentsContextType => {
 };
 
 const CommentsProviderInternal = ({ children }: { children: ReactNode }) => {
-  const { provider, username, cursorColor, avatar } = useCollab();
+  const collab = useOptionalCollab();
+  const provider = collab?.provider ?? null;
+  const username = collab?.username ?? "Anonymous";
+  const cursorColor = collab?.cursorColor ?? "#6366f1";
+  const avatar = collab?.avatar;
   const [threads, setThreads] = useState<CommentThread[]>([]);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

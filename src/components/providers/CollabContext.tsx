@@ -164,6 +164,10 @@ const EMPTY_USERS: CollabUser[] = [];
 
 const CollabContext = createContext<CollabContextType | null>(null);
 
+export const useOptionalCollab = (): CollabContextType | null => {
+  return useContext(CollabContext);
+};
+
 export const useCollab = (): CollabContextType => {
   const context = useContext(CollabContext);
   if (!context) {
