@@ -9,7 +9,7 @@ import Editor, {
   CommentsProvider,
   VersionHistoryProvider,
 } from "../../components/editor";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Check, Copy, Share2, Shuffle } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export default function PlaygroundPage() {
@@ -19,6 +19,63 @@ export default function PlaygroundPage() {
   const [collabActive, setCollabActive] = useState(true);
   const [collabRoom, setCollabRoom] = useState("notiq-playground-demo");
   const [collabServer, setCollabServer] = useState<string | undefined>(undefined);
+  const [roomMenuOpen, setRoomMenuOpen] = useState(false);
+  const [roomDraft, setRoomDraft] = useState("notiq-playground-demo");
+  const [copiedLink, setCopiedLink] = useState(false);
+  const roomMenuRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setRoomDraft(collabRoom);
+  }, [collabRoom]);
+
+  useEffect(() => {
+    if (!roomMenuOpen) return;
+    const handlePointerDown = (event: MouseEvent) => {
+      if (roomMenuRef.current && !roomMenuRef.current.contains(event.target as Node)) {
+        setRoomMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setRoomMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [roomMenuOpen]);
+
+  const applyRoom = React.useCallback(
+    (nextRoom: string) => {
+      const cleaned = nextRoom.trim();
+      if (!cleaned) return;
+      setCollabRoom(cleaned);
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.searchParams.set("room", cleaned);
+        window.history.replaceState({}, "", url.toString());
+      }
+      setRoomMenuOpen(false);
+    },
+    [],
+  );
+
+  const handleCopyInviteLink = React.useCallback(async () => {
+    if (typeof window === "undefined") return;
+    const url = new URL(`${window.location.origin}/collaboration`);
+    url.searchParams.set("room", collabRoom);
+    if (collabServer) {
+      url.searchParams.set("server", collabServer);
+    }
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      // Fallback ignored if clipboard permission denied
+    }
+  }, [collabRoom, collabServer]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -1053,6 +1110,82 @@ export default function PlaygroundPage() {
                       <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       <span className="hidden sm:inline">Playground</span>
                     </Link>
+
+                    <div className="relative" ref={roomMenuRef}>
+                      <button
+                        type="button"
+                        onClick={() => setRoomMenuOpen((prev) => !prev)}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-300 shadow-xs transition-colors hover:bg-emerald-500/20"
+                      >
+                        <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <span className="hidden sm:inline">Share / Join Room</span>
+                      </button>
+
+                      {roomMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl z-50">
+                          <div className="flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                Collaboration Room
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const randomId = `notiq-${Math.random().toString(36).slice(2, 8)}`;
+                                  setRoomDraft(randomId);
+                                  applyRoom(randomId);
+                                }}
+                                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+                              >
+                                <Shuffle className="h-3 w-3" />
+                                New Room
+                              </button>
+                            </div>
+
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                applyRoom(roomDraft);
+                              }}
+                              className="flex items-center gap-2"
+                            >
+                              <input
+                                type="text"
+                                value={roomDraft}
+                                onChange={(e) => setRoomDraft(e.target.value)}
+                                placeholder="Enter room ID..."
+                                className="min-w-0 flex-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs font-mono text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500/40"
+                              />
+                              <button
+                                type="submit"
+                                className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-emerald-500"
+                              >
+                                Join
+                              </button>
+                            </form>
+
+                            <button
+                              type="button"
+                              onClick={handleCopyInviteLink}
+                              className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+                            >
+                              {copiedLink ? (
+                                <>
+                                  <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                  <span>Invite link copied!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-3.5 w-3.5" />
+                                  <span>Copy Invite Link</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     <CollaboratorsBar />
                     <ModeToggle />
                   </div>
