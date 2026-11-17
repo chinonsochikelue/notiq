@@ -443,7 +443,27 @@ export default function FrameworkPage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link
+              href="/"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Playground
+            </Link>
+            <Link
+              href="/collaboration"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Collaborate
+            </Link>
+            <Link
+              href="https://www.collabchron.com.ng"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Docs
+            </Link>
             <Link
               href="https://github.com/chinonsochikelue/notiq"
               target="_blank"

@@ -7,6 +7,7 @@ export default defineConfig({
   css: { postcss: { plugins: [] } },
   test: {
     environment: "jsdom",
+    pool: "vmThreads",
     globals: true,
     setupFiles: "./vitest.setup.ts",
     alias: {

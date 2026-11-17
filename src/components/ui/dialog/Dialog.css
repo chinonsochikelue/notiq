@@ -9,17 +9,21 @@
 .DialogActions {
   display: flex;
   flex-direction: row;
-  justify-content: right;
-  margin-top: 20px;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border, #e4e4e7);
 }
 
 .DialogButtonsList {
   display: flex;
   flex-direction: column;
-  justify-content: right;
-  margin-top: 20px;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .DialogButtonsList button {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }

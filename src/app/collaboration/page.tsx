@@ -9,7 +9,7 @@ import Editor, {
   CommentsProvider,
   VersionHistoryProvider,
 } from "../../components/editor";
-import { Users } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export default function PlaygroundPage() {
@@ -1046,6 +1046,13 @@ export default function PlaygroundPage() {
 
                   {/* Stats and Actions */}
                   <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+                    <Link
+                      href="/"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <span className="hidden sm:inline">Playground</span>
+                    </Link>
                     <CollaboratorsBar />
                     <ModeToggle />
                   </div>

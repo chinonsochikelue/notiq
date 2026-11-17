@@ -10,55 +10,63 @@
 .ExcalidrawModal__overlay {
   display: flex;
   align-items: center;
+  justify-content: center;
   position: fixed;
   flex-direction: column;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  flex-grow: 0px;
-  flex-shrink: 1px;
+  inset: 0;
+  padding: 1.5rem;
   z-index: 100;
-  background-color: rgba(40, 40, 40, 0.6);
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
 }
+
 .ExcalidrawModal__actions {
   text-align: end;
   position: absolute;
-  right: 5px;
-  top: 5px;
+  right: 0.75rem;
+  top: 0.625rem;
+  display: flex;
+  gap: 0.5rem;
   z-index: 1;
 }
+
 .ExcalidrawModal__actions button {
-  background-color: #fff;
-  border-radius: 5px;
+  background-color: var(--background, #ffffff);
+  color: var(--foreground, #18181b);
+  border: 1px solid var(--border, #e4e4e7);
+  border-radius: 0.5rem;
 }
+
 .ExcalidrawModal__row {
   position: relative;
-  padding: 40px 5px 5px;
-  width: 70vw;
-  height: 70vh;
-  border-radius: 8px;
-  box-shadow:
-    0 12px 28px 0 rgba(0, 0, 0, 0.2),
-    0 2px 4px 0 rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  padding: 3rem 0.5rem 0.5rem;
+  width: min(85vw, 1100px);
+  height: min(78vh, 760px);
+  border-radius: 0.75rem;
+  background-color: var(--card, #ffffff);
+  border: 1px solid var(--border, #e4e4e7);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.3);
 }
+
 .ExcalidrawModal__row > div {
-  border-radius: 5px;
+  border-radius: 0.5rem;
 }
+
 .ExcalidrawModal__modal {
   position: relative;
   z-index: 10;
-  top: 50px;
   width: auto;
-  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  background-color: #eee;
+  border-radius: 0.75rem;
+  color: var(--card-foreground, #18181b);
+  background-color: var(--card, #ffffff);
+  border: 1px solid var(--border, #e4e4e7);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.3);
 }
+
 .ExcalidrawModal__discardModal {
-  margin-top: 60px;
+  margin-top: 1.5rem;
   text-align: center;
 }
