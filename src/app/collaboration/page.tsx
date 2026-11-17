@@ -1065,64 +1065,56 @@ export default function PlaygroundPage() {
         <VersionHistoryProvider>
           <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
             <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
-                  <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
-                    <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-                      <Link href="https://collabchron.com.ng/" className="flex items-center gap-1.5 sm:gap-2">
-                        <div className="relative">
-                          <div>
-                            <img
-                              src="/logo.png"
-                              className="flex h-8 w-8 sm:h-10 sm:w-10"
-                              alt="Notiq Logo"
-                            />
-                          </div>
-                          {aiAssistantActive && (
-                            <div className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-green-400 rounded-full animate-pulse"></div>
-                          )}
-                        </div>
-                        <span className="text-base sm:text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-                          Notiq
-                        </span>
-                      </Link>
-                    </div>
-
-                    <div className="hidden md:block h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-                    <div className="hidden md:flex items-center space-x-3">
-                      <input
-                        type="text"
-                        value={documentTitle}
-                        onChange={(e) => setDocumentTitle(e.target.value)}
-                        className="bg-transparent text-slate-900 dark:text-white font-medium text-lg border-none outline-none focus:bg-slate-100 dark:focus:bg-slate-800 px-2 py-1 rounded transition-colors"
-                        placeholder="Document title..."
-                      />
-                    </div>
-                  </div>
-
-                  {/* Stats and Actions */}
-                  <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+              <div className="container mx-auto px-3 sm:px-6 lg:px-8">
+                <div className="flex min-h-14 sm:h-16 items-center justify-between gap-2 py-1.5 sm:py-0">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                     <Link
-                      href="/"
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80"
+                      href="https://collabchron.com.ng/"
+                      className="flex items-center gap-1.5 sm:gap-2 shrink-0"
                     >
-                      <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      <span className="hidden sm:inline">Playground</span>
+                      <div className="relative">
+                        <img
+                          src="/logo.png"
+                          className="h-7 w-7 sm:h-9 sm:w-9"
+                          alt="Notiq Logo"
+                        />
+                        {aiAssistantActive && (
+                          <div className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-green-400 rounded-full animate-pulse" />
+                        )}
+                      </div>
+                      <span className="hidden xs:inline sm:inline text-base sm:text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                        Notiq
+                      </span>
                     </Link>
 
-                    <div className="relative" ref={roomMenuRef}>
+                    <div className="hidden lg:block h-5 w-px bg-slate-300 dark:bg-slate-700" />
+
+                    <input
+                      type="text"
+                      value={documentTitle}
+                      onChange={(e) => setDocumentTitle(e.target.value)}
+                      className="hidden lg:block w-44 xl:w-56 truncate bg-transparent text-slate-900 dark:text-white font-medium text-base border-none outline-none focus:bg-slate-100 dark:focus:bg-slate-800 px-2 py-1 rounded transition-colors"
+                      placeholder="Document title..."
+                    />
+                  </div>
+
+                  {/* Compact, responsive collaboration controls */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <div className="relative shrink-0" ref={roomMenuRef}>
                       <button
                         type="button"
                         onClick={() => setRoomMenuOpen((prev) => !prev)}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-300 shadow-xs transition-colors hover:bg-emerald-500/20"
+                        aria-label="Share or switch collaboration room"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2 sm:px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 shadow-xs transition-colors hover:bg-emerald-500/20"
                       >
-                        <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        <span className="hidden sm:inline">Share / Join Room</span>
+                        <Share2 className="h-3.5 w-3.5 shrink-0" />
+                        <span className="hidden md:inline max-w-[110px] truncate font-mono">
+                          {collabRoom}
+                        </span>
                       </button>
 
                       {roomMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl z-50">
+                        <div className="fixed sm:absolute left-3 right-3 sm:left-auto sm:right-0 top-16 sm:top-auto sm:mt-2 sm:w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl z-50">
                           <div className="flex flex-col gap-3">
                             <div className="flex items-center justify-between">
                               <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -1187,7 +1179,19 @@ export default function PlaygroundPage() {
                     </div>
 
                     <CollaboratorsBar />
-                    <ModeToggle />
+
+                    <Link
+                      href="/"
+                      aria-label="Back to Playground"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2 sm:px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80 shrink-0"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5" />
+                      <span className="hidden md:inline">Playground</span>
+                    </Link>
+
+                    <div className="shrink-0">
+                      <ModeToggle />
+                    </div>
                   </div>
                 </div>
               </div>

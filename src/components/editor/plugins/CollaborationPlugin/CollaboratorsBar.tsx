@@ -186,7 +186,7 @@ export default function CollaboratorsBar({
     <TooltipProvider delayDuration={150}>
       <div
         className={cn(
-          "inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full",
+          "inline-flex max-w-full items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 rounded-full",
           "bg-background/80 backdrop-blur-md border border-border/60 shadow-sm",
           "text-xs font-medium transition-all duration-200 select-none",
           className
@@ -519,7 +519,7 @@ export default function CollaboratorsBar({
                   initial={{ opacity: 0, scale: 0.9, x: -4 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.9, x: -4 }}
-                  className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium ml-1"
+                  className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium ml-1"
                 >
                   <span
                     className="h-1.5 w-1.5 rounded-full animate-ping"
@@ -727,7 +727,7 @@ export default function CollaboratorsBar({
               size="sm"
               onClick={toggleHistoryDrawer}
               className={cn(
-                "h-6 w-6 p-0 hover:bg-muted rounded-full ml-0.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer",
+                "hidden sm:inline-flex h-6 w-6 p-0 hover:bg-muted rounded-full ml-0.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer",
                 isHistoryDrawerOpen && "bg-muted text-foreground"
               )}
               aria-label="Version history"
@@ -755,7 +755,7 @@ export default function CollaboratorsBar({
                   );
                 }
               }}
-              className="h-6 w-6 p-0 hover:bg-muted rounded-full ml-0.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="hidden sm:inline-flex h-6 w-6 p-0 hover:bg-muted rounded-full ml-0.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               aria-label="Import & Export document"
             >
               <ArrowDownUp className="h-3 w-3" />
