@@ -13,13 +13,13 @@
   margin-top: 10px;
   margin-bottom: 10px;
   justify-content: space-between;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .KatexEquationAlterer_dialogActions {
   display: flex;
   flex-direction: row;
-  overflow: hidden;
+  overflow-x: auto;
   margin-top: 20px;
   margin-bottom: 0;
   justify-content: right;
@@ -27,11 +27,11 @@
 
 .KatexEquationAlterer_centerRow {
   display: flex;
-  flex-direction: 'row';
+  flex-direction: row;
   margin-top: 10px;
   margin-bottom: 10px;
   justify-content: center;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .KatexEquationAlterer_textArea {

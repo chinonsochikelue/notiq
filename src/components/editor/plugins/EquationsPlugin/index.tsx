@@ -51,7 +51,7 @@ export function InsertEquationDialog({
     [activeEditor, onClose],
   );
 
-  return <KatexEquationAlterer onConfirm={onEquationConfirm} />;
+  return <KatexEquationAlterer onConfirm={onEquationConfirm} onCancel={onClose} />;
 }
 
 export default function EquationsPlugin(): JSX.Element | null {
