@@ -3,42 +3,14 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ModeToggle } from "../components/theme/ModeToggle";
 import Editor, {
-  CollaboratorsBar,
-  OfflineBanner,
-  CollabProvider,
   CommentsProvider,
   VersionHistoryProvider,
 } from "../components/editor";
-import { Users } from "lucide-react";
-import { cn } from "../lib/utils";
 
 export default function PlaygroundPage() {
   const [aiAssistantActive] = useState(false);
   const [documentTitle, setDocumentTitle] = useState("Untitled Document");
   const [lastSaved, setLastSaved] = useState(new Date());
-  const [collabActive, setCollabActive] = useState(true);
-  const [collabRoom, setCollabRoom] = useState("notiq-playground-demo");
-  const [collabServer, setCollabServer] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const syncParams = () => {
-        const params = new URLSearchParams(window.location.search);
-        const roomParam = params.get("room");
-        const collabParam = params.get("collab");
-        const serverParam = params.get("server");
-        if (roomParam) setCollabRoom(roomParam);
-        if (collabParam !== null) setCollabActive(collabParam === "true");
-        if (serverParam) setCollabServer(serverParam);
-      };
-
-      // Read on initial client mount
-      syncParams();
-
-      window.addEventListener("popstate", syncParams);
-      return () => window.removeEventListener("popstate", syncParams);
-    }
-  }, []);
 
   const uploadConfig = React.useMemo(
     () => ({
@@ -52,15 +24,6 @@ export default function PlaygroundPage() {
       },
     }),
     [],
-  );
-
-  const collabConfig = React.useMemo(
-    () => ({
-      enabled: collabActive,
-      docId: collabRoom,
-      serverUrl: collabServer,
-    }),
-    [collabActive, collabRoom, collabServer],
   );
 
   // Updated content structure with comprehensive Notiq documentation
@@ -1003,76 +966,69 @@ export default function PlaygroundPage() {
 
 
   return (
-    <CollabProvider config={collabConfig}>
-      <CommentsProvider>
-        <VersionHistoryProvider>
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-            <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
-                  <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
-                    <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-                      <Link href="https://collabchron.com.ng/" className="flex items-center gap-1.5 sm:gap-2">
-                        <div className="relative">
-                          <div>
-                            <img
-                              src="/logo.png"
-                              className="flex h-8 w-8 sm:h-10 sm:w-10"
-                              alt="Notiq Logo"
-                            />
-                          </div>
-                          {aiAssistantActive && (
-                            <div className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-green-400 rounded-full animate-pulse"></div>
-                          )}
+    <CommentsProvider>
+      <VersionHistoryProvider>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+          <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
+                  <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                    <Link href="https://collabchron.com.ng/" className="flex items-center gap-1.5 sm:gap-2">
+                      <div className="relative">
+                        <div>
+                          <img
+                            src="/logo.png"
+                            className="flex h-8 w-8 sm:h-10 sm:w-10"
+                            alt="Notiq Logo"
+                          />
                         </div>
-                        <span className="text-base sm:text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-                          Notiq
-                        </span>
-                      </Link>
-                    </div>
-
-                    <div className="hidden md:block h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
-
-                    <div className="hidden md:flex items-center space-x-3">
-                      <input
-                        type="text"
-                        value={documentTitle}
-                        onChange={(e) => setDocumentTitle(e.target.value)}
-                        className="bg-transparent text-slate-900 dark:text-white font-medium text-lg border-none outline-none focus:bg-slate-100 dark:focus:bg-slate-800 px-2 py-1 rounded transition-colors"
-                        placeholder="Document title..."
-                      />
-                    </div>
+                        {aiAssistantActive && (
+                          <div className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-green-400 rounded-full animate-pulse"></div>
+                        )}
+                      </div>
+                      <span className="text-base sm:text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                        Notiq
+                      </span>
+                    </Link>
                   </div>
 
-                  {/* Stats and Actions */}
-                  <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
-                    <CollaboratorsBar />
-                    <ModeToggle />
+                  <div className="hidden md:block h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+
+                  <div className="hidden md:flex items-center space-x-3">
+                    <input
+                      type="text"
+                      value={documentTitle}
+                      onChange={(e) => setDocumentTitle(e.target.value)}
+                      className="bg-transparent text-slate-900 dark:text-white font-medium text-lg border-none outline-none focus:bg-slate-100 dark:focus:bg-slate-800 px-2 py-1 rounded transition-colors"
+                      placeholder="Document title..."
+                    />
                   </div>
                 </div>
-              </div>
-            </header>
 
-            <OfflineBanner />
-
-            {/* Main Editor Area */}
-            <main className="flex-1">
-              <div className="container mx-auto max-w-6xl px-3 sm:px-6 md:px-8 py-4 sm:py-8 md:mt-2">
-                <Editor
-                  isEditable={true}
-                  content={content}
-                  aiConfig={{
-                    apiEndpoint: "/api/ai",
-                  }}
-                  uploadConfig={uploadConfig}
-                  collabConfig={collabConfig}
-                  showCollaboratorsBar={false}
-                />
+                {/* Stats and Actions */}
+                <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+                  <ModeToggle />
+                </div>
               </div>
-            </main>
-          </div>
-        </VersionHistoryProvider>
-      </CommentsProvider>
-    </CollabProvider>
+            </div>
+          </header>
+
+          {/* Main Editor Area */}
+          <main className="flex-1">
+            <div className="container mx-auto max-w-6xl px-3 sm:px-6 md:px-8 py-4 sm:py-8 md:mt-2">
+              <Editor
+                isEditable={true}
+                content={content}
+                aiConfig={{
+                  apiEndpoint: "/api/ai",
+                }}
+                uploadConfig={uploadConfig}
+              />
+            </div>
+          </main>
+        </div>
+      </VersionHistoryProvider>
+    </CommentsProvider>
   );
 }
