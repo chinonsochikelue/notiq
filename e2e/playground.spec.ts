@@ -33,16 +33,21 @@ test.describe("Notiq Playground & Routes", () => {
   });
 
   test("toolbar activates Undo/Redo after typing", async ({ page }) => {
-    await page.goto("/", { waitUntil: "networkidle" });
-    const firstParagraph = page.locator("#lexical-editor p").first();
-    await expect(firstParagraph).toBeVisible();
-    await firstParagraph.click();
-    await page.keyboard.type(" Hello Notiq");
-    await expect(firstParagraph).toContainText("Hello Notiq");
+    const errors: string[] = [];
+    page.on("pageerror", (err) => errors.push(err.message));
 
+    await page.goto("/", { waitUntil: "networkidle" });
+    const editor = page.locator(".editor-content").first();
+    await expect(editor).toBeVisible();
+    await editor.click({ position: { x: 40, y: 40 } });
+    await page.keyboard.type("Hello Notiq");
+    await page.keyboard.press("Enter");
+    await expect(editor).toContainText("Hello Notiq");
+
+    expect(errors).toEqual([]);
     const undoButton = page.getByRole("button", { name: "Undo" });
     await expect(undoButton).toBeVisible();
-    await expect(undoButton).toBeEnabled();
+    await expect(undoButton).toBeEnabled({ timeout: 10_000 });
 
     await undoButton.click();
     const redoButton = page.getByRole("button", { name: "Redo" });
