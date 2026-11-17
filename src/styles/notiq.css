@@ -856,24 +856,36 @@ input[type="number"]::-webkit-outer-spin-button {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 10px;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 .Input__label {
   display: flex;
   flex: 1;
-  color: #666;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground, #71717a);
 }
 .Input__input {
   display: flex;
   flex: 2;
-  border: 1px solid #999;
-  padding-top: 7px;
-  padding-bottom: 7px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 16px;
-  border-radius: 5px;
   min-width: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--foreground, #18181b);
+  background-color: var(--background, #ffffff);
+  border: 1px solid var(--input, #e4e4e7);
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.Input__input:focus {
+  border-color: var(--ring, #a1a1aa);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring, #a1a1aa) 25%, transparent);
+}
+.Input__input::placeholder {
+  color: var(--muted-foreground, #a1a1aa);
 }
 
 
@@ -893,52 +905,58 @@ input[type="number"]::-webkit-outer-spin-button {
   align-items: center;
   position: fixed;
   flex-direction: column;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  background-color: rgba(40, 40, 40, 0.6);
-  flex-grow: 0px;
-  flex-shrink: 1px;
+  inset: 0;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
   z-index: 100;
 }
 .Modal__modal {
-  padding: 20px;
+  padding: 1.25rem 1.5rem;
   min-height: 100px;
-  min-width: 300px;
+  min-width: 320px;
+  max-width: 92vw;
   display: flex;
-  flex-grow: 0px;
-  background-color: #fff;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 0 20px 0 #444;
-  border-radius: 10px;
+  color: var(--card-foreground, #18181b);
+  background-color: var(--card, #ffffff);
+  border: 1px solid var(--border, #e4e4e7);
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 0.75rem;
 }
 .Modal__title {
-  color: #444;
-  margin: 0px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ccc;
+  color: var(--foreground, #18181b);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  padding-right: 2.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border, #e4e4e7);
 }
 .Modal__closeButton {
-  border: 0px;
+  border: 0;
   position: absolute;
-  right: 20px;
-  border-radius: 20px;
+  top: 1rem;
+  right: 1rem;
+  border-radius: 0.375rem;
   justify-content: center;
   align-items: center;
   display: flex;
-  width: 30px;
-  height: 30px;
+  width: 1.75rem;
+  height: 1.75rem;
   text-align: center;
   cursor: pointer;
-  background-color: #eee;
+  color: var(--muted-foreground, #71717a);
+  background-color: transparent;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 .Modal__closeButton:hover {
-  background-color: #ddd;
+  color: var(--foreground, #18181b);
+  background-color: var(--muted, #f4f4f5);
 }
 .Modal__content {
-  padding-top: 20px;
+  padding-top: 1rem;
 }
 
 
@@ -963,27 +981,26 @@ select {
   font-size: inherit;
   cursor: inherit;
   line-height: inherit;
-
   z-index: 1;
   outline: none;
-}
-
-:root {
-  --select-border: #393939;
-  --select-focus: #101484;
-  --select-arrow: var(--select-border);
 }
 
 .select {
   min-width: 160px;
   max-width: 290px;
-  border: 1px solid var(--select-border);
-  border-radius: 0.25em;
-  padding: 0.25em 0.5em;
-  font-size: 1rem;
-  cursor: pointer;
+  border: 1px solid var(--input, #e4e4e7);
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.875rem;
   line-height: 1.4;
-  background: linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+  cursor: pointer;
+  color: var(--foreground, #18181b);
+  background-color: var(--background, #ffffff);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.select:focus {
+  border-color: var(--ring, #a1a1aa);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring, #a1a1aa) 25%, transparent);
 }
 
 
@@ -999,19 +1016,23 @@ select {
 .DialogActions {
   display: flex;
   flex-direction: row;
-  justify-content: right;
-  margin-top: 20px;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border, #e4e4e7);
 }
 
 .DialogButtonsList {
   display: flex;
   flex-direction: column;
-  justify-content: right;
-  margin-top: 20px;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .DialogButtonsList button {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 
@@ -1026,33 +1047,43 @@ select {
  */
 
 .EquationEditor_inlineEditor {
-  padding: 0;
+  padding: 0 2px;
   margin: 0;
   border: 0;
   outline: 0;
-  color: #8421a2;
-  background-color: inherit;
+  color: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  background-color: transparent;
   resize: none;
 }
 
 .EquationEditor_blockEditor {
-  padding: 0;
+  padding: 4px 0;
   margin: 0;
   border: 0;
   outline: 0;
-  color: #8421a2;
-  background-color: inherit;
+  color: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  background-color: transparent;
   resize: none;
   width: 100%;
 }
 
 .EquationEditor_inputBackground {
-  background-color: #eee;
+  background-color: var(--muted, #f4f4f5);
+  color: var(--foreground, #18181b);
+  border: 1px solid var(--border, #e4e4e7);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
 }
 
 .EquationEditor_dollarSign {
   text-align: left;
-  color: #b0b0b0;
+  color: var(--muted-foreground, #71717a);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  user-select: none;
 }
 
 
@@ -1072,13 +1103,13 @@ select {
   margin-top: 10px;
   margin-bottom: 10px;
   justify-content: space-between;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .KatexEquationAlterer_dialogActions {
   display: flex;
   flex-direction: row;
-  overflow: hidden;
+  overflow-x: auto;
   margin-top: 20px;
   margin-bottom: 0;
   justify-content: right;
@@ -1090,7 +1121,7 @@ select {
   margin-top: 10px;
   margin-bottom: 10px;
   justify-content: center;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .KatexEquationAlterer_textArea {
@@ -1113,122 +1144,59 @@ select {
 .ExcalidrawModal__overlay {
   display: flex;
   align-items: center;
+  justify-content: center;
   position: fixed;
   flex-direction: column;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  flex-grow: 0px;
-  flex-shrink: 1px;
+  inset: 0;
+  padding: 1.5rem;
   z-index: 100;
-  background-color: rgba(40, 40, 40, 0.6);
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
 }
 .ExcalidrawModal__actions {
   text-align: end;
   position: absolute;
-  right: 5px;
-  top: 5px;
+  right: 0.75rem;
+  top: 0.625rem;
+  display: flex;
+  gap: 0.5rem;
   z-index: 1;
 }
 .ExcalidrawModal__actions button {
-  background-color: #fff;
-  border-radius: 5px;
+  background-color: var(--background, #ffffff);
+  color: var(--foreground, #18181b);
+  border: 1px solid var(--border, #e4e4e7);
+  border-radius: 0.5rem;
 }
 .ExcalidrawModal__row {
   position: relative;
-  padding: 40px 5px 5px;
-  width: 70vw;
-  height: 70vh;
-  border-radius: 8px;
-  box-shadow:
-    0 12px 28px 0 rgba(0, 0, 0, 0.2),
-    0 2px 4px 0 rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  padding: 3rem 0.5rem 0.5rem;
+  width: min(85vw, 1100px);
+  height: min(78vh, 760px);
+  border-radius: 0.75rem;
+  background-color: var(--card, #ffffff);
+  border: 1px solid var(--border, #e4e4e7);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.3);
 }
 .ExcalidrawModal__row > div {
-  border-radius: 5px;
+  border-radius: 0.5rem;
 }
 .ExcalidrawModal__modal {
   position: relative;
   z-index: 10;
-  top: 50px;
   width: auto;
-  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  background-color: #eee;
+  border-radius: 0.75rem;
+  color: var(--card-foreground, #18181b);
+  background-color: var(--card, #ffffff);
+  border: 1px solid var(--border, #e4e4e7);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.3);
 }
 .ExcalidrawModal__discardModal {
-  margin-top: 60px;
+  margin-top: 1.5rem;
   text-align: center;
-}
-
-
-/* File: C:\Users\HP\notiq\src\components\ui\excalidraw\Modal.css */
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- *
- */
-
-.Modal__overlay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  flex-direction: column;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  background-color: rgba(40, 40, 40, 0.6);
-  flex-grow: 0px;
-  flex-shrink: 1px;
-  z-index: 100;
-}
-.Modal__modal {
-  padding: 20px;
-  min-height: 100px;
-  min-width: 300px;
-  display: flex;
-  flex-grow: 0px;
-  background-color: #fff;
-  flex-direction: column;
-  position: relative;
-  box-shadow: 0 0 20px 0 #444;
-  border-radius: 10px;
-}
-.Modal__title {
-  color: #444;
-  margin: 0px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ccc;
-}
-.Modal__closeButton {
-  border: 0px;
-  position: absolute;
-  right: 20px;
-  border-radius: 20px;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  cursor: pointer;
-  background-color: #eee;
-}
-.Modal__closeButton:hover {
-  background-color: #ddd;
-}
-.Modal__content {
-  padding-top: 20px;
 }
 
 
