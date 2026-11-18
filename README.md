@@ -20,7 +20,7 @@
   <p>
     <a href="https://www.collabchron.com.ng">Documentation</a> •
     <a href="https://playground.collabchron.com.ng">Live Playground</a> •
-    <a href="https://www.npmjs.com/package/@collabchron/notiq">npm (v1.2.2)</a> •
+    <a href="https://www.npmjs.com/package/@collabchron/notiq">npm (v1.3.0)</a> •
     <a href="https://github.com/chinonsochikelue/notiq/issues">Report Bug</a>
   </p>
 </div>

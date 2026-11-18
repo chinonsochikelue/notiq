@@ -30,6 +30,7 @@ import { StoryBuilderNode } from '../plugins/StoryBuilderPlugin';
 import { DynamicBlockNode } from './DynamicBlockNode/DynamicBlockNode';
 import { AudioNode } from './AudioNode';
 import { FileNode } from './FileNode';
+import { MentionNode } from './MentionNode';
 
 
 
@@ -68,6 +69,7 @@ const nodes: Array<Klass<LexicalNode>> = [
   DynamicBlockNode,
   AudioNode,
   FileNode,
+  MentionNode,
 ];
 
 export  const nestedNodes: Array<Klass<LexicalNode>>=[
@@ -88,5 +90,6 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   DynamicBlockNode,
   AudioNode,
   FileNode,
+  MentionNode,
 ]
 export default nodes

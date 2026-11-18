@@ -14,6 +14,18 @@ export {
   type UseTableOfContentsResult,
   type TableOfContentsPluginProps,
 } from "./components/editor/plugins/TableOfContentsPlugin";
+export {
+  default as MentionsPlugin,
+  formatSmartDateLabel,
+  getSmartDateOptions,
+} from "./components/editor/plugins/MentionsPlugin";
+export {
+  MentionNode,
+  $createMentionNode,
+  $isMentionNode,
+  type MentionKind,
+  type SerializedMentionNode,
+} from "./components/editor/nodes/MentionNode";
 
 // Providers & Contexts
 export * from "./components/providers/ToolbarContext";
