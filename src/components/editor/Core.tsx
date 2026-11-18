@@ -69,6 +69,7 @@ import CollaborationPlugin from "./plugins/CollaborationPlugin"
 import CollaboratorsBar from "./plugins/CollaborationPlugin/CollaboratorsBar"
 import CommentsPlugin from "./plugins/CommentsPlugin"
 import VersionHistoryPlugin from "./plugins/VersionHistoryPlugin"
+import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin"
 import InlineCopilotPlugin from "./plugins/InlineCopilotPlugin"
 import AICommandBarPlugin from "./plugins/AICommandBarPlugin"
 import SmartTypographyPlugin from "./plugins/SmartTypographyPlugin"
@@ -359,6 +360,7 @@ export default function Core({
           {isEditable && <MarkdownPastePlugin />}
           <CommentsPlugin />
           <VersionHistoryPlugin />
+          <TableOfContentsPlugin />
           {children}
         </motion.div>
       </div>

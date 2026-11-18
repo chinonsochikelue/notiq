@@ -6,6 +6,14 @@ export { default as Editor } from "./components/editor";
 export { default as CanvasMode } from "./components/canvas/CanvasMode";
 export type { ToolbarConfig, ToolbarItem } from "./components/editor";
 export * from "./components/editor/plugins/CollaborationPlugin/CollaboratorsBar";
+export {
+  default as TableOfContentsPlugin,
+  useTableOfContents,
+  type HeadingEntry,
+  type UseTableOfContentsOptions,
+  type UseTableOfContentsResult,
+  type TableOfContentsPluginProps,
+} from "./components/editor/plugins/TableOfContentsPlugin";
 
 // Providers & Contexts
 export * from "./components/providers/ToolbarContext";
