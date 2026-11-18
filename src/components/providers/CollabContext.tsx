@@ -99,12 +99,14 @@ export interface CollabContextType {
 }
 
 export const COLLAB_SERVER_PRESETS = [
+  { label: "CollabChron Cloud (wss://www.notiqcollabserver.collabchron.com.ng)", url: "wss://www.notiqcollabserver.collabchron.com.ng" },
   { label: "Local Server (Self-Hosted: ws://localhost:4444)", url: "ws://localhost:4444" },
   { label: "Public Demo (Cloud: wss://demos.yjs.dev/ws)", url: "wss://demos.yjs.dev/ws" },
 ] as const;
 
 export const DEFAULT_SERVER_URL =
-  process.env.NEXT_PUBLIC_COLLAB_SERVER_URL || "ws://localhost:4444";
+  process.env.NEXT_PUBLIC_COLLAB_SERVER_URL ||
+  "wss://www.notiqcollabserver.collabchron.com.ng";
 export const FALLBACK_SERVER_URL = "wss://demos.yjs.dev/ws";
 export const DEFAULT_DOC_ID = "notiq-collab-room";
 
