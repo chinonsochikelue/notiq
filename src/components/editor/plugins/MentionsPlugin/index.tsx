@@ -120,7 +120,7 @@ export default function MentionsPlugin() {
       }
     }
 
-    return list.slice(0, 8);
+    return list.slice(0, 50);
   }, [collab?.users, queryString]);
 
   const onSelectOption = useCallback(
@@ -159,6 +159,7 @@ export default function MentionsPlugin() {
       onSelectOption={onSelectOption}
       triggerFn={checkForTriggerMatch}
       options={options}
+      anchorClassName="z-[9999] pointer-events-auto"
       menuRenderFn={(
         anchorElementRef,
         { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }
@@ -168,11 +169,15 @@ export default function MentionsPlugin() {
         }
 
         return ReactDOM.createPortal(
-          <div className="z-60 w-64 rounded-xl border border-border/80 bg-popover/95 p-1.5 text-popover-foreground shadow-xl backdrop-blur-xl">
-            <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="z-[100] relative w-64 rounded-xl border border-border/80 bg-popover/95 text-popover-foreground shadow-xl backdrop-blur-xl overflow-hidden flex flex-col pointer-events-auto">
+            <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border/40 select-none">
               Mention or Date
             </div>
-            <ul className="max-h-60 overflow-y-auto space-y-0.5">
+            <ul
+              className="max-h-52 overflow-y-auto overscroll-contain space-y-0.5 p-1.5"
+              role="listbox"
+              aria-label="Mention options"
+            >
               {options.map((option, index) => {
                 const isSelected = selectedIndex === index;
                 return (

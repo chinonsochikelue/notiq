@@ -78,7 +78,7 @@ export default function MentionsAutocomplete({
       role="listbox"
       aria-label="Mention options"
       className={cn(
-        "absolute z-50 w-60 max-h-52 overflow-y-auto rounded-xl border border-border bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-md text-xs",
+        "absolute z-50 w-60 max-h-52 overflow-y-auto overscroll-contain pointer-events-auto rounded-xl border border-border bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-md text-xs",
         "animate-in fade-in-50 zoom-in-95 duration-100",
         className
       )}
