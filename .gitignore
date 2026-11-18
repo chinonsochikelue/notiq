@@ -53,3 +53,5 @@ next-env.d.ts
 # Nested dependencies and builds
 **/node_modules/
 **/dist/
+
+/Legendary-Pop-&-RnB-Classics

@@ -168,7 +168,7 @@ export default function MentionsPlugin() {
         }
 
         return ReactDOM.createPortal(
-          <div className="z-50 w-64 rounded-xl border border-border/80 bg-popover/95 p-1.5 text-popover-foreground shadow-xl backdrop-blur-xl">
+          <div className="z-60 w-64 rounded-xl border border-border/80 bg-popover/95 p-1.5 text-popover-foreground shadow-xl backdrop-blur-xl">
             <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Mention or Date
             </div>
