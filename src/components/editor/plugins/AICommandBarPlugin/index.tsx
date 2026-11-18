@@ -41,7 +41,12 @@ import {
   Image as ImageIcon,
   Shapes,
 } from "lucide-react";
-import { computeWordDiff } from "../../utils/diffUtils";
+import {
+  buildDiffHunks,
+  computeWordDiff,
+  resolveDiffHunks,
+  type DiffHunkStatus,
+} from "../../utils/diffUtils";
 import { useAI } from "../../../providers/AIContext";
 import {
   WRITING_STYLE_PRESETS,
@@ -361,6 +366,7 @@ export default function AICommandBarPlugin({
   const [selectedText, setSelectedText] = useState("");
   const [streamedText, setStreamedText] = useState("");
   const [showDiff, setShowDiff] = useState(false);
+  const [hunkDecisions, setHunkDecisions] = useState<Record<string, DiffHunkStatus>>({});
   const [thinkEnabled, setThinkEnabled] = useState(true);
   const [researchEnabled, setResearchEnabled] = useState(false);
   const [showTrace, setShowTrace] = useState(false);
@@ -408,6 +414,8 @@ export default function AICommandBarPlugin({
     if (!canShowDiff || !showDiff) return [];
     return computeWordDiff(selectedText, parsedStream.content);
   }, [canShowDiff, showDiff, selectedText, parsedStream.content]);
+
+  const diffHunks = useMemo(() => buildDiffHunks(diffParts), [diffParts]);
 
   const filteredPresets = useMemo(() => {
     const q = prompt.trim().toLowerCase();
@@ -491,6 +499,33 @@ export default function AICommandBarPlugin({
       );
     },
     [editor]
+  );
+
+  const handleHunkDecision = useCallback(
+    (hunkId: string, status: DiffHunkStatus) => {
+      setHunkDecisions((prev) => {
+        const next = { ...prev, [hunkId]: status };
+        const resolved = resolveDiffHunks(diffHunks, next);
+        applyStreamedMarkdownToEditor(resolved, false);
+        return next;
+      });
+    },
+    [applyStreamedMarkdownToEditor, diffHunks]
+  );
+
+  const handleBulkHunkDecision = useCallback(
+    (status: "accepted" | "rejected") => {
+      const next: Record<string, DiffHunkStatus> = {};
+      for (const hunk of diffHunks) {
+        if (hunk.type !== "unchanged") {
+          next[hunk.id] = status;
+        }
+      }
+      setHunkDecisions(next);
+      const resolved = resolveDiffHunks(diffHunks, next);
+      applyStreamedMarkdownToEditor(resolved, false);
+    },
+    [applyStreamedMarkdownToEditor, diffHunks]
   );
 
   const captureAnchorFromSelection = useCallback(() => {
@@ -633,6 +668,7 @@ export default function AICommandBarPlugin({
       setPhase("streaming");
       setStreamedText("");
       setShowDiff(false);
+      setHunkDecisions({});
       setShowTrace(false);
     setShowTrace(false);
       lastRequestRef.current = {
@@ -1367,41 +1403,107 @@ export default function AICommandBarPlugin({
             </div>
           )}
 
-          {showDiff && diffParts.length > 0 && (
-            <div className="w-[min(40rem,calc(100vw-2rem))] max-h-48 overflow-y-auto rounded-2xl border border-violet-200/90 dark:border-violet-800/70 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl p-3 text-xs leading-relaxed shadow-2xl shadow-violet-500/15 animate-in fade-in slide-in-from-bottom-2 duration-150">
-              <div className="mb-1.5 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
-                <span>Inline Diff (Original vs. AI)</span>
-                <button
-                  type="button"
-                  onClick={() => setShowDiff(false)}
-                  className="rounded px-1.5 py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"
-                >
-                  Hide
-                </button>
+          {showDiff && diffHunks.length > 0 && (
+            <div className="w-[min(40rem,calc(100vw-2rem))] max-h-56 overflow-y-auto rounded-2xl border border-violet-200/90 dark:border-violet-800/70 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl p-3 text-xs leading-relaxed shadow-2xl shadow-violet-500/15 animate-in fade-in slide-in-from-bottom-2 duration-150">
+              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+                <span>Inline Diff (Click ✓ / ✕ per hunk)</span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => handleBulkHunkDecision("accepted")}
+                    className="rounded px-1.5 py-0.5 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                  >
+                    Accept All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleBulkHunkDecision("rejected")}
+                    className="rounded px-1.5 py-0.5 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10"
+                  >
+                    Reject All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowDiff(false)}
+                    className="rounded px-1.5 py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"
+                  >
+                    Hide
+                  </button>
+                </div>
               </div>
               <div className="whitespace-pre-wrap break-words text-zinc-700 dark:text-zinc-200">
-                {diffParts.map((part, idx) => {
-                  if (part.type === "added") {
-                    return (
-                      <ins
-                        key={idx}
-                        className="rounded bg-emerald-500/15 px-0.5 text-emerald-700 dark:text-emerald-300 no-underline"
-                      >
-                        {part.text}
-                      </ins>
-                    );
+                {diffHunks.map((hunk) => {
+                  if (hunk.type === "unchanged") {
+                    return <span key={hunk.id}>{hunk.originalText}</span>;
                   }
-                  if (part.type === "removed") {
-                    return (
-                      <del
-                        key={idx}
-                        className="rounded bg-rose-500/15 px-0.5 text-rose-600 dark:text-rose-400 line-through"
-                      >
-                        {part.text}
-                      </del>
-                    );
-                  }
-                  return <span key={idx}>{part.text}</span>;
+
+                  const status = hunkDecisions[hunk.id] ?? hunk.status;
+                  const isRejected = status === "rejected";
+                  const isAccepted = status === "accepted";
+
+                  return (
+                    <span
+                      key={hunk.id}
+                      className={`group inline-flex flex-wrap items-baseline gap-0.5 rounded px-1 py-0.5 mx-0.5 border transition-colors ${
+                        isAccepted
+                          ? "border-emerald-500/40 bg-emerald-500/10"
+                          : isRejected
+                          ? "border-zinc-300/60 dark:border-zinc-700/60 bg-zinc-100/70 dark:bg-zinc-800/50 opacity-75"
+                          : "border-violet-500/25 bg-violet-500/5"
+                      }`}
+                    >
+                      {hunk.originalText && (
+                        <del
+                          className={`rounded px-0.5 ${
+                            isRejected
+                              ? "no-underline text-zinc-700 dark:text-zinc-200"
+                              : "bg-rose-500/15 text-rose-600 dark:text-rose-400 line-through"
+                          }`}
+                        >
+                          {hunk.originalText}
+                        </del>
+                      )}
+                      {hunk.updatedText && (
+                        <ins
+                          className={`rounded px-0.5 no-underline ${
+                            isRejected
+                              ? "line-through text-zinc-400"
+                              : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                          }`}
+                        >
+                          {hunk.updatedText}
+                        </ins>
+                      )}
+                      <span className="inline-flex items-center gap-0.5 ml-1">
+                        <button
+                          type="button"
+                          onClick={() => handleHunkDecision(hunk.id, "accepted")}
+                          aria-label={`Accept change ${hunk.index + 1}`}
+                          title="Accept hunk"
+                          className={`rounded px-1 text-[10px] font-bold transition-colors ${
+                            isAccepted
+                              ? "bg-emerald-600 text-white"
+                              : "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+                          }`}
+                        >
+                          ✓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleHunkDecision(hunk.id, "rejected")}
+                          aria-label={`Reject change ${hunk.index + 1}`}
+                          title="Reject hunk"
+                          className={`rounded px-1 text-[10px] font-bold transition-colors ${
+                            isRejected
+                              ? "bg-rose-600 text-white"
+                              : "text-rose-600 dark:text-rose-400 hover:bg-rose-500/20"
+                          }`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    </span>
+                  );
                 })}
               </div>
             </div>

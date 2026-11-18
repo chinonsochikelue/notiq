@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { computeWordDiff } from "../utils/diffUtils";
+import {
+  buildDiffHunks,
+  computeWordDiff,
+  resolveDiffHunks,
+} from "../utils/diffUtils";
 
 describe("diffUtils computeWordDiff", () => {
   it("detects completely identical text as unchanged", () => {
@@ -30,5 +34,27 @@ describe("diffUtils computeWordDiff", () => {
     expect(computeWordDiff("Old text", "")).toEqual([
       { type: "removed", text: "Old text" },
     ]);
+  });
+});
+
+describe("buildDiffHunks & resolveDiffHunks", () => {
+  it("pairs removed + added tokens into replaced hunks and resolves selective accept/reject", () => {
+    const parts = computeWordDiff(
+      "The bad code runs slowly",
+      "The clean code runs fast"
+    );
+    const hunks = buildDiffHunks(parts);
+    const changed = hunks.filter((h) => h.type !== "unchanged");
+    expect(changed.length).toBe(2);
+    expect(changed[0].type).toBe("replaced");
+    expect(changed[0].originalText).toBe("bad");
+    expect(changed[0].updatedText).toBe("clean");
+
+    // Accept first hunk, reject second hunk
+    const resolved = resolveDiffHunks(hunks, {
+      [changed[0].id]: "accepted",
+      [changed[1].id]: "rejected",
+    });
+    expect(resolved).toBe("The clean code runs slowly");
   });
 });

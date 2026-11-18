@@ -83,3 +83,91 @@ export function computeWordDiff(original: string, updated: string): DiffPart[] {
 
   return merged;
 }
+
+export type DiffHunkStatus = "pending" | "accepted" | "rejected";
+
+export interface DiffHunk {
+  id: string;
+  index: number;
+  type: "added" | "removed" | "replaced" | "unchanged";
+  originalText: string;
+  updatedText: string;
+  status: DiffHunkStatus;
+}
+
+/**
+ * Groups `DiffPart[]` into interactive hunks, pairing adjacent `removed` + `added`
+ * parts into a single `"replaced"` hunk for per-hunk Accept / Reject review.
+ */
+export function buildDiffHunks(parts: DiffPart[]): DiffHunk[] {
+  const hunks: DiffHunk[] = [];
+  let i = 0;
+
+  while (i < parts.length) {
+    const current = parts[i];
+    const next = parts[i + 1];
+
+    if (current.type === "removed" && next?.type === "added") {
+      hunks.push({
+        id: `hunk-${hunks.length}`,
+        index: hunks.length,
+        type: "replaced",
+        originalText: current.text,
+        updatedText: next.text,
+        status: "pending",
+      });
+      i += 2;
+      continue;
+    }
+
+    if (current.type === "added") {
+      hunks.push({
+        id: `hunk-${hunks.length}`,
+        index: hunks.length,
+        type: "added",
+        originalText: "",
+        updatedText: current.text,
+        status: "pending",
+      });
+    } else if (current.type === "removed") {
+      hunks.push({
+        id: `hunk-${hunks.length}`,
+        index: hunks.length,
+        type: "removed",
+        originalText: current.text,
+        updatedText: "",
+        status: "pending",
+      });
+    } else {
+      hunks.push({
+        id: `hunk-${hunks.length}`,
+        index: hunks.length,
+        type: "unchanged",
+        originalText: current.text,
+        updatedText: current.text,
+        status: "accepted",
+      });
+    }
+
+    i += 1;
+  }
+
+  return hunks;
+}
+
+/**
+ * Reconstructs the final text from reviewed diff hunks:
+ * rejected hunks keep `originalText`; accepted or pending hunks use `updatedText`.
+ */
+export function resolveDiffHunks(
+  hunks: DiffHunk[],
+  decisions: Record<string, DiffHunkStatus> = {}
+): string {
+  return hunks
+    .map((hunk) => {
+      if (hunk.type === "unchanged") return hunk.originalText;
+      const status = decisions[hunk.id] ?? hunk.status;
+      return status === "rejected" ? hunk.originalText : hunk.updatedText;
+    })
+    .join("");
+}
