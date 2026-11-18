@@ -103,7 +103,8 @@ export const COLLAB_SERVER_PRESETS = [
   { label: "Public Demo (Cloud: wss://demos.yjs.dev/ws)", url: "wss://demos.yjs.dev/ws" },
 ] as const;
 
-export const DEFAULT_SERVER_URL = "ws://localhost:4444";
+export const DEFAULT_SERVER_URL =
+  process.env.NEXT_PUBLIC_COLLAB_SERVER_URL || "ws://localhost:4444";
 export const FALLBACK_SERVER_URL = "wss://demos.yjs.dev/ws";
 export const DEFAULT_DOC_ID = "notiq-collab-room";
 

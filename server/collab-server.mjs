@@ -14,7 +14,7 @@ import * as awarenessProtocol from "y-protocols/awareness";
 import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
 
-const PORT = parseInt(process.env.COLLAB_PORT || "4444", 10);
+const PORT = parseInt(process.env.PORT || process.env.COLLAB_PORT || "4444", 10);
 const HOST = process.env.COLLAB_HOST || "0.0.0.0";
 
 const messageSync = 0;
