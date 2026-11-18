@@ -1066,8 +1066,8 @@ export default function PlaygroundPage() {
           <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
             <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
               <div className="container mx-auto px-3 sm:px-6 lg:px-8">
-                <div className="flex min-h-14 sm:h-16 items-center justify-between gap-2 py-1.5 sm:py-0">
-                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="flex flex-wrap sm:flex-nowrap min-h-14 sm:h-16 items-center justify-between gap-x-2 gap-y-1.5 py-2 sm:py-0">
+                  <div className="order-1 flex items-center gap-2 sm:gap-3 min-w-0">
                     <Link
                       href="https://collabchron.com.ng/"
                       className="flex items-center gap-1.5 sm:gap-2 shrink-0"
@@ -1082,7 +1082,7 @@ export default function PlaygroundPage() {
                           <div className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-green-400 rounded-full animate-pulse" />
                         )}
                       </div>
-                      <span className="hidden xs:inline sm:inline text-base sm:text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                      <span className="text-base sm:text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
                         Notiq
                       </span>
                     </Link>
@@ -1099,8 +1099,8 @@ export default function PlaygroundPage() {
                   </div>
 
                   {/* Compact, responsive collaboration controls */}
-                  <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                    <div className="relative shrink-0" ref={roomMenuRef}>
+                  <div className="contents sm:flex sm:items-center sm:gap-2 min-w-0">
+                    <div className="order-2 sm:order-none ml-auto sm:ml-0 relative shrink-0" ref={roomMenuRef}>
                       <button
                         type="button"
                         onClick={() => setRoomMenuOpen((prev) => !prev)}
@@ -1178,18 +1178,20 @@ export default function PlaygroundPage() {
                       )}
                     </div>
 
-                    <CollaboratorsBar />
+                    <div className="order-5 sm:order-none basis-full sm:basis-auto flex justify-center border-t border-slate-200/40 dark:border-slate-800/40 pt-1.5 sm:border-t-0 sm:pt-0">
+                      <CollaboratorsBar />
+                    </div>
 
                     <Link
                       href="/"
                       aria-label="Back to Playground"
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2 sm:px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80 shrink-0"
+                      className="order-3 sm:order-none inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-2 sm:px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/80 shrink-0"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" />
                       <span className="hidden md:inline">Playground</span>
                     </Link>
 
-                    <div className="shrink-0">
+                    <div className="order-4 sm:order-none shrink-0">
                       <ModeToggle />
                     </div>
                   </div>

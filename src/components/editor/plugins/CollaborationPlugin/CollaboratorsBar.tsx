@@ -285,7 +285,7 @@ export default function CollaboratorsBar({
                 <PopoverTrigger asChild>
                   <button
                     type="button"
-                    className="flex items-center gap-1 text-muted-foreground/80 hover:text-foreground px-1.5 py-0.5 rounded-full hover:bg-muted/80 transition-colors cursor-pointer"
+                    className="hidden sm:flex items-center gap-1 text-muted-foreground/80 hover:text-foreground px-1.5 py-0.5 rounded-full hover:bg-muted/80 transition-colors cursor-pointer"
                     aria-label="Inspect offline storage and sync health"
                   >
                     <HardDrive className="h-3 w-3 text-emerald-500" />
@@ -406,26 +406,6 @@ export default function CollaboratorsBar({
                   ? "Local"
                   : "Cloud"}
               </span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCopyLink}
-                    className="h-6 w-6 p-0 hover:bg-muted rounded-full"
-                    aria-label="Copy collaboration room link"
-                  >
-                    {copied ? (
-                      <Check className="h-3 w-3 text-emerald-500" />
-                    ) : (
-                      <Share2 className="h-3 w-3" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  Copy shareable invite link
-                </TooltipContent>
-              </Tooltip>
             </div>
           </>
         )}
