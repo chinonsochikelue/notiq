@@ -12,6 +12,7 @@ import {
   FORMAT_ELEMENT_COMMAND,
   REDO_COMMAND,
   UNDO_COMMAND,
+  type LexicalEditor,
 } from "lexical";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -119,8 +120,8 @@ export default function MobileToolbar({
   isVisible,
   toolbarConfig,
 }: {
-  editor: any;
-  activeEditor: any;
+  editor: LexicalEditor;
+  activeEditor: LexicalEditor;
   toolbarState: any;
   setIsLinkEditMode: (mode: boolean) => void;
   isVisible: boolean;
