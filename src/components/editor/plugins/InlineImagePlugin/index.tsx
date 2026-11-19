@@ -34,6 +34,7 @@ import {
 } from "lexical"
 import type * as React from "react"
 import { useEffect, useRef, useState } from "react"
+import { ImagePlus, Link2, Upload, X } from "lucide-react"
 
 import {
   $createInlineImageNode,
@@ -41,10 +42,12 @@ import {
   InlineImageNode,
   type InlineImagePayload,
 } from "../../nodes/InlineImageNode/InlineImageNode"
+import {
+  InlineImageCaptionToggle,
+  InlineImagePositionPicker,
+} from "../../nodes/InlineImageNode/InlineImageComponent"
+import { cn } from "../../../../lib/utils"
 import { Button } from "../../../ui/button"
-import FileInput from "../../../ui/FileInput"
-import Select from "../../../ui/Select"
-import TextInput from "../../../ui/TextInput"
 import { DialogActions } from "../../../ui/dialog/Dialog"
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>
@@ -60,37 +63,37 @@ export function InsertInlineImageDialog({
   onClose: () => void
 }): JSX.Element {
   const hasModifier = useRef(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
+  const [mode, setMode] = useState<"upload" | "url">("upload")
   const [src, setSrc] = useState("")
+  const [fileName, setFileName] = useState("")
   const [altText, setAltText] = useState("")
   const [showCaption, setShowCaption] = useState(false)
   const [position, setPosition] = useState<Position>("left")
+  const [isDragging, setIsDragging] = useState(false)
 
-  const isDisabled = src === ""
-
-  const handleShowCaptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowCaption(e.target.checked)
-  }
-
-  const handlePositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPosition(e.target.value as Position)
-  }
+  const isDisabled = src.trim() === ""
 
   const loadImage = (files: FileList | null) => {
+    if (!files || files.length === 0) return
+    const file = files[0]
+    setFileName(file.name)
+    if (!altText) {
+      setAltText(file.name.replace(/\.[^/.]+$/, "").replace(/[-_]+/g, " "))
+    }
     const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result === "string") {
         setSrc(reader.result)
       }
-      return ""
     }
     reader.onerror = () => {
       console.error("Error reading file")
       setSrc("")
+      setFileName("")
     }
-    if (files !== null && files.length > 0) {
-      reader.readAsDataURL(files[0])
-    }
+    reader.readAsDataURL(file)
   }
 
   useEffect(() => {
@@ -105,57 +108,171 @@ export function InsertInlineImageDialog({
   }, [activeEditor])
 
   const handleOnClick = () => {
-    const payload = { altText, position, showCaption, src }
+    const payload = { altText, position, showCaption, src: src.trim() }
     activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload)
     onClose()
   }
 
   return (
-    <>
-      <div className="mb-4">
-        <FileInput label="Image Upload" onChange={loadImage} accept="image/*" data-test-id="image-modal-file-upload" />
+    <div className="space-y-4 w-full max-w-md">
+      {/* Source Mode Switcher */}
+      <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-muted/40 p-1">
+        <button
+          type="button"
+          onClick={() => setMode("upload")}
+          className={cn(
+            "flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all cursor-pointer",
+            mode === "upload"
+              ? "bg-background text-foreground shadow-xs ring-1 ring-border"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Upload className="h-3.5 w-3.5" />
+          <span>Upload File</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("url")}
+          className={cn(
+            "flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all cursor-pointer",
+            mode === "url"
+              ? "bg-background text-foreground shadow-xs ring-1 ring-border"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Link2 className="h-3.5 w-3.5" />
+          <span>From URL</span>
+        </button>
       </div>
-      <div className="mb-4">
-        <TextInput
-          label="Alt Text"
+
+      {/* Upload Dropzone or URL Input */}
+      {mode === "upload" ? (
+        <div
+          onDragOver={(e) => {
+            e.preventDefault()
+            setIsDragging(true)
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault()
+            setIsDragging(false)
+            loadImage(e.dataTransfer.files)
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          className={cn(
+            "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors cursor-pointer",
+            isDragging
+              ? "border-primary bg-primary/5"
+              : "border-border/80 bg-muted/20 hover:border-primary/50 hover:bg-muted/40",
+          )}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={(e) => loadImage(e.target.files)}
+            data-test-id="image-modal-file-upload"
+            className="sr-only"
+          />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <ImagePlus className="h-5 w-5" />
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-xs font-medium text-foreground">
+              {fileName ? fileName : "Click to upload or drag & drop"}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              PNG, JPG, GIF, WebP, or SVG
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          <label
+            htmlFor="inline-image-url-input"
+            className="block text-xs font-medium text-muted-foreground"
+          >
+            Image URL
+          </label>
+          <input
+            id="inline-image-url-input"
+            type="url"
+            placeholder="https://example.com/image.png"
+            value={src}
+            onChange={(e) => {
+              setSrc(e.target.value)
+              setFileName("")
+            }}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+      )}
+
+      {/* Live Preview */}
+      {src && (
+        <div className="relative flex items-center justify-center rounded-xl border border-border/80 bg-muted/30 p-3 overflow-hidden">
+          <img
+            src={src}
+            alt={altText || "Preview"}
+            className="max-h-36 max-w-full rounded-lg object-contain"
+          />
+          <button
+            type="button"
+            aria-label="Clear selected image"
+            onClick={() => {
+              setSrc("")
+              setFileName("")
+            }}
+            className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-background/90 border border-border text-muted-foreground hover:text-foreground shadow-xs cursor-pointer"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Alt Text */}
+      <div className="space-y-1.5">
+        <label
+          htmlFor="inline-image-alt-input"
+          className="block text-xs font-medium text-muted-foreground"
+        >
+          Alt Text
+        </label>
+        <input
+          id="inline-image-alt-input"
+          type="text"
           placeholder="Descriptive alternative text"
-          onChange={setAltText}
+          onChange={(e) => setAltText(e.target.value)}
           value={altText}
           data-test-id="image-modal-alt-text-input"
+          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
-      <Select
-        className="mb-4 w-72"
-        label="Position"
-        name="position"
-        id="position-select"
-        onChange={handlePositionChange}
-      >
-        <option value="left">Left</option>
-        <option value="right">Right</option>
-        <option value="full">Full Width</option>
-      </Select>
+      {/* Position */}
+      <InlineImagePositionPicker value={position} onChange={setPosition} />
 
-      <div className="flex items-center space-x-2 mb-4">
-        <input
-          id="caption"
-          type="checkbox"
-          checked={showCaption}
-          onChange={handleShowCaptionChange}
-          className="w-4 h-4 text-primary bg-background border-border rounded focus:ring-ring focus:ring-2"
-        />
-        <label htmlFor="caption" className="text-sm font-medium text-foreground cursor-pointer">
-          Show Caption
-        </label>
-      </div>
+      {/* Caption Toggle */}
+      <InlineImageCaptionToggle
+        id="insert-inline-image-caption"
+        checked={showCaption}
+        onChange={setShowCaption}
+      />
 
       <DialogActions>
-        <Button data-test-id="image-modal-file-upload-btn" disabled={isDisabled} onClick={() => handleOnClick()}>
-          Confirm
+        <Button type="button" variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          data-test-id="image-modal-file-upload-btn"
+          disabled={isDisabled}
+          onClick={handleOnClick}
+        >
+          Insert Image
         </Button>
       </DialogActions>
-    </>
+    </div>
   )
 }
 
@@ -238,6 +355,7 @@ function $onDragStart(event: DragEvent): boolean {
         caption: node.__caption,
         height: node.__height,
         key: node.getKey(),
+        position: node.__position,
         showCaption: node.__showCaption,
         src: node.__src,
         width: node.__width,
