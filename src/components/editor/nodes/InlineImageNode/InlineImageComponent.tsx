@@ -40,6 +40,7 @@ import {
   Pencil,
   RotateCcw,
   Trash2,
+  ZoomIn,
 } from "lucide-react"
 import type * as React from "react"
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"
@@ -50,6 +51,7 @@ import LinkPlugin from "../../plugins/LinkPlugin"
 import LexicalContentEditable from "../../../ui/ContentEditable"
 import { Button } from "../../../ui/button"
 import { DialogActions } from "../../../ui/dialog/Dialog"
+import ImageLightbox from "../../../ui/image/image-lightbox"
 
 const imageCache = new Set<string>()
 
@@ -371,6 +373,7 @@ export default function InlineImageComponent({
   const [isLoadError, setIsLoadError] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const [liveSize, setLiveSize] = useState<{ width: number; height: number } | null>(null)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   useEffect(() => {
     setIsLoadError(false)
@@ -570,7 +573,16 @@ export default function InlineImageComponent({
   return (
     <Suspense fallback={null}>
       <span className={cn("relative group select-none", positionContainerClass)}>
-        <span draggable={draggable} className="relative block">
+        <span
+          draggable={draggable}
+          onDoubleClick={() => {
+            if (!isLoadError && src) setLightboxOpen(true)
+          }}
+          onClick={() => {
+            if (!isEditable && !isLoadError && src) setLightboxOpen(true)
+          }}
+          className="relative block"
+        >
           {isLoadError ? (
             <span className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border bg-muted/40 px-5 py-6 text-center text-xs text-muted-foreground min-w-[200px]">
               <ImageOff className="h-5 w-5 text-muted-foreground/70" />
@@ -660,6 +672,20 @@ export default function InlineImageComponent({
 
               <button
                 type="button"
+                title="Preview full size"
+                aria-label="Preview full size"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setLightboxOpen(true)
+                }}
+                className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+              >
+                <ZoomIn className="h-3.5 w-3.5" />
+              </button>
+
+              <button
+                type="button"
                 ref={buttonRef}
                 title="Edit inline image"
                 aria-label="Edit inline image"
@@ -713,7 +739,7 @@ export default function InlineImageComponent({
         </span>
 
         {showCaption && (
-          <span className="block mt-1.5 rounded-lg border border-border/60 bg-muted/30 px-2.5 py-1 transition-colors focus-within:border-primary/40 focus-within:bg-muted/50">
+          <span className="block -mt-6.5 rounded-lg border border-border/60 bg-transparent px-2.5 py-1 transition-colors focus-within:border-primary/40 focus-within:bg-muted/50">
             <LexicalNestedComposer initialEditor={caption}>
               <AutoFocusPlugin />
               <LinkPlugin />
@@ -732,6 +758,12 @@ export default function InlineImageComponent({
         )}
       </span>
       {modal}
+      <ImageLightbox
+        src={src}
+        altText={altText}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
     </Suspense>
   )
 }

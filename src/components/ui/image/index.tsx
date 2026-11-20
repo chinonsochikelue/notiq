@@ -47,6 +47,8 @@ import ImageResizer from "./image-resizer";
 import LazyImage from "./lazy-image";
 import LazyVideo from "./lazy-video";
 import ImageToolBar from "./image-toolbar";
+import ImageLightbox from "./image-lightbox";
+import { ZoomIn } from "lucide-react";
 
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
   createCommand("RIGHT_CLICK_IMAGE_COMMAND");
@@ -91,6 +93,7 @@ export default function ImageComponent({
     }
   }, [caption, isEditable]);
   const [MediaType, setMediaType] = useState<"IMAGE" | "VIDEO">("IMAGE");
+  const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
 
   const $onDelete = useCallback(
     (payload: KeyboardEvent) => {
@@ -318,7 +321,19 @@ export default function ImageComponent({
   return (
     <Suspense fallback={null}>
       <div className="relative inline-block group">
-        <div draggable={draggable}>
+        <div
+          draggable={draggable}
+          onDoubleClick={() => {
+            if (MediaType === "IMAGE" && !isLoadError && src) {
+              setLightboxOpen(true);
+            }
+          }}
+          onClick={() => {
+            if (!isEditable && MediaType === "IMAGE" && !isLoadError && src) {
+              setLightboxOpen(true);
+            }
+          }}
+        >
           {isLoadError ? (
             <ErrorImage />
           ) : (
@@ -400,6 +415,22 @@ export default function ImageComponent({
           />
         )}
 
+        {MediaType === "IMAGE" && !isLoadError && !isResizing && src && (
+          <button
+            type="button"
+            title="View full size"
+            aria-label="View full size"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxOpen(true);
+            }}
+            className="absolute top-2 right-2 z-20 flex h-7 w-7 items-center justify-center rounded-lg border border-border/70 bg-background/85 text-foreground shadow-sm backdrop-blur-md opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity duration-150 hover:bg-background cursor-pointer"
+          >
+            <ZoomIn className="h-3.5 w-3.5" />
+          </button>
+        )}
+
         {resizable && $isNodeSelection(selection) && isFocused && (
           <ImageResizer
             editor={editor}
@@ -409,6 +440,12 @@ export default function ImageComponent({
           />
         )}
       </div>
+      <ImageLightbox
+        src={src}
+        altText={altText}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
     </Suspense>
   );
 }
