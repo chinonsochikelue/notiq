@@ -37,23 +37,23 @@ async function injectOverlay(page) {
       }
       #notiq-motion-caption {
         position: fixed;
-        bottom: 24px;
+        bottom: 22px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 999998;
-        padding: 10px 20px;
+        padding: 10px 22px;
         border-radius: 9999px;
-        background: rgba(9, 13, 22, 0.88);
-        border: 1px solid rgba(99, 102, 241, 0.4);
+        background: rgba(9, 13, 22, 0.9);
+        border: 1px solid rgba(99, 102, 241, 0.45);
         color: #f8fafc;
         font-family: ui-sans-serif, system-ui, sans-serif;
         font-size: 13px;
         font-weight: 600;
         letter-spacing: 0.02em;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(12px);
         pointer-events: none;
-        transition: opacity 0.3s ease;
+        white-space: nowrap;
       }
     `;
     document.head.appendChild(style);
@@ -68,7 +68,7 @@ async function injectOverlay(page) {
 
     const caption = document.createElement("div");
     caption.id = "notiq-motion-caption";
-    caption.textContent = "Notiq v1.4.0 · Collaborative AI Workspace";
+    caption.textContent = "Notiq v1.4.0 · Real-Time Collaborative Workspace";
 
     wrap.appendChild(cursor);
     wrap.appendChild(caption);
@@ -85,6 +85,11 @@ async function setCaption(page, text) {
 }
 
 async function moveAndClick(page, locator) {
+  try {
+    await locator.scrollIntoViewIfNeeded();
+  } catch {
+    // ignore
+  }
   const box = await locator.boundingBox();
   if (box) {
     const x = box.x + box.width / 2;
@@ -99,7 +104,7 @@ async function moveAndClick(page, locator) {
       },
       { x, y }
     );
-    await page.waitForTimeout(380);
+    await page.waitForTimeout(340);
     await page.evaluate(() => {
       const c = document.getElementById("notiq-motion-cursor");
       c?.classList.add("click");
@@ -121,66 +126,119 @@ async function main() {
   });
 
   const page = await context.newPage();
+  const roomId = `showcase-${Date.now().toString(36)}`;
 
-  // 1. Open Playground
-  await page.goto(BASE_URL, { waitUntil: "networkidle" });
+  // 1. Fresh blank editor on /collaboration
+  await page.goto(`${BASE_URL}/collaboration?room=${roomId}`, {
+    waitUntil: "networkidle",
+  });
   await page.waitForTimeout(900);
-  await setCaption(page, "01 · Notiq Playground — Rich Lexical + AI Editor");
-  await page.waitForTimeout(1200);
+  await setCaption(page, "01 · Blank Collaborative Canvas · Live Yjs Sync");
 
-  // Focus editor & add a new section at the bottom
   const editor = page.locator('[contenteditable="true"]').first();
   await moveAndClick(page, editor);
-  await page.keyboard.press("Control+End");
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Enter");
+  await page.waitForTimeout(400);
 
-  await setCaption(page, "02 · Slash Commands — Insert Database & Kanban Board");
-  await page.keyboard.type("/database", { delay: 65 });
-  await page.waitForTimeout(700);
+  // Type Markdown heading & smart typography
+  await setCaption(page, "02 · Markdown Shortcuts & Smart Typography");
+  await page.keyboard.type("# Notiq v1.4.0 Launch Spec", { delay: 42 });
   await page.keyboard.press("Enter");
-  await page.waitForTimeout(900);
+  await page.keyboard.type("Real-time CRDT editing -> zero conflicts, offline-first.", { delay: 34 });
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("- [x] Yjs WebSocket + IndexedDB Persistence", { delay: 32 });
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("- [ ] Launch @collabchron/notiq@1.4.0", { delay: 32 });
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(600);
 
-  // Switch Database to Kanban View
+  // 3. Slash command -> Database Table -> Kanban
+  await setCaption(page, "03 · /database — Interactive Table & Kanban Board");
+  await page.keyboard.type("/database", { delay: 60 });
+  await page.waitForTimeout(650);
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(850);
+
   const kanbanTab = page.getByRole("tab", { name: "Kanban" }).first();
   if (await kanbanTab.isVisible()) {
-    await kanbanTab.scrollIntoViewIfNeeded();
-    await setCaption(page, "03 · Instant Table ↔ Kanban View Switching");
     await moveAndClick(page, kanbanTab);
-    await page.waitForTimeout(1000);
-
-    // Move first card right if available
+    await page.waitForTimeout(850);
     const moveRight = page.locator('button[aria-label$="right"]').first();
     if (await moveRight.isVisible()) {
       await moveAndClick(page, moveRight);
-      await page.waitForTimeout(800);
+      await page.waitForTimeout(700);
     }
   }
 
-  // Type [[Page]] link and @today mention
+  // 4. [[Page]] Links & @Mentions / Smart Dates
   await moveAndClick(page, editor);
   await page.keyboard.press("Control+End");
   await page.keyboard.press("Enter");
   await setCaption(page, "04 · [[Page]] Backlinks & @Smart Date Chips");
-  await page.keyboard.type("Next: [[", { delay: 60 });
-  await page.waitForTimeout(750);
+  await page.keyboard.type("Linked doc: [[", { delay: 50 });
+  await page.waitForTimeout(650);
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(400);
+
+  await page.keyboard.type(" · Target @today", { delay: 50 });
+  await page.waitForTimeout(650);
   await page.keyboard.press("Enter");
   await page.waitForTimeout(500);
 
-  await page.keyboard.type(" · Due @today", { delay: 60 });
-  await page.waitForTimeout(750);
+  const backlinksToggle = page.getByRole("button", { name: /Page Links & Backlinks/i }).first();
+  if (await backlinksToggle.isVisible()) {
+    await moveAndClick(page, backlinksToggle);
+    await page.waitForTimeout(700);
+  }
+
+  // 5. Inline Image + Floating Toolbar + Lightbox
+  await moveAndClick(page, editor);
+  await page.keyboard.press("Control+End");
   await page.keyboard.press("Enter");
-  await page.waitForTimeout(900);
+  await setCaption(page, "05 · Inline Image + Vector SVG + Lightbox Zoom");
+  await page.keyboard.type("/inline", { delay: 60 });
+  await page.waitForTimeout(650);
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(600);
 
-  // Navigate to /collaboration
-  await setCaption(page, "05 · Real-Time Multiplayer Sync (Yjs + WebSocket)");
-  await page.goto(`${BASE_URL}/collaboration`, { waitUntil: "networkidle" });
-  await injectOverlay(page);
-  await setCaption(page, "05 · Live Collaboration · wss://notiqcollabserver.collabchron.com.ng");
-  await page.waitForTimeout(2200);
+  const fromUrlBtn = page.getByRole("button", { name: "From URL" }).first();
+  if (await fromUrlBtn.isVisible()) {
+    await moveAndClick(page, fromUrlBtn);
+    await page.waitForTimeout(300);
+    const urlInput = page.locator("#inline-image-url-input");
+    await urlInput.fill(`${BASE_URL}/vectors/notiq-architecture.svg`);
+    await page.waitForTimeout(500);
+    const fullBtn = page.getByRole("radio", { name: "Full Width" }).first();
+    if (await fullBtn.isVisible()) {
+      await moveAndClick(page, fullBtn);
+    }
+    const insertBtn = page.getByRole("button", { name: "Insert Image" }).first();
+    await moveAndClick(page, insertBtn);
+    await page.waitForTimeout(900);
 
-  await setCaption(page, "Install globally: npm install @collabchron/notiq@1.4.0");
-  await page.waitForTimeout(1600);
+    // Open Lightbox Zoom
+    const zoomBtn = page.getByRole("button", { name: "Preview full size" }).first();
+    if (await zoomBtn.isVisible()) {
+      await moveAndClick(page, zoomBtn);
+      await page.waitForTimeout(750);
+      const zoomInBtn = page.getByRole("button", { name: "Zoom in" }).first();
+      if (await zoomInBtn.isVisible()) {
+        await moveAndClick(page, zoomInBtn);
+        await page.waitForTimeout(700);
+      }
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(500);
+    }
+  }
+
+  // 6. Share / Room Menu + Final CTA
+  await setCaption(page, "06 · Share Room, Presence & Comments · npm i @collabchron/notiq@1.4.0");
+  const shareBtn = page.getByRole("button", { name: "Share or switch collaboration room" }).first();
+  if (await shareBtn.isVisible()) {
+    await moveAndClick(page, shareBtn);
+    await page.waitForTimeout(1500);
+  } else {
+    await page.waitForTimeout(1500);
+  }
 
   const video = page.video();
   await context.close();
@@ -189,7 +247,6 @@ async function main() {
   const rawVideoPath = await video.path();
   console.log("Raw recording:", rawVideoPath);
 
-  // Convert & polish with ffmpeg into high-quality H.264 MP4
   execFileSync(
     "ffmpeg",
     [
