@@ -17,6 +17,7 @@ import { INSERT_TABLE_COMMAND } from "@lexical/table";
 import {
   $createParagraphNode,
   $getSelection,
+  $insertNodes,
   $isRangeSelection,
   createEditor,
   LexicalEditor,
@@ -56,6 +57,8 @@ import {
   FileDown,
   FileUp,
   FileJson,
+  Kanban,
+  Table2,
 } from "lucide-react";
 import { Figma, Twitter, Youtube } from "../../../ui/icons/brand-icons";
 
@@ -82,6 +85,7 @@ import { InsertInlineImageDialog } from "../InlineImagePlugin";
 import { InsertEquationDialog } from "../EquationsPlugin";
 import { INSERT_STORY_BUILDER_COMMAND } from "../StoryBuilderPlugin";
 import { createDefaultDynamicBlock, INSERT_DYNAMIC_BLOCK_COMMAND } from "../DynamicBlockPlugin";
+import { $createDatabaseNode } from "../../nodes/DatabaseNode";
 
 const InsertGif = React.lazy(() => import("../../../ui/models/insert-gif"));
 const InsertImageDialog = React.lazy(() =>
@@ -499,6 +503,26 @@ function getBaseOptions(
       category: "media",
       onSelect: () =>
         editor.dispatchCommand(INSERT_POLL_COMMAND, "Type the Question"),
+    }),
+    new ComponentPickerOption("Database Table", {
+      icon: <Table2 className="h-4 w-4" />,
+      keywords: ["database", "table", "tasks", "tracker", "notion"],
+      desc: "Sortable & filterable task database",
+      category: "layout",
+      onSelect: () =>
+        editor.update(() => {
+          $insertNodes([$createDatabaseNode({ view: "table" })]);
+        }),
+    }),
+    new ComponentPickerOption("Kanban Board", {
+      icon: <Kanban className="h-4 w-4" />,
+      keywords: ["kanban", "board", "columns", "workflow", "cards"],
+      desc: "Drag-and-drop Kanban task board",
+      category: "layout",
+      onSelect: () =>
+        editor.update(() => {
+          $insertNodes([$createDatabaseNode({ view: "kanban" })]);
+        }),
     }),
 
     // 4. Layout & Structure
