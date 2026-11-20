@@ -32,6 +32,7 @@ import { AudioNode } from './AudioNode';
 import { FileNode } from './FileNode';
 import { MentionNode } from './MentionNode';
 import { DatabaseNode } from './DatabaseNode';
+import { PageLinkNode } from './PageLinkNode';
 
 
 
@@ -72,6 +73,7 @@ const nodes: Array<Klass<LexicalNode>> = [
   FileNode,
   MentionNode,
   DatabaseNode,
+  PageLinkNode,
 ];
 
 export  const nestedNodes: Array<Klass<LexicalNode>>=[
@@ -94,5 +96,6 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   FileNode,
   MentionNode,
   DatabaseNode,
+  PageLinkNode,
 ]
 export default nodes

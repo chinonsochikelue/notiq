@@ -71,6 +71,7 @@ import CommentsPlugin from "./plugins/CommentsPlugin"
 import VersionHistoryPlugin from "./plugins/VersionHistoryPlugin"
 import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin"
 import MentionsPlugin from "./plugins/MentionsPlugin"
+import PageLinksPlugin from "./plugins/PageLinksPlugin"
 import InlineCopilotPlugin from "./plugins/InlineCopilotPlugin"
 import AICommandBarPlugin from "./plugins/AICommandBarPlugin"
 import SmartTypographyPlugin from "./plugins/SmartTypographyPlugin"
@@ -356,6 +357,7 @@ export default function Core({
 
           {isEditable && <SlashCommand />}
           {isEditable && <MentionsPlugin />}
+          <PageLinksPlugin />
           {isEditable && <InlineCopilotPlugin />}
           {isEditable && <AICommandBarPlugin />}
           {isEditable && <SmartTypographyPlugin />}
