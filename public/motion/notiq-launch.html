@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notiq v1.4.0 — Launch Motion Graphic</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --card: rgba(17, 24, 39, 0.85);
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --indigo: #6366f1;
+      --blue: #3b82f6;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.16), transparent 45%),
+                  radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.14), transparent 45%),
+                  var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+    .stage {
+      width: 100%;
+      max-width: 960px;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black 45%, transparent 90%);
+      pointer-events: none;
+    }
+    .scene {
+      position: absolute;
+      inset: 0;
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+    .scene.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      background: rgba(99, 102, 241, 0.12);
+      color: #a5b4fc;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--emerald);
+      box-shadow: 0 0 12px var(--emerald);
+      animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+    h1 {
+      font-size: clamp(32px, 5vw, 58px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+    .sub {
+      max-width: 600px;
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 760px;
+      margin-top: 28px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: left;
+      transform: translateY(10px);
+      animation: floatUp 0.6s ease forwards;
+    }
+    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #f1f5f9; }
+    .card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    @keyframes floatUp {
+      to { transform: translateY(0); }
+    }
+    .cmd {
+      margin-top: 24px;
+      padding: 14px 24px;
+      border-radius: 14px;
+      background: #090d16;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 15px;
+      color: #38bdf8;
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+    }
+    .controls {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .controls button {
+      background: rgba(30, 41, 59, 0.8);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .controls button.active, .controls button:hover {
+      background: var(--indigo);
+      border-color: var(--indigo);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="grid-bg"></div>
+
+    <section class="scene active" data-scene="0">
+      <div class="pill"><span class="dot"></span> Notiq v1.4.0 Release</div>
+      <h1>Write. Sync. Ship.</h1>
+      <p class="sub">
+        The collaborative AI workspace built on Lexical &amp; Yjs CRDT — now with Database Kanban boards, [[Page]] backlinks, Image Lightbox, and live multiplayer sync.
+      </p>
+    </section>
+
+    <section class="scene" data-scene="1">
+      <div class="pill"><span class="dot"></span> Real-Time Multiplayer</div>
+      <h1>Zero-Conflict Collaboration</h1>
+      <p class="sub">
+        Sub-50ms Yjs WebSocket sync powered by <code>notiqcollabserver.collabchron.com.ng</code> with IndexedDB offline persistence and live <code>@</code> mentions.
+      </p>
+      <div class="cards">
+        <div class="card"><h3>Live Cursors</h3><p>Presence avatars, typing indicators, and color-coded carets.</p></div>
+        <div class="card"><h3>@Mentions &amp; Dates</h3><p>Tag collaborators or insert smart date chips anywhere.</p></div>
+        <div class="card"><h3>Offline-First</h3><p>Edits persist in IndexedDB and sync automatically on reconnect.</p></div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="2">
+      <div class="pill"><span class="dot"></span> Structured Workflows</div>
+      <h1>Database, Kanban &amp; [[Links]]</h1>
+      <p class="sub">
+        Turn any document into an interactive project hub with instant Table ↔ Kanban switching and bidirectional page linking.
+      </p>
+      <div class="cards">
+        <div class="card"><h3>/database &amp; /kanban</h3><p>Filter, sort, and drag-and-drop cards synced via Lexical JSON.</p></div>
+        <div class="card"><h3>[[Page]] &amp; Backlinks</h3><p>Type <code>[[</code> to link rooms or headings with a collapsible footer.</p></div>
+        <div class="card"><h3>Media &amp; Lightbox</h3><p>Floating inline image toolbar, resize handles, SVG support, and 3x zoom.</p></div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="3">
+      <div class="pill"><span class="dot"></span> Available Globally</div>
+      <h1>Install @collabchron/notiq</h1>
+      <p class="sub">Drop into any React or Next.js app — headless core or full batteries-included editor.</p>
+      <div class="cmd">npm install @collabchron/notiq@1.4.0</div>
+    </section>
+  </div>
+
+  <div class="controls" id="controls">
+    <button class="active" onclick="goTo(0)">1. Hero</button>
+    <button onclick="goTo(1)">2. Sync</button>
+    <button onclick="goTo(2)">3. Blocks</button>
+    <button onclick="goTo(3)">4. Install</button>
+  </div>
+
+  <script>
+    const scenes = document.querySelectorAll(".scene");
+    const buttons = document.querySelectorAll("#controls button");
+    let current = 0;
+
+    function goTo(index) {
+      current = index % scenes.length;
+      scenes.forEach((s, i) => s.classList.toggle("active", i === current));
+      buttons.forEach((b, i) => b.classList.toggle("active", i === current));
+    }
+
+    setInterval(() => goTo(current + 1), 4200);
+  </script>
+</body>
+</html>
