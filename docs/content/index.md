@@ -49,7 +49,7 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
   :::u-button
   ---
   size: sm
-  to: /docs/core-concepts/headless-ui
+  to: /docs/changelog#v140
   variant: outline
   ---
   v1.4.0: Database Kanban, [[Links]], ImageLightbox & Live Sync →
