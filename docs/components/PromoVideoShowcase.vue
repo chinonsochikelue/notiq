@@ -10,7 +10,7 @@ const props = withDefaults(
   {
     defaultTab: 'promo',
     title: 'See Notiq v1.4.0 in Motion',
-    subtitle: 'Real-time Yjs collaboration, Kanban databases, page backlinks, image lightbox, and AI diff review.',
+    subtitle: 'Real-time Yjs collaboration, Database Table ↔ Kanban, Page Links & Backlinks, ImageLightbox, and AI Diff Review.',
   }
 )
 
@@ -30,18 +30,18 @@ const currentVideo = computed(() =>
 </script>
 
 <template>
-  <section class="my-8 mx-auto max-w-5xl rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/95 p-4 sm:p-6 shadow-xl dark:shadow-2xl">
+  <section class="my-8 mx-auto max-w-5xl rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-950/95 p-4 sm:p-6 shadow-2xl">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
       <div>
-        <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+        <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight">
           {{ title }}
         </h3>
-        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+        <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
           {{ subtitle }}
         </p>
       </div>
 
-      <div class="inline-flex rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 p-1 self-start sm:self-auto shrink-0">
+      <div class="inline-flex rounded-xl border border-slate-800 bg-slate-900 p-1 self-start sm:self-auto shrink-0">
         <button
           type="button"
           @click="activeTab = 'promo'"
@@ -49,7 +49,7 @@ const currentVideo = computed(() =>
             'px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer',
             activeTab === 'promo'
               ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              : 'text-slate-400 hover:text-white'
           ]"
         >
           Launch Reel
@@ -61,7 +61,7 @@ const currentVideo = computed(() =>
             'px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer',
             activeTab === 'walkthrough'
               ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              : 'text-slate-400 hover:text-white'
           ]"
         >
           Live Walkthrough

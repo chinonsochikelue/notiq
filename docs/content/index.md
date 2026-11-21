@@ -52,7 +52,7 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
   to: /docs/changelog#v140
   variant: outline
   ---
-  v1.4.0: Database Kanban, [[Links]], ImageLightbox & Live Sync →
+  v1.4.0: Database Kanban, Page Links, ImageLightbox & Live Sync →
   :::
 ::
 
