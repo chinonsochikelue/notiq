@@ -52,11 +52,14 @@ Build high-performance Notion-style editors and limitless visual workspaces. :br
   to: /docs/core-concepts/headless-ui
   variant: outline
   ---
-  v1.2.0: 100% Headless + AI Excalidraw & Research →
+  v1.4.0: Database Kanban, [[Links]], ImageLightbox & Live Sync →
   :::
 ::
 
 ::floating-notiq
+::
+
+::promo-video-showcase
 ::
 
 ::u-page-section

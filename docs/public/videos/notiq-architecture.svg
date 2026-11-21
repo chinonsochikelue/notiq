@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="800" y2="460" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#090D16"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="460" rx="24" fill="url(#bgGrad)"/>
+  <g opacity="0.18" stroke="#334155" stroke-width="1">
+    <path d="M0 92H800M0 184H800M0 276H800M0 368H800"/>
+    <path d="M160 0V460M320 0V460M480 0V460M640 0V460"/>
+  </g>
+
+  <!-- Connecting lines from Core -->
+  <path d="M400 230 C300 230 260 120 190 120" stroke="#6366F1" stroke-width="2" stroke-dasharray="6 4" opacity="0.7"/>
+  <path d="M400 230 C500 230 540 120 610 120" stroke="#10B981" stroke-width="2" stroke-dasharray="6 4" opacity="0.7"/>
+  <path d="M400 230 C300 230 260 340 190 340" stroke="#3B82F6" stroke-width="2" stroke-dasharray="6 4" opacity="0.7"/>
+  <path d="M400 230 C500 230 540 340 610 340" stroke="#F59E0B" stroke-width="2" stroke-dasharray="6 4" opacity="0.7"/>
+
+  <!-- Center Notiq Core Hub -->
+  <rect x="315" y="175" width="170" height="110" rx="20" fill="#111827" stroke="url(#accentGrad)" stroke-width="2.5"/>
+  <circle cx="400" cy="216" r="18" fill="url(#accentGrad)" opacity="0.2"/>
+  <path d="M392 216L398 222L410 209" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="400" y="252" text-anchor="middle" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="700">Notiq Core</text>
+  <text x="400" y="270" text-anchor="middle" fill="#94A3B8" font-family="ui-monospace, monospace" font-size="11">@collabchron/notiq</text>
+
+  <!-- Top-Left: Yjs CRDT Sync -->
+  <rect x="64" y="72" width="172" height="92" rx="16" fill="#1E293B" stroke="#6366F1" stroke-opacity="0.45" stroke-width="1.5"/>
+  <circle cx="92" cy="102" r="8" fill="#6366F1" opacity="0.25"/>
+  <circle cx="92" cy="102" r="4" fill="#818CF8"/>
+  <text x="110" y="106" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="600">Yjs CRDT Sync</text>
+  <text x="82" y="130" fill="#94A3B8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">WebSocket + IndexedDB</text>
+  <text x="82" y="147" fill="#818CF8" font-family="ui-monospace, monospace" font-size="10">wss://notiqcollabserver</text>
+
+  <!-- Top-Right: AI Copilot & Diffs -->
+  <rect x="564" y="72" width="172" height="92" rx="16" fill="#1E293B" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.5"/>
+  <circle cx="592" cy="102" r="8" fill="#10B981" opacity="0.25"/>
+  <circle cx="592" cy="102" r="4" fill="#34D399"/>
+  <text x="610" y="106" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="600">AI Copilot &amp; Diffs</text>
+  <text x="582" y="130" fill="#94A3B8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">Per-hunk Accept / Reject</text>
+  <text x="582" y="147" fill="#34D399" font-family="ui-monospace, monospace" font-size="10">/ai · Cmd+J · Ghost Text</text>
+
+  <!-- Bottom-Left: Database & Kanban -->
+  <rect x="64" y="296" width="172" height="92" rx="16" fill="#1E293B" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.5"/>
+  <circle cx="92" cy="326" r="8" fill="#3B82F6" opacity="0.25"/>
+  <circle cx="92" cy="326" r="4" fill="#60A5FA"/>
+  <text x="110" y="330" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="600">Database &amp; Kanban</text>
+  <text x="82" y="354" fill="#94A3B8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">Table · Drag-and-Drop</text>
+  <text x="82" y="371" fill="#60A5FA" font-family="ui-monospace, monospace" font-size="10">/database · /kanban</text>
+
+  <!-- Bottom-Right: Rich Media & Links -->
+  <rect x="564" y="296" width="172" height="92" rx="16" fill="#1E293B" stroke="#F59E0B" stroke-opacity="0.45" stroke-width="1.5"/>
+  <circle cx="592" cy="326" r="8" fill="#F59E0B" opacity="0.25"/>
+  <circle cx="592" cy="326" r="4" fill="#FBBF24"/>
+  <text x="610" y="330" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="600">Media &amp; [[Links]]</text>
+  <text x="582" y="354" fill="#94A3B8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">Lightbox · Resize · @Mention</text>
+  <text x="582" y="371" fill="#FBBF24" font-family="ui-monospace, monospace" font-size="10">[[Page]] · @User · Excalidraw</text>
+</svg>

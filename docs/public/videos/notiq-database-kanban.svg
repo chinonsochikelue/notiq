@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" fill="none">
+  <rect width="720" height="400" rx="20" fill="#0B1120"/>
+  <rect x="24" y="24" width="672" height="352" rx="16" fill="#111827" stroke="#1E293B" stroke-width="1.5"/>
+
+  <!-- Header -->
+  <rect x="24" y="24" width="672" height="52" rx="16" fill="#172033"/>
+  <text x="48" y="55" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">Project Tasks</text>
+  <rect x="150" y="40" width="54" height="22" rx="11" fill="#1E293B"/>
+  <text x="177" y="55" text-anchor="middle" fill="#94A3B8" font-family="ui-monospace, monospace" font-size="11">3 items</text>
+
+  <!-- Table / Kanban Toggle -->
+  <rect x="528" y="36" width="144" height="28" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="564" y="54" text-anchor="middle" fill="#94A3B8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600">Table</text>
+  <rect x="600" y="39" width="69" height="22" rx="6" fill="#3B82F6"/>
+  <text x="634" y="54" text-anchor="middle" fill="#FFFFFF" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600">Kanban</text>
+
+  <!-- Column 1: To Do -->
+  <rect x="44" y="96" width="198" height="256" rx="12" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <circle cx="64" cy="118" r="4" fill="#94A3B8"/>
+  <text x="76" y="122" fill="#E2E8F0" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">To Do</text>
+  <rect x="56" y="138" width="174" height="72" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+  <text x="68" y="160" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">Run E2E Verification</text>
+  <rect x="68" y="176" width="42" height="20" rx="5" fill="#F43F5E" fill-opacity="0.18"/>
+  <text x="89" y="190" text-anchor="middle" fill="#FB7185" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="600">High</text>
+  <rect x="116" y="176" width="32" height="20" rx="5" fill="#334155"/>
+  <text x="132" y="190" text-anchor="middle" fill="#CBD5E1" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10">QA</text>
+
+  <!-- Column 2: In Progress -->
+  <rect x="261" y="96" width="198" height="256" rx="12" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <circle cx="281" cy="118" r="4" fill="#3B82F6"/>
+  <text x="293" y="122" fill="#E2E8F0" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">In Progress</text>
+  <rect x="273" y="138" width="174" height="72" rx="10" fill="#1E293B" stroke="#3B82F6" stroke-opacity="0.5" stroke-width="1.5"/>
+  <text x="285" y="160" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">Design Collab UI</text>
+  <rect x="285" y="176" width="54" height="20" rx="5" fill="#F59E0B" fill-opacity="0.18"/>
+  <text x="312" y="190" text-anchor="middle" fill="#FBBF24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="600">Medium</text>
+  <rect x="345" y="176" width="46" height="20" rx="5" fill="#334155"/>
+  <text x="368" y="190" text-anchor="middle" fill="#CBD5E1" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10">Design</text>
+
+  <!-- Column 3: Done -->
+  <rect x="478" y="96" width="198" height="256" rx="12" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+  <circle cx="498" cy="118" r="4" fill="#10B981"/>
+  <text x="510" y="122" fill="#E2E8F0" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">Done</text>
+  <rect x="490" y="138" width="174" height="72" rx="10" fill="#1E293B" stroke="#10B981" stroke-opacity="0.4" stroke-width="1"/>
+  <text x="502" y="160" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">Draft Project Roadmap</text>
+  <rect x="502" y="176" width="42" height="20" rx="5" fill="#F43F5E" fill-opacity="0.18"/>
+  <text x="523" y="190" text-anchor="middle" fill="#FB7185" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="600">High</text>
+  <rect x="550" y="176" width="54" height="20" rx="5" fill="#334155"/>
+  <text x="577" y="190" text-anchor="middle" fill="#CBD5E1" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10">Planning</text>
+</svg>
