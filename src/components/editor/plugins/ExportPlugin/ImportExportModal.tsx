@@ -6,6 +6,8 @@ import { $convertToMarkdownString } from "@lexical/markdown";
 import { $getRoot } from "lexical";
 import { NOTIQ_TRANSFORMERS } from "../../utils/markdownTransformers";
 import { exportEditorToHTML, downloadHTML } from "../../../../utils/htmlExport";
+import { downloadDocx } from "../../../../utils/docxExport";
+import { convertDocxBufferToHtml } from "../../../../utils/docxImport";
 import {
   detectContentFormat,
   importContentToEditor,
@@ -100,8 +102,20 @@ export default function ImportExportModal({
   }, [rawText]);
 
   // Read file content
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     setImportFile(file);
+    if (file.name.toLowerCase().endsWith(".docx")) {
+      try {
+        const buffer = await file.arrayBuffer();
+        const { html } = await convertDocxBufferToHtml(buffer);
+        setRawText(html);
+        setDetectedFormat("html");
+      } catch (err: any) {
+        console.error("[Notiq DOCX Import Error]:", err);
+        toast.error(`Failed to read DOCX: ${err?.message || "Invalid file"}`);
+      }
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = (e.target?.result as string) || "";
@@ -465,6 +479,41 @@ export default function ImportExportModal({
                     </div>
                   </div>
 
+                  {/* 5. Word Document (.docx) */}
+                  <div className="border border-border/80 hover:border-indigo-500/40 rounded-xl p-3 bg-card hover:bg-indigo-500/5 transition-all group flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <span className="p-1.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                            <FileText className="h-4 w-4" />
+                          </span>
+                          <span className="font-semibold text-xs text-foreground">
+                            Word Document
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-muted-foreground uppercase">
+                          .docx
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-snug mb-3">
+                        Microsoft Word &amp; Google Docs compatible OOXML document.
+                      </p>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={async () => {
+                        await downloadDocx(editor, `document-${timestamp}.docx`);
+                        toast.success("Downloaded Word (.docx) document");
+                      }}
+                      className="w-full text-xs h-7 gap-1"
+                    >
+                      <Download className="h-3 w-3" />
+                      Download .docx
+                    </Button>
+                  </div>
+
                   {/* 4. JSON Snapshot State */}
                   <div className="border border-border/80 hover:border-emerald-500/40 rounded-xl p-3 bg-card hover:bg-emerald-500/5 transition-all group flex flex-col justify-between">
                     <div>
@@ -569,7 +618,7 @@ export default function ImportExportModal({
                         : "bg-muted text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    Upload File (.md, .json, .html, .txt)
+                    Upload File (.md, .docx, .json, .html, .txt)
                   </button>
                   <button
                     type="button"
@@ -602,7 +651,7 @@ export default function ImportExportModal({
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept=".md,.markdown,.html,.htm,.json,.txt,.lexical"
+                      accept=".md,.markdown,.docx,.html,.htm,.json,.txt,.lexical"
                       onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0) {
                           handleFileSelect(e.target.files[0]);

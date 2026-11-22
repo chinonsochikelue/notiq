@@ -7,6 +7,7 @@ import jsPDF from "jspdf";
 import { toast } from "sonner";
 import { NOTIQ_TRANSFORMERS } from "../../utils/markdownTransformers";
 import { exportEditorToHTML, downloadHTML } from "../../../../utils/htmlExport";
+import { downloadDocx } from "../../../../utils/docxExport";
 import {
   importMarkdownToEditor,
   importHTMLToEditor,
@@ -21,6 +22,7 @@ export const EXPORT_PDF_COMMAND: LexicalCommand<void> = createCommand("EXPORT_PD
 export const EXPORT_HTML_COMMAND: LexicalCommand<void> = createCommand("EXPORT_HTML_COMMAND");
 export const EXPORT_JSON_COMMAND: LexicalCommand<void> = createCommand("EXPORT_JSON_COMMAND");
 export const EXPORT_TEXT_COMMAND: LexicalCommand<void> = createCommand("EXPORT_TEXT_COMMAND");
+export const EXPORT_DOCX_COMMAND: LexicalCommand<void> = createCommand("EXPORT_DOCX_COMMAND");
 
 export interface OpenImportExportPayload {
   defaultTab?: "export" | "import";
