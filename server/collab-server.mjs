@@ -13,9 +13,11 @@ import * as syncProtocol from "y-protocols/sync";
 import * as awarenessProtocol from "y-protocols/awareness";
 import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
+import { fileURLToPath } from "node:url";
 
 const PORT = parseInt(process.env.PORT || process.env.COLLAB_PORT || "4444", 10);
 const HOST = process.env.COLLAB_HOST || "0.0.0.0";
+const API_KEY = process.env.COLLAB_API_KEY || "";
 
 const messageSync = 0;
 const messageAwareness = 1;
@@ -80,12 +82,39 @@ function getOrCreateRoom(roomName) {
   return room;
 }
 
-// HTTP Server for health checks and status
-const server = http.createServer((req, res) => {
+function readJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => {
+      const raw = Buffer.concat(chunks).toString("utf8").trim();
+      if (!raw) return resolve({});
+      try {
+        resolve(JSON.parse(raw));
+      } catch (err) {
+        reject(err);
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
+function sendJson(res, status, payload) {
+  res.writeHead(status, { "Content-Type": "application/json" });
+  res.end(JSON.stringify(payload));
+}
+
+function isAuthorized(req) {
+  if (!API_KEY) return true;
+  const auth = req.headers["authorization"] || "";
+  return auth === `Bearer ${API_KEY}`;
+}
+
+export async function handleHttpRequest(req, res) {
   // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -93,9 +122,31 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.url?.startsWith("/reset") || req.url?.startsWith("/api/reset")) {
-    const url = new URL(req.url, "http://localhost");
-    const roomParam = url.searchParams.get("room");
+  const parsedUrl = new URL(req.url || "/", "http://localhost");
+  const pathname = parsedUrl.pathname;
+
+  if (pathname === "/health" || pathname === "/api/health") {
+    let totalConnections = 0;
+    rooms.forEach((r) => (totalConnections += r.conns.size));
+
+    sendJson(res, 200, {
+      status: "ok",
+      service: "notiq-collab-server",
+      uptime: Math.floor(process.uptime()),
+      roomsCount: rooms.size,
+      connectedClients: totalConnections,
+      rooms: Array.from(rooms.keys()),
+      timestamp: Date.now(),
+    });
+    return;
+  }
+
+  if (pathname.startsWith("/reset") || pathname.startsWith("/api/reset")) {
+    if (!isAuthorized(req)) {
+      sendJson(res, 401, { error: "Unauthorized" });
+      return;
+    }
+    const roomParam = parsedUrl.searchParams.get("room");
     if (roomParam) {
       rooms.delete(roomParam);
       console.log(`[Notiq Collab] Room reset: "${roomParam}"`);
@@ -103,32 +154,97 @@ const server = http.createServer((req, res) => {
       rooms.clear();
       console.log(`[Notiq Collab] All rooms cleared`);
     }
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: "cleared", room: roomParam || "all" }));
+    sendJson(res, 200, { status: "cleared", room: roomParam || "all" });
     return;
   }
 
-  if (req.url === "/health" || req.url === "/api/health") {
-    let totalConnections = 0;
-    rooms.forEach((r) => (totalConnections += r.conns.size));
+  // Headless Document REST API (/docs, /docs/:room, /api/docs, /api/docs/:room)
+  const docMatch = pathname.match(/^\/(?:api\/)?docs(?:\/([^/]+))?$/);
+  if (docMatch) {
+    if (!isAuthorized(req)) {
+      sendJson(res, 401, { error: "Unauthorized" });
+      return;
+    }
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        status: "ok",
-        service: "notiq-collab-server",
-        uptime: Math.floor(process.uptime()),
-        roomsCount: rooms.size,
-        connectedClients: totalConnections,
-        rooms: Array.from(rooms.keys()),
-        timestamp: Date.now(),
-      })
-    );
+    const roomParam = docMatch[1] ? decodeURIComponent(docMatch[1]) : null;
+
+    if (!roomParam && req.method === "GET") {
+      const list = Array.from(rooms.values()).map((r) => ({
+        name: r.name,
+        createdAt: r.createdAt,
+        connectedClients: r.conns.size,
+        stateBytes: Y.encodeStateAsUpdate(r.doc).byteLength,
+      }));
+      sendJson(res, 200, { rooms: list, count: list.length });
+      return;
+    }
+
+    if (roomParam && req.method === "GET") {
+      const room = getOrCreateRoom(roomParam);
+      const update = Y.encodeStateAsUpdate(room.doc);
+      const metaMap = room.doc.getMap("metadata");
+      const rootText = room.doc.get("root", Y.XmlText).toString();
+
+      sendJson(res, 200, {
+        room: room.name,
+        createdAt: room.createdAt,
+        connectedClients: room.conns.size,
+        stateBase64: Buffer.from(update).toString("base64"),
+        metadata: metaMap.toJSON(),
+        rootXmlText: rootText,
+      });
+      return;
+    }
+
+    if (roomParam && (req.method === "POST" || req.method === "PUT")) {
+      let body;
+      try {
+        body = await readJsonBody(req);
+      } catch {
+        sendJson(res, 400, { error: "Invalid JSON body" });
+        return;
+      }
+
+      const room = getOrCreateRoom(roomParam);
+      if (typeof body.updateBase64 === "string" && body.updateBase64.length > 0) {
+        const updateBytes = new Uint8Array(Buffer.from(body.updateBase64, "base64"));
+        Y.applyUpdate(room.doc, updateBytes, "rest-api");
+      }
+      if (body.metadata && typeof body.metadata === "object") {
+        const metaMap = room.doc.getMap("metadata");
+        room.doc.transact(() => {
+          for (const [k, v] of Object.entries(body.metadata)) {
+            metaMap.set(k, v);
+          }
+        }, "rest-api");
+      }
+
+      sendJson(res, 200, {
+        status: "updated",
+        room: room.name,
+        metadata: room.doc.getMap("metadata").toJSON(),
+        stateBytes: Y.encodeStateAsUpdate(room.doc).byteLength,
+      });
+      return;
+    }
+
+    if (roomParam && req.method === "DELETE") {
+      const existed = rooms.delete(roomParam);
+      sendJson(res, 200, { status: existed ? "deleted" : "not_found", room: roomParam });
+      return;
+    }
+
+    sendJson(res, 405, { error: "Method not allowed" });
     return;
   }
 
   res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Notiq Collaboration Server is running. Connect via WebSocket (ws://...).\n");
+  res.end("Notiq Collaboration Server is running. Connect via WebSocket (ws://...) or REST (/docs).\n");
+}
+
+// HTTP Server for health checks and Document REST API
+const server = http.createServer((req, res) => {
+  void handleHttpRequest(req, res);
 });
 
 const wss = new WebSocketServer({ server });
@@ -252,16 +368,26 @@ const heartbeatTimer = setInterval(() => {
   });
 }, HEARTBEAT_INTERVAL_MS);
 
-heartbeatTimer.unref();
+heartbeatTimer.unref?.();
 
-server.listen(PORT, HOST, () => {
-  console.log(`
+const isMainModule =
+  process.argv[1] &&
+  fileURLToPath(import.meta.url).toLowerCase() ===
+    process.argv[1].toLowerCase();
+
+if (isMainModule) {
+  server.listen(PORT, HOST, () => {
+    console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║   Notiq Real-Time Collaboration Server (Self-Hosted)      ║
 ║                                                            ║
 ║   WebSocket: ws://${HOST === "0.0.0.0" ? "localhost" : HOST}:${PORT}                            ║
 ║   Health API: http://localhost:${PORT}/health                  ║
+║   Docs REST:  http://localhost:${PORT}/docs                    ║
 ║   Status: Ready for peer connections                       ║
 ╚════════════════════════════════════════════════════════════╝
 `);
-});
+  });
+}
+
+export { rooms, getOrCreateRoom, server };
