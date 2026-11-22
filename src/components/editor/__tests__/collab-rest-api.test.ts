@@ -1,7 +1,14 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { EventEmitter } from "node:events";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import * as Y from "yjs";
-import { handleHttpRequest, rooms } from "../../../../server/collab-server.mjs";
+import {
+  handleHttpRequest,
+  rooms,
+  setPersistenceDir,
+} from "../../../../server/collab-server.mjs";
 
 function createMockReq(method: string, url: string, body?: unknown) {
   const req = new EventEmitter() as EventEmitter & {
@@ -97,5 +104,53 @@ describe("Notiq Collab Server Headless Document REST API", () => {
     );
     expect(delRes.statusCode).toBe(200);
     expect(delRes.json().status).toBe("deleted");
+  });
+
+  it("persists Yjs room snapshots to disk and restores after memory clear", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "notiq-collab-"));
+    setPersistenceDir(tmpDir);
+
+    try {
+      const clientDoc = new Y.Doc();
+      clientDoc.get("root", Y.XmlText).insert(0, "Durable persisted doc");
+      const updateBase64 = Buffer.from(
+        Y.encodeStateAsUpdate(clientDoc)
+      ).toString("base64");
+
+      const postRes = createMockRes();
+      await handleHttpRequest(
+        createMockReq("POST", "/docs/durable-room", {
+          updateBase64,
+          metadata: { owner: "notiq" },
+        }) as never,
+        postRes as never
+      );
+      expect(postRes.statusCode).toBe(200);
+      expect(fs.existsSync(path.join(tmpDir, "durable-room.yjs"))).toBe(true);
+
+      // Simulate server restart by clearing in-memory rooms
+      rooms.clear();
+
+      const getRes = createMockRes();
+      await handleHttpRequest(
+        createMockReq("GET", "/docs/durable-room") as never,
+        getRes as never
+      );
+      expect(getRes.statusCode).toBe(200);
+      expect(getRes.json().rootXmlText).toContain("Durable persisted doc");
+      expect(getRes.json().metadata).toEqual({ owner: "notiq" });
+
+      // Deleting room also removes snapshot file
+      const delRes = createMockRes();
+      await handleHttpRequest(
+        createMockReq("DELETE", "/docs/durable-room") as never,
+        delRes as never
+      );
+      expect(delRes.statusCode).toBe(200);
+      expect(fs.existsSync(path.join(tmpDir, "durable-room.yjs"))).toBe(false);
+    } finally {
+      setPersistenceDir("");
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 });

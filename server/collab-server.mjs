@@ -14,10 +14,73 @@ import * as awarenessProtocol from "y-protocols/awareness";
 import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
 import { fileURLToPath } from "node:url";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 const PORT = parseInt(process.env.PORT || process.env.COLLAB_PORT || "4444", 10);
 const HOST = process.env.COLLAB_HOST || "0.0.0.0";
 const API_KEY = process.env.COLLAB_API_KEY || "";
+let persistenceDir = process.env.COLLAB_DATA_DIR
+  ? path.resolve(process.env.COLLAB_DATA_DIR)
+  : "";
+
+export function setPersistenceDir(dir) {
+  persistenceDir = dir ? path.resolve(dir) : "";
+  if (persistenceDir) {
+    fs.mkdirSync(persistenceDir, { recursive: true });
+  }
+}
+
+function getRoomSnapshotPath(roomName) {
+  if (!persistenceDir) return null;
+  const safe = encodeURIComponent(roomName).replace(/%/g, "_");
+  return path.join(persistenceDir, `${safe}.yjs`);
+}
+
+function saveRoomSnapshot(room) {
+  const filePath = getRoomSnapshotPath(room.name);
+  if (!filePath) return;
+  fs.mkdirSync(persistenceDir, { recursive: true });
+  const state = Y.encodeStateAsUpdate(room.doc);
+  const tmpPath = `${filePath}.tmp`;
+  fs.writeFileSync(tmpPath, state);
+  fs.renameSync(tmpPath, filePath);
+}
+
+function loadRoomSnapshot(room) {
+  const filePath = getRoomSnapshotPath(room.name);
+  if (!filePath || !fs.existsSync(filePath)) return false;
+  try {
+    const bytes = fs.readFileSync(filePath);
+    if (bytes.byteLength > 0) {
+      Y.applyUpdate(room.doc, new Uint8Array(bytes), "disk-restore");
+      return true;
+    }
+  } catch (err) {
+    console.error(`[Notiq Collab] Failed to load snapshot for "${room.name}":`, err);
+  }
+  return false;
+}
+
+function deleteRoomSnapshot(roomName) {
+  const filePath = getRoomSnapshotPath(roomName);
+  if (filePath && fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+}
+
+const saveTimers = new Map();
+function scheduleRoomSave(room) {
+  if (!persistenceDir) return;
+  const prev = saveTimers.get(room.name);
+  if (prev) clearTimeout(prev);
+  const timer = setTimeout(() => {
+    saveTimers.delete(room.name);
+    saveRoomSnapshot(room);
+  }, 350);
+  timer.unref?.();
+  saveTimers.set(room.name, timer);
+}
 
 const messageSync = 0;
 const messageAwareness = 1;
@@ -47,6 +110,10 @@ class Room {
           conn.send(message);
         }
       });
+
+      if (origin !== "disk-restore") {
+        scheduleRoomSave(this);
+      }
     });
 
     // Broadcast awareness updates (cursor position, username, color)
@@ -65,6 +132,10 @@ class Room {
           conn.send(message);
         }
       });
+
+      if (origin !== "disk-restore") {
+        scheduleRoomSave(this);
+      }
     });
   }
 }
@@ -76,8 +147,11 @@ function getOrCreateRoom(roomName) {
   let room = rooms.get(roomName);
   if (!room) {
     room = new Room(roomName);
+    const restored = loadRoomSnapshot(room);
     rooms.set(roomName, room);
-    console.log(`[Notiq Collab] Room opened: "${roomName}"`);
+    console.log(
+      `[Notiq Collab] Room opened: "${roomName}"${restored ? " (restored from disk)" : ""}`
+    );
   }
   return room;
 }
@@ -149,8 +223,12 @@ export async function handleHttpRequest(req, res) {
     const roomParam = parsedUrl.searchParams.get("room");
     if (roomParam) {
       rooms.delete(roomParam);
+      deleteRoomSnapshot(roomParam);
       console.log(`[Notiq Collab] Room reset: "${roomParam}"`);
     } else {
+      for (const name of rooms.keys()) {
+        deleteRoomSnapshot(name);
+      }
       rooms.clear();
       console.log(`[Notiq Collab] All rooms cleared`);
     }
@@ -219,6 +297,8 @@ export async function handleHttpRequest(req, res) {
         }, "rest-api");
       }
 
+      saveRoomSnapshot(room);
+
       sendJson(res, 200, {
         status: "updated",
         room: room.name,
@@ -230,6 +310,7 @@ export async function handleHttpRequest(req, res) {
 
     if (roomParam && req.method === "DELETE") {
       const existed = rooms.delete(roomParam);
+      deleteRoomSnapshot(roomParam);
       sendJson(res, 200, { status: existed ? "deleted" : "not_found", room: roomParam });
       return;
     }
