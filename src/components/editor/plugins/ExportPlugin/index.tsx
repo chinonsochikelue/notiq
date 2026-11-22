@@ -599,6 +599,24 @@ export default function ExportPlugin(): React.JSX.Element {
     );
   }, [editor]);
 
+  // 6b. Word (.docx) Export Command
+  useEffect(() => {
+    return editor.registerCommand(
+      EXPORT_DOCX_COMMAND,
+      () => {
+        const timestamp = new Date().toISOString().slice(0, 10);
+        void downloadDocx(editor, `document-${timestamp}.docx`)
+          .then(() => toast.success("Word (.docx) document exported!"))
+          .catch((err) => {
+            console.error("[Notiq Export DOCX Error]:", err);
+            toast.error("Failed to export Word (.docx).");
+          });
+        return true;
+      },
+      COMMAND_PRIORITY_LOW
+    );
+  }, [editor]);
+
   // 7. JSON State Export Command
   useEffect(() => {
     return editor.registerCommand(

@@ -26,6 +26,61 @@ export {
   type MentionKind,
   type SerializedMentionNode,
 } from "./components/editor/nodes/MentionNode";
+export {
+  DatabaseNode,
+  $createDatabaseNode,
+  $isDatabaseNode,
+  createDefaultDatabaseRows,
+  type DatabaseRow,
+  type DatabaseStatus,
+  type DatabasePriority,
+  type DatabaseViewMode,
+  type SerializedDatabaseNode,
+} from "./components/editor/nodes/DatabaseNode";
+export {
+  PageLinkNode,
+  $createPageLinkNode,
+  $isPageLinkNode,
+  type PageLinkKind,
+  type SerializedPageLinkNode,
+} from "./components/editor/nodes/PageLinkNode";
+export {
+  default as PageLinksPlugin,
+  PageBacklinksFooter,
+  extractPageLinksFromEditorState,
+  type PageLinkReference,
+  type WorkspacePageSuggestion,
+} from "./components/editor/plugins/PageLinksPlugin";
+export {
+  default as UniqueIDPlugin,
+  getOrAssignBlockId,
+  getBlockId,
+} from "./components/editor/plugins/UniqueIDPlugin";
+export {
+  default as CharacterCountPlugin,
+  useCharacterCount,
+  computeTextStats,
+  type TextStats,
+} from "./components/editor/plugins/CharacterCountPlugin";
+export {
+  default as EmojiPickerPlugin,
+  searchEmojis,
+  type EmojiCandidate,
+} from "./components/editor/plugins/EmojiPickerPlugin";
+export {
+  default as ImageLightbox,
+  type ImageLightboxProps,
+} from "./components/ui/image/image-lightbox";
+export {
+  exportEditorToDocxBlob,
+  exportEditorToDocxBuffer,
+  downloadDocx,
+} from "./utils/docxExport";
+export {
+  convertDocxBufferToHtml,
+  importDocxBufferToEditor,
+  importDocxFileToEditor,
+} from "./utils/docxImport";
 
 // Providers & Contexts
 export * from "./components/providers/ToolbarContext";

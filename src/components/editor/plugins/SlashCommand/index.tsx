@@ -71,6 +71,7 @@ import {
   EXPORT_PDF_COMMAND,
   EXPORT_HTML_COMMAND,
   EXPORT_JSON_COMMAND,
+  EXPORT_DOCX_COMMAND,
   OPEN_IMPORT_EXPORT_MODAL_COMMAND,
 } from "../ExportPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
@@ -702,6 +703,13 @@ function getBaseOptions(
       desc: "Export document as standalone styled HTML",
       category: "export",
       onSelect: () => editor.dispatchCommand(EXPORT_HTML_COMMAND, undefined),
+    }),
+    new ComponentPickerOption("Export to Word (.docx)", {
+      icon: <FileText className="h-4 w-4 text-indigo-500" />,
+      keywords: ["export", "docx", "word", "microsoft", "document"],
+      desc: "Export document as Microsoft Word (.docx)",
+      category: "export",
+      onSelect: () => editor.dispatchCommand(EXPORT_DOCX_COMMAND, undefined),
     }),
     new ComponentPickerOption("Export JSON State", {
       icon: <FileJson className="h-4 w-4 text-emerald-600" />,
