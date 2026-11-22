@@ -72,6 +72,9 @@ import VersionHistoryPlugin from "./plugins/VersionHistoryPlugin"
 import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin"
 import MentionsPlugin from "./plugins/MentionsPlugin"
 import PageLinksPlugin from "./plugins/PageLinksPlugin"
+import UniqueIDPlugin from "./plugins/UniqueIDPlugin"
+import CharacterCountPlugin from "./plugins/CharacterCountPlugin"
+import EmojiPickerPlugin from "./plugins/EmojiPickerPlugin"
 import InlineCopilotPlugin from "./plugins/InlineCopilotPlugin"
 import AICommandBarPlugin from "./plugins/AICommandBarPlugin"
 import SmartTypographyPlugin from "./plugins/SmartTypographyPlugin"
@@ -357,7 +360,10 @@ export default function Core({
 
           {isEditable && <SlashCommand />}
           {isEditable && <MentionsPlugin />}
+          {isEditable && <EmojiPickerPlugin />}
           <PageLinksPlugin />
+          <UniqueIDPlugin />
+          <CharacterCountPlugin />
           {isEditable && <InlineCopilotPlugin />}
           {isEditable && <AICommandBarPlugin />}
           {isEditable && <SmartTypographyPlugin />}
